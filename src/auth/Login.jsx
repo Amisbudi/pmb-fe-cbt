@@ -11,6 +11,9 @@ function Login() {
   const togglePasswordVisibility = () => {
     setShowPassword((prevState) => !prevState);
   };
+  const HomeFunc = async () => {
+    navigate('/dashboard');
+  };
   useEffect(() => {
     AOS.init();
   }, []);
@@ -91,7 +94,7 @@ function Login() {
             </div>
             <div className="flex items-center gap-5">
               <div>
-                <button className="bg-sky-700 text-white w-28 text-sm font-bold rounded-xl flex gap-2 items-center justify-center px-4 py-2">
+                <button  onClick={HomeFunc} className="bg-sky-700 text-white w-28 text-sm font-bold rounded-xl flex gap-2 items-center justify-center px-4 py-2">
                   <div className="flex items-center">Masuk</div>
                   <div className="pt-1">
                     <i className="fi fi-br-sign-in-alt w-1" />
