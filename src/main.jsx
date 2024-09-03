@@ -5,8 +5,10 @@ import {
   RouterProvider,
 } from 'react-router-dom'
 import App from './App.jsx'
+import Camera from './Camera.jsx'
 import Login from './auth/Login.jsx'
 import './index.css'
+import Assesment from './pages/Assesment.jsx'
 
 const router = createBrowserRouter([
   {
@@ -16,6 +18,14 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />
+  },
+  {
+    path: "/camera",
+    element: <Camera />
+  },
+  {
+    path: "/assesment",
+    element: <Assesment />
   },
 ]);
 

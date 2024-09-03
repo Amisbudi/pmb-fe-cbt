@@ -14,18 +14,18 @@ function App(){
     <div className="bg-gradient-to-b from-[#005D99] to-[#005083] lg:h-screen flex-col lg:flex-row lg:flex items-center justify-center lg:gap-48 p-4">
       <div>
         <div>
-          <img
+          {/* <img
             src={TrisaktiLogo}
             className="lg:w-36 w-28 lg:-ml-3 flex items-start ml-36 mt-[135px] lg:mt-0"
             alt="Logo-Usakti"
-          />
+          /> */}
         </div>
         <div className="text-white mt-6 flex items-start lg:text-[35px] text-[25px] text-wrap font-bold lg:w-[550px] w-full">
-          Computer Based Test Universitas Trisakti
+          Computer Based Test Kampus
         </div>
         <div className="text-white mt-1 flex items-start lg:text-[17px] text-md text-wrap lg:w-[550px] w-full">
           Wujudkan Aspirasi dan Cita-Citamu dengan Pendidikan Berkualitas!
-          Bergabunglah dengan Universitas Trisakti, tempat di mana ilmu
+          Bergabunglah dengan kampus, tempat di mana ilmu
           pengetahuan, inovasi, dan kepemimpinan berpadu untuk menciptakan
           generasi unggul.
         </div>

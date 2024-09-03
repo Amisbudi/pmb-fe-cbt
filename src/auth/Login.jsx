@@ -17,7 +17,7 @@ function Login() {
   return (
     <div className="bg-gradient-to-b from-[#005D99] to-[#005083] h-screen flex-col lg:flex-row lg:flex items-center justify-center p-4">
       <div>
-        <div className="flex items-center justify-center mt-[180px] lg:mt-0">
+        {/* <div className="flex items-center justify-center mt-[180px] lg:mt-0">
           <a href="/">
             <img
               src={TrisaktiLogo}
@@ -27,7 +27,7 @@ function Login() {
               data-aos-delay="50"
             />
           </a>
-        </div>
+        </div> */}
         <div
           className="p-5 border border-2 rounded-3xl mt-4 bg-white text-black lg:w-[600px] w-full"
           data-aos="fade-down"

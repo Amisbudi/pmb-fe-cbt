@@ -6,7 +6,7 @@ export default {
   ],
   theme: {
     extend: {
-      typography: (theme) => ({
+      typography: () => ({
         DEFAULT: {
           css: {
             fontFamily: 'Poppins, sans-serif',
