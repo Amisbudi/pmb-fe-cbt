@@ -59,12 +59,90 @@ function Home() {
       </div>
       <div className="w-full text-black">
         <div className="grid grid-cols-3 w-full gap-2">
-          <div className="bg-white h-44 rounded-3xl" data-aos="zoom-in"></div>
-          <div className="bg-white h-44 rounded-3xl" data-aos="zoom-in"></div>
-          <div className="bg-white h-44 rounded-3xl" data-aos="zoom-in"></div>
-          <div className="bg-white h-44 rounded-3xl" data-aos="zoom-in"></div>
-          <div className="bg-white h-44 rounded-3xl" data-aos="zoom-in"></div>
-          <div className="bg-white h-44 rounded-3xl" data-aos="zoom-in"></div>
+          <a
+            href="#"
+            className="bg-white h-44 rounded-3xl hover:bg-[#357097]  hover:text-white"
+            data-aos="zoom-in"
+          >
+            <div className="border border-4 border-[#357097] hover:border-white m-6 h-32 rounded-3xl">
+              <div className="flex items-center justify-center mt-8 text-3xl">
+                <i className="fi fi-sr-member-list"></i>
+              </div>
+              <div className="flex items-center justify-center font-bold">
+                DATA PRIBADI
+              </div>
+            </div>
+          </a>
+          <a
+            href="#"
+            className="bg-white h-44 rounded-3xl hover:bg-[#357097]  hover:text-white"
+            data-aos="zoom-in"
+          >
+            <div className="border border-4 border-[#357097] hover:border-white m-6 h-32 rounded-3xl">
+              <div className="flex items-center justify-center mt-8 text-3xl">
+                <i className="fi fi-sr-users-alt"></i>
+              </div>
+              <div className="flex items-center justify-center font-bold">
+                DATA ORANG TUA
+              </div>
+            </div>
+          </a>
+          <a
+            href="#"
+            className="bg-white h-44 rounded-3xl hover:bg-[#357097]  hover:text-white"
+            data-aos="zoom-in"
+          >
+            <div className="border border-4 border-[#357097] hover:border-white m-6 h-32 rounded-3xl">
+              <div className="flex items-center justify-center mt-8 text-3xl">
+                <i className="fi fi-ss-book-open-reader"></i>
+              </div>
+              <div className="flex items-center justify-center font-bold">
+                PROGRAM STUDI
+              </div>
+            </div>
+          </a>
+          <a
+            href="#"
+            className="bg-white h-44 rounded-3xl hover:bg-[#357097]  hover:text-white"
+            data-aos="zoom-in"
+          >
+            <div className="border border-4 border-[#357097] hover:border-white m-6 h-32 rounded-3xl">
+              <div className="flex items-center justify-center mt-8 text-3xl">
+                <i className="fi fi-sr-folder-upload"></i>
+              </div>
+              <div className="flex items-center justify-center font-bold">
+                UNGGAH BERKAS
+              </div>
+            </div>
+          </a>
+          <a
+            href="#"
+            className="bg-white h-44 rounded-3xl hover:bg-[#357097]  hover:text-white"
+            data-aos="zoom-in"
+          >
+            <div className="border border-4 border-[#357097] hover:border-white m-6 h-32 rounded-3xl">
+              <div className="flex items-center justify-center mt-8 text-3xl">
+                <i className="fi fi-sr-trophy-star"></i>
+              </div>
+              <div className="flex items-center justify-center font-bold">
+                PRESTASI
+              </div>
+            </div>
+          </a>
+          <a
+            href="#"
+            className="bg-white h-44 rounded-3xl hover:bg-[#357097]  hover:text-white"
+            data-aos="zoom-in"
+          >
+            <div className="border border-4 border-[#357097] hover:border-white m-6 h-32 rounded-3xl">
+              <div className="flex items-center justify-center mt-8 text-3xl">
+                <i className="fi fi-ss-department-structure"></i>
+              </div>
+              <div className="flex items-center justify-center font-bold">
+                ORGANISASI
+              </div>
+            </div>
+          </a>
         </div>
       </div>
     </div>
