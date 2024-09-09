@@ -4,11 +4,11 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from 'react-router-dom'
-import App from './App.jsx'
-import Camera from './Camera.jsx'
-import Login from './auth/Login.jsx'
 import './index.css'
+import App from './App.jsx'
+import Login from './auth/Login.jsx'
 import Assesment from './pages/Assesment.jsx'
+import Dashboard from './Dashboard.jsx'
 
 const router = createBrowserRouter([
   {
@@ -20,12 +20,11 @@ const router = createBrowserRouter([
     element: <Login />
   },
   {
-    path: "/camera",
-    element: <Camera />
-  },
-  {
     path: "/assesment",
     element: <Assesment />
+  }, {
+    path: "/dashboard",
+    element: <Dashboard />
   },
 ]);
 
