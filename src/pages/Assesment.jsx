@@ -175,6 +175,11 @@ const Assesment = () => {
     }
   }
 
+  const handleFinish = () => {
+    localStorage.removeItem('CBT:package');
+    navigate('/dashboard');
+  }
+
   useEffect(() => {
     const startCamera = async () => {
       try {
@@ -259,7 +264,7 @@ const Assesment = () => {
               )
             }
             <div className='h-full'>
-              <button type='button' onClick={() => navigate('/dashboard')} className='w-full block bg-red-500 hover:bg-red-600 py-2.5 rounded-xl text-white transition-all ease-in-out font-bold text-sm'>Selesai</button>
+              <button type='button' onClick={handleFinish} className='w-full block bg-red-500 hover:bg-red-600 py-2.5 rounded-xl text-white transition-all ease-in-out font-bold text-sm'>Selesai</button>
             </div>
             <div className='h-full'>
               <video ref={videoRef} autoPlay playsInline className='rounded-2xl' />
