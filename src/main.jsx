@@ -9,6 +9,7 @@ import App from './App.jsx'
 import Login from './auth/Login.jsx'
 import Assesment from './pages/Assesment.jsx'
 import Dashboard from './Dashboard.jsx'
+import Record from './pages/Record.jsx'
 
 const router = createBrowserRouter([
   {
@@ -22,9 +23,14 @@ const router = createBrowserRouter([
   {
     path: "/assesment",
     element: <Assesment />
-  }, {
+  },
+  {
     path: "/dashboard",
     element: <Dashboard />
+  },
+  {
+    path: "/record",
+    element: <Record />
   },
 ]);
 

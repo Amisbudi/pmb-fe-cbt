@@ -8,8 +8,8 @@ import { useNavigate } from "react-router-dom";
 const Assesment = () => {
   const navigate = useNavigate();
   const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-  const [capturedImage, setCapturedImage] = useState(null);
+
+  const [loading, setLoading] = useState(false);
 
   const [questions, setQuestions] = useState([]);
 
@@ -23,31 +23,6 @@ const Assesment = () => {
   const [indexQuestion, setIndexQuestion] = useState('');
 
   const [update, setUpdate] = useState(false);
-
-  const capturePhoto = async () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      // Mendapatkan stream track video
-      const track = videoRef.current.srcObject.getVideoTracks()[0];
-      const imageCapture = new ImageCapture(track);
-
-      // Mengambil snapshot menggunakan ImageCapture API
-      const blob = await imageCapture.takePhoto();
-      
-      // Mengonversi blob menjadi data URL
-      const imageDataURL = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-
-      setCapturedImage(imageDataURL);
-      console.log(imageDataURL);
-    } else {
-      console.log('tidak ada');
-      
-    }
-  };
 
   const getQuestions = async () => {
     try {
@@ -105,7 +80,7 @@ const Assesment = () => {
   }
 
   const backQuestion = () => {
-    if(indexQuestion > 1 &&  indexQuestion <= questions.length){
+    if (indexQuestion > 1 && indexQuestion <= questions.length) {
       changeQuestion(indexQuestion - 1)
       setIndexQuestion(null);
     }
@@ -129,47 +104,55 @@ const Assesment = () => {
 
   const saveRecord = async () => {
     try {
-      // let buffer;
-      // if (videoRef.current && videoRef.current.srcObject) {
-      //   const track = videoRef.current.srcObject.getVideoTracks()[0];
-      //   const imageCapture = new ImageCapture(track);
-      //   const blob = await imageCapture.takePhoto();
+      if (videoRef.current && videoRef.current.srcObject) {
+        setLoading(true);
+        const track = videoRef.current.srcObject.getVideoTracks()[0];
+        const imageCapture = new ImageCapture(track);
+        const blob = await imageCapture.takePhoto();
 
-      //   const imageDataURL = await new Promise((resolve, reject) => {
-      //     const reader = new FileReader();
-      //     reader.onloadend = () => resolve(reader.result);
-      //     reader.onerror = reject;
-      //     reader.readAsDataURL(blob);
-      //   });
-  
-        // const arrayBuffer = await blob.arrayBuffer();
-        
-        // buffer = arrayBuffer;
-        // buffer = imageDataURL;
+        const imageDataURL = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
 
-      if (update) {
-        const response = await axios.patch(`https://sbpmb-express.amisbudi.cloud/records/${record.question_id}/${record.package_question_id}`, {
-          user_id: 1,
-          answer_id: record.answer_id
-        });
-        console.log(response.data);
+        if (update) {
+          const response = await axios.patch(`https://sbpmb-express.amisbudi.cloud/records/${record.question_id}/${record.package_question_id}`, {
+            user_id: 1,
+            answer_id: record.answer_id,
+            photo: imageDataURL,
+          });
+          if (response.data) {
+            setTimeout(() => {
+              setLoading(false);
+            }, 500);
+          }
+        } else {
+          const response = await axios.post(`https://sbpmb-express.amisbudi.cloud/records`, {
+            question_user_id: record.question_user_id,
+            question_id: record.question_id,
+            package_question_id: record.package_question_id,
+            user_id: 1,
+            answer_id: record.answer_id,
+            photo: imageDataURL,
+          });
+          if (response.data) {
+            setTimeout(() => {
+              setLoading(false);
+            }, 500);
+          }
+        }
+        const nextPage = record.question_user_id + 1;
+        if (nextPage <= questions.length) {
+          changeQuestion(nextPage);
+        } else {
+          changeQuestion(1);
+        }
+        setIndexQuestion(null);
       } else {
-        const response = await axios.post(`https://sbpmb-express.amisbudi.cloud/records`, {
-          question_user_id: record.question_user_id,
-          question_id: record.question_id,
-          package_question_id: record.package_question_id,
-          user_id: 1,
-          answer_id: record.answer_id
-        });
-        console.log(response.data);
+        alert('Kamera tidak aktif!');
       }
-      const nextPage = record.question_user_id + 1;
-      if (nextPage <= questions.length) {
-        changeQuestion(nextPage);
-      } else {
-        changeQuestion(1);
-      }
-      setIndexQuestion(null);
     } catch (error) {
       console.log(error.message);
     }
@@ -229,14 +212,17 @@ const Assesment = () => {
                 )
               }
             </div>
-            <div className='flex justify-center md:justify-start items-center gap-3'>
-              <button type='button' onClick={backQuestion} className='bg-gray-100 hover:bg-gray-300 text-gray-400 transition-all ease-in-out w-10 h-10 rounded-full'>
-                <FontAwesomeIcon icon={faChevronLeft} />
-              </button>
-              <button type='button' onClick={saveRecord} className='bg-sky-500 hover:bg-sky-600 text-white transition-all ease-in-out w-10 h-10 rounded-full'>
-                <FontAwesomeIcon icon={faChevronRight} />
-              </button>
-            </div>
+            {
+              !loading &&
+              <div className='flex justify-center md:justify-start items-center gap-3'>
+                <button type='button' onClick={backQuestion} className='bg-gray-100 hover:bg-gray-300 text-gray-400 transition-all ease-in-out w-10 h-10 rounded-full'>
+                  <FontAwesomeIcon icon={faChevronLeft} />
+                </button>
+                <button type='button' onClick={saveRecord} className='bg-sky-500 hover:bg-sky-600 text-white transition-all ease-in-out w-10 h-10 rounded-full'>
+                  <FontAwesomeIcon icon={faChevronRight} />
+                </button>
+              </div>
+            }
           </div>
         </section>
         <section className='order-1 md:order-2 w-full md:w-3/12 bg-sky-700 shadow-md p-8 h-full md:rounded-3xl'>
@@ -245,7 +231,6 @@ const Assesment = () => {
               <img
                 src={TrisaktiLogo}
                 className="h-20"
-                // className="h-12"
                 alt="Logo-Usakti"
               />
               <h5 className='w-full text-center font-bold text-md rounded-2xl py-2.5 text-white border-2 border-sky-600'>00:30:32</h5>
