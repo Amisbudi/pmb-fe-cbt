@@ -2,26 +2,42 @@ import { useEffect, useState } from "react";
 import TrisaktiLogo from "./assets/img/Logo-Usakti-White.png";
 import AOS from "aos";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [packages, setPackages] = useState([]);
 
   const getPackageQuestions = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/packagequestions`);
+      const response = await axios.get(`https://sbpmb-express.amisbudi.cloud/packagequestions`);
       setPackages(response.data);
     } catch (error) {
       console.log(error.message);
     }
   }
 
+  const checkAssesment = () => {
+    const activePackage = localStorage.getItem('CBT:package');
+    if (activePackage) {
+      navigate('/assesment');
+    }
+  }
+
   const checkoutPackage = async (id) => {
     try {
-      const response = await axios.post(`http://localhost:3000/questionusers`, {
-        package_question_id: id,
-        user_id: 1,
-      });
-      console.log(response.data);
+      const activePackage = localStorage.getItem('CBT:package');
+      if (activePackage) {
+        navigate('/assesment');
+      } else {
+        const data = {
+          package_question_id: id,
+          user_id: 1,
+        }
+        localStorage.setItem('CBT:package', JSON.stringify(data));
+        const response = await axios.post(`https://sbpmb-express.amisbudi.cloud/questionusers`, data);
+        navigate('/assesment');
+      }
     } catch (error) {
       console.log(error.message);
     }
@@ -33,6 +49,7 @@ const Dashboard = () => {
       easing: "ease-in-out",
     });
     getPackageQuestions();
+    checkAssesment();
   }, []);
   return (
     <div className="bg-gradient-to-b from-[#005D99] to-[#005083] h-screen flex-col lg:flex-row lg:flex items-center justify-center p-12 text-white gap-10">

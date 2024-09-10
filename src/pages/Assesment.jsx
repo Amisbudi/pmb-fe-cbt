@@ -3,8 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import TrisaktiLogo from "../assets/img/Logo-Usakti-White.png";
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 const Assesment = () => {
+  const navigate = useNavigate();
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [capturedImage, setCapturedImage] = useState(null);
@@ -22,46 +24,68 @@ const Assesment = () => {
 
   const [update, setUpdate] = useState(false);
 
-  const capturePhoto = () => {
-    if (videoRef.current && canvasRef.current) {
-      const context = canvasRef.current.getContext('2d');
-      context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-      const imageDataURL = canvasRef.current.toDataURL('image/png');
+  const capturePhoto = async () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      // Mendapatkan stream track video
+      const track = videoRef.current.srcObject.getVideoTracks()[0];
+      const imageCapture = new ImageCapture(track);
+
+      // Mengambil snapshot menggunakan ImageCapture API
+      const blob = await imageCapture.takePhoto();
+      
+      // Mengonversi blob menjadi data URL
+      const imageDataURL = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+
       setCapturedImage(imageDataURL);
+      console.log(imageDataURL);
+    } else {
+      console.log('tidak ada');
+      
     }
   };
 
   const getQuestions = async () => {
     try {
-      const responseQuestions = await axios.get(`http://localhost:3000/questionusers/packagequestion/1/1`);
-      setQuestions(responseQuestions.data)
-      setQuestionActive(responseQuestions.data[0].question);
-      setIndexQuestion(responseQuestions.data[0].id);
-      getRecord(responseQuestions.data[0].question_id, responseQuestions.data[0].package_question_id);
-      getAnswers(responseQuestions.data[0].question_id);
+      const activePackage = localStorage.getItem('CBT:package');
+      if (activePackage) {
+        const data = JSON.parse(activePackage)
+        const responseQuestions = await axios.get(`https://sbpmb-express.amisbudi.cloud/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`);
+        setQuestions(responseQuestions.data)
+        setQuestionActive(responseQuestions.data[0].question);
+        setIndexQuestion(responseQuestions.data[0].id);
+        getRecord(responseQuestions.data[0].question_id, responseQuestions.data[0].package_question_id);
+        getAnswers(responseQuestions.data[0].question_id);
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error) {
       console.log(error.message);
     }
   }
 
   const getRecord = async (question, pkg) => {
-    await axios.get(`http://localhost:3000/records/question/${question}/${pkg}`)
-    .then((response) => {
-      setAnswered(response.data.answer.name);
-      setIsAnswered(true);
-      setUpdate(true);
-    })
-    .catch((error) => {
-      setAnswered('');
-      setIsAnswered(false);
-      setUpdate(false);
-      console.log(error.message);
-    });
+    await axios.get(`https://sbpmb-express.amisbudi.cloud/records/question/${question}/${pkg}`)
+      .then((response) => {
+        setAnswered(response.data.answer.name);
+        setIsAnswered(true);
+        setUpdate(true);
+      })
+      .catch((error) => {
+        setAnswered('');
+        setIsAnswered(false);
+        setUpdate(false);
+        console.log(error.message);
+      });
   }
 
   const getAnswers = async (id) => {
     try {
-      const responseAnwers = await axios.get(`http://localhost:3000/answers/question/${id}`);
+      const responseAnwers = await axios.get(`https://sbpmb-express.amisbudi.cloud/answers/question/${id}`);
       setAnswersActive(responseAnwers.data);
     } catch (error) {
       console.log(error.message);
@@ -70,7 +94,7 @@ const Assesment = () => {
 
   const changeQuestion = async (id) => {
     try {
-      const responseQuestions = await axios.get(`http://localhost:3000/questionusers/${id}`);
+      const responseQuestions = await axios.get(`https://sbpmb-express.amisbudi.cloud/questionusers/${id}`);
       setQuestionActive(responseQuestions.data.question);
       getAnswers(responseQuestions.data.question_id);
       getRecord(responseQuestions.data.question_id, responseQuestions.data.package_question_id);
@@ -79,6 +103,14 @@ const Assesment = () => {
       console.log(error.message);
     }
   }
+
+  const backQuestion = () => {
+    if(indexQuestion > 1 &&  indexQuestion <= questions.length){
+      changeQuestion(indexQuestion - 1)
+      setIndexQuestion(null);
+    }
+  }
+
   const handleChange = async (e) => {
     const questionId = e.target.getAttribute("data-question");
     const packageQuestionId = e.target.getAttribute("data-package");
@@ -97,14 +129,32 @@ const Assesment = () => {
 
   const saveRecord = async () => {
     try {
-      if(update){
-        const response = await axios.patch(`http://localhost:3000/records/${record.question_id}/${record.package_question_id}`, {
+      // let buffer;
+      // if (videoRef.current && videoRef.current.srcObject) {
+      //   const track = videoRef.current.srcObject.getVideoTracks()[0];
+      //   const imageCapture = new ImageCapture(track);
+      //   const blob = await imageCapture.takePhoto();
+
+      //   const imageDataURL = await new Promise((resolve, reject) => {
+      //     const reader = new FileReader();
+      //     reader.onloadend = () => resolve(reader.result);
+      //     reader.onerror = reject;
+      //     reader.readAsDataURL(blob);
+      //   });
+  
+        // const arrayBuffer = await blob.arrayBuffer();
+        
+        // buffer = arrayBuffer;
+        // buffer = imageDataURL;
+
+      if (update) {
+        const response = await axios.patch(`https://sbpmb-express.amisbudi.cloud/records/${record.question_id}/${record.package_question_id}`, {
           user_id: 1,
           answer_id: record.answer_id
         });
         console.log(response.data);
       } else {
-        const response = await axios.post(`http://localhost:3000/records`, {
+        const response = await axios.post(`https://sbpmb-express.amisbudi.cloud/records`, {
           question_user_id: record.question_user_id,
           question_id: record.question_id,
           package_question_id: record.package_question_id,
@@ -114,7 +164,7 @@ const Assesment = () => {
         console.log(response.data);
       }
       const nextPage = record.question_user_id + 1;
-      if(nextPage <= questions.length){
+      if (nextPage <= questions.length) {
         changeQuestion(nextPage);
       } else {
         changeQuestion(1);
@@ -175,13 +225,12 @@ const Assesment = () => {
               }
             </div>
             <div className='flex justify-center md:justify-start items-center gap-3'>
-              <button type='button' className='bg-gray-100 hover:bg-gray-300 text-gray-400 transition-all ease-in-out w-10 h-10 rounded-full'>
+              <button type='button' onClick={backQuestion} className='bg-gray-100 hover:bg-gray-300 text-gray-400 transition-all ease-in-out w-10 h-10 rounded-full'>
                 <FontAwesomeIcon icon={faChevronLeft} />
               </button>
               <button type='button' onClick={saveRecord} className='bg-sky-500 hover:bg-sky-600 text-white transition-all ease-in-out w-10 h-10 rounded-full'>
                 <FontAwesomeIcon icon={faChevronRight} />
               </button>
-              {update ? 'Update' : 'Simpan'}
             </div>
           </div>
         </section>
