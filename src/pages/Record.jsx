@@ -28,7 +28,7 @@ const Record = () => {
                 <ul>
                   <li>User ID: {record.user_id}</li>
                   <li>Answer ID: {record.answer_id}</li>
-                  <a href={`http://localhost:3000/records/${record.id}`} className='underline'>Download</a>
+                  <a href={`https://sbpmb-express.amisbudi.cloud/records/${record.id}`} className='underline'>Download</a>
                 </ul>
               </div>
             ))}
