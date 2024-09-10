@@ -21,7 +21,7 @@ const Record = () => {
   return (
     <main>
       {
-        records.length > 1 ? (
+        records.length > 0 ? (
           <section>
             {records.map((record, index) => (
               <div key={index}>
