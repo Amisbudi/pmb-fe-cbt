@@ -10,7 +10,7 @@ const Dashboard = () => {
 
   const getPackageQuestions = async () => {
     try {
-      const response = await axios.get(`https://sbpmb-express.amisbudi.cloud/packagequestions`);
+      const response = await axios.get(`http://localhost:3000/packagequestions`);
       setPackages(response.data);
     } catch (error) {
       console.log(error.message);
@@ -35,7 +35,7 @@ const Dashboard = () => {
           user_id: 1,
         }
         localStorage.setItem('CBT:package', JSON.stringify(data));
-        const response = await axios.post(`https://sbpmb-express.amisbudi.cloud/questionusers`, data);
+        const response = await axios.post(`http://localhost:3000/questionusers`, data);
         navigate('/assesment');
       }
     } catch (error) {

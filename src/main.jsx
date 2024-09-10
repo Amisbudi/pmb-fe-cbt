@@ -10,6 +10,7 @@ import Login from './auth/Login.jsx'
 import Assesment from './pages/Assesment.jsx'
 import Dashboard from './Dashboard.jsx'
 import Record from './pages/Record.jsx'
+import PackageQuestions from './pages/PackageQuestions.jsx'
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: "/record",
     element: <Record />
+  },
+  {
+    path: "/packagequestions",
+    element: <PackageQuestions />
   },
 ]);
 
