@@ -29,7 +29,7 @@ const Assesment = () => {
       const activePackage = localStorage.getItem('CBT:package');
       if (activePackage) {
         const data = JSON.parse(activePackage)
-        const responseQuestions = await axios.get(`http://localhost:3000/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`);
+        const responseQuestions = await axios.get(`https://sbpmb-express.amisbudi.cloud/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`);
         setQuestions(responseQuestions.data)
         setQuestionActive(responseQuestions.data[0].question);
         setIndexQuestion(responseQuestions.data[0].id);
@@ -44,7 +44,7 @@ const Assesment = () => {
   }
 
   const getRecord = async (question, pkg) => {
-    await axios.get(`http://localhost:3000/records/question/${question}/${pkg}`)
+    await axios.get(`https://sbpmb-express.amisbudi.cloud/records/question/${question}/${pkg}`)
       .then((response) => {
         setAnswered(response.data.answer.name);
         setIsAnswered(true);
@@ -60,7 +60,7 @@ const Assesment = () => {
 
   const getAnswers = async (id) => {
     try {
-      const responseAnwers = await axios.get(`http://localhost:3000/answers/question/${id}`);
+      const responseAnwers = await axios.get(`https://sbpmb-express.amisbudi.cloud/answers/question/${id}`);
       setAnswersActive(responseAnwers.data);
     } catch (error) {
       console.log(error.message);
@@ -69,7 +69,7 @@ const Assesment = () => {
 
   const changeQuestion = async (id) => {
     try {
-      const responseQuestions = await axios.get(`http://localhost:3000/questionusers/${id}`);
+      const responseQuestions = await axios.get(`https://sbpmb-express.amisbudi.cloud/questionusers/${id}`);
       setQuestionActive(responseQuestions.data.question);
       getAnswers(responseQuestions.data.question_id);
       getRecord(responseQuestions.data.question_id, responseQuestions.data.package_question_id);
@@ -118,7 +118,7 @@ const Assesment = () => {
         });
 
         if (update) {
-          const response = await axios.patch(`http://localhost:3000/records/${record.question_id}/${record.package_question_id}`, {
+          const response = await axios.patch(`https://sbpmb-express.amisbudi.cloud/records/${record.question_id}/${record.package_question_id}`, {
             user_id: 1,
             answer_id: record.answer_id,
             photo: imageDataURL,
@@ -129,7 +129,7 @@ const Assesment = () => {
             }, 500);
           }
         } else {
-          const response = await axios.post(`http://localhost:3000/records`, {
+          const response = await axios.post(`https://sbpmb-express.amisbudi.cloud/records`, {
             question_user_id: record.question_user_id,
             question_id: record.question_id,
             package_question_id: record.package_question_id,
@@ -215,11 +215,12 @@ const Assesment = () => {
             {
               !loading &&
               <div className='flex justify-center md:justify-start items-center gap-3'>
-                <button type='button' onClick={backQuestion} className='bg-gray-100 hover:bg-gray-300 text-gray-400 transition-all ease-in-out w-10 h-10 rounded-full'>
+                {/* <button type='button' onClick={backQuestion} className='bg-gray-100 hover:bg-gray-300 text-gray-400 transition-all ease-in-out w-10 h-10 rounded-full'>
                   <FontAwesomeIcon icon={faChevronLeft} />
-                </button>
-                <button type='button' onClick={saveRecord} className='bg-sky-500 hover:bg-sky-600 text-white transition-all ease-in-out w-10 h-10 rounded-full'>
-                  <FontAwesomeIcon icon={faChevronRight} />
+                </button> */}
+                <button type='button' onClick={saveRecord} className='bg-sky-500 hover:bg-sky-600 text-white transition-all ease-in-out px-5 py-2.5 text-sm rounded-xl'>
+                  {/* <FontAwesomeIcon icon={faChevronRight} /> */}
+                  Simpan Jawaban
                 </button>
               </div>
             }

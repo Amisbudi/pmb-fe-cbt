@@ -24,7 +24,7 @@ const Dashboard = () => {
 
   const getPackageQuestions = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/packagequestions`);
+      const response = await axios.get(`https://sbpmb-express.amisbudi.cloud/packagequestions`);
       setPackages(response.data.data);
     } catch (error) {
       console.log(error.message);
@@ -49,7 +49,7 @@ const Dashboard = () => {
           user_id: 1,
         }
         localStorage.setItem('CBT:package', JSON.stringify(data));
-        const response = await axios.post(`http://localhost:3000/questionusers`, data);
+        const response = await axios.post(`https://sbpmb-express.amisbudi.cloud/questionusers`, data);
         navigate('/assesment');
       }
     } catch (error) {
@@ -69,7 +69,7 @@ const Dashboard = () => {
   return (
     <div className="bg-gradient-to-b from-[#005D99] to-[#005083] h-screen flex-col lg:flex-row lg:flex items-center justify-center p-12 text-white gap-10">
       <div className="w-full">
-        {/* <div className="px-3">
+        <div className="px-3">
           <img
             src={TrisaktiLogo}
             className="lg:w-36 w-32 -ml-2 flex items-start"
@@ -77,7 +77,7 @@ const Dashboard = () => {
             data-aos-offset="300"
             alt="Logo-Usakti"
           />
-        </div> */}
+        </div>
         <div
           className="font-bold text-[30px]"
           data-aos="fade-right"

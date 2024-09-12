@@ -5,7 +5,7 @@ const Record = () => {
   const [records, setRecords] = useState([]);
 
   const getRecords = async () => {
-    await axios.get(`http://localhost:3000/records`)
+    await axios.get(`https://sbpmb-express.amisbudi.cloud/records`)
       .then((response) => {
         setRecords(response.data);
         console.log(response.data);
