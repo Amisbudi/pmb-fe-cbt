@@ -24,7 +24,7 @@ const PackageQuestions = () => {
   });
 
   const getData = async (page = 1) => {
-    await axios.get(`https://sbpmb-express.amisbudi.cloud/packagequestions?page=${page}`)
+    await axios.get(`https://localhost:3000/packagequestions?page=${page}`)
       .then((response) => {
         setPackageQuestions(response.data.data);
         setCurrentPage(response.data.currentPage);
@@ -93,7 +93,7 @@ const PackageQuestions = () => {
   }
 
   const getTypes = async () => {
-    await axios.get(`https://sbpmb-express.amisbudi.cloud/types`)
+    await axios.get(`https://localhost:3000/types`)
       .then((response) => {
         setTypes(response.data);
       })
@@ -121,7 +121,7 @@ const PackageQuestions = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    await axios.post(`https://sbpmb-express.amisbudi.cloud/packagequestions`, {
+    await axios.post(`https://localhost:3000/packagequestions`, {
       type_id: formData.type_id,
       name: formData.name,
       status: true,
@@ -138,7 +138,7 @@ const PackageQuestions = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    await axios.patch(`https://sbpmb-express.amisbudi.cloud/packagequestions/${formData.id}`, {
+    await axios.patch(`https://localhost:3000/packagequestions/${formData.id}`, {
       type_id: formData.type_id,
       name: formData.name,
       status: formData.status,
@@ -155,7 +155,7 @@ const PackageQuestions = () => {
 
   const handleDelete = async (id) => {
     if (confirm('Apakah yakin akan menghapus paket soal?')) {
-      await axios.delete(`https://sbpmb-express.amisbudi.cloud/packagequestions/${id}`)
+      await axios.delete(`https://localhost:3000/packagequestions/${id}`)
         .then((response) => {
           alert(response.data.message);
           getData();
