@@ -5,7 +5,7 @@ const Record = () => {
   const [records, setRecords] = useState([]);
 
   const getRecords = async () => {
-    await axios.get(`https://localhost:3000/records`)
+    await axios.get(`http://localhost:3000/records`)
       .then((response) => {
         setRecords(response.data);
         console.log(response.data);
@@ -28,7 +28,7 @@ const Record = () => {
                 <ul>
                   <li>User ID: {record.user_id}</li>
                   <li>Answer ID: {record.answer_id}</li>
-                  <a href={`https://localhost:3000/records/${record.id}`} className='underline'>Download</a>
+                  <a href={`http://localhost:3000/records/${record.id}`} className='underline'>Download</a>
                 </ul>
               </div>
             ))}

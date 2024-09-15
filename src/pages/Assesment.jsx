@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronRight, faSave } from '@fortawesome/free-solid-svg-icons';
 import TrisaktiLogo from "../assets/img/Logo-Usakti-White.png";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
@@ -9,10 +9,14 @@ const Assesment = () => {
   const navigate = useNavigate();
   const videoRef = useRef(null);
 
+  const [timeLeft, setTimeLeft] = useState('');
+  const [scheduleTime, setScheduleTime] = useState(null);
+
   const [loading, setLoading] = useState(false);
 
   const [questions, setQuestions] = useState([]);
 
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [questionActive, setQuestionActive] = useState('');
   const [answersActive, setAnswersActive] = useState([]);
   const [record, setRecord] = useState(null);
@@ -29,10 +33,11 @@ const Assesment = () => {
       const activePackage = localStorage.getItem('CBT:package');
       if (activePackage) {
         const data = JSON.parse(activePackage)
-        const responseQuestions = await axios.get(`https://sbpmb-express.amisbudi.cloud/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`);
+        const responseQuestions = await axios.get(`http://localhost:3000/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`);
         setQuestions(responseQuestions.data)
         setQuestionActive(responseQuestions.data[0].question);
-        setIndexQuestion(responseQuestions.data[0].id);
+        setIndexQuestion(responseQuestions.data[0].number);
+        setScheduleTime(new Date(responseQuestions.data[0].date_end));
         getRecord(responseQuestions.data[0].question_id, responseQuestions.data[0].package_question_id);
         getAnswers(responseQuestions.data[0].question_id);
       } else {
@@ -44,7 +49,7 @@ const Assesment = () => {
   }
 
   const getRecord = async (question, pkg) => {
-    await axios.get(`https://sbpmb-express.amisbudi.cloud/records/question/${question}/${pkg}`)
+    await axios.get(`http://localhost:3000/records/question/${question}/${pkg}`)
       .then((response) => {
         setAnswered(response.data.answer.name);
         setIsAnswered(true);
@@ -60,16 +65,16 @@ const Assesment = () => {
 
   const getAnswers = async (id) => {
     try {
-      const responseAnwers = await axios.get(`https://sbpmb-express.amisbudi.cloud/answers/question/${id}`);
+      const responseAnwers = await axios.get(`http://localhost:3000/answers/question/${id}`);
       setAnswersActive(responseAnwers.data);
     } catch (error) {
       console.log(error.message);
     }
   }
 
-  const changeQuestion = async (id) => {
+  const changeQuestion = async (id, packageQuestion) => {
     try {
-      const responseQuestions = await axios.get(`https://sbpmb-express.amisbudi.cloud/questionusers/${id}`);
+      const responseQuestions = await axios.get(`http://localhost:3000/questionusers/${id}/${packageQuestion}`);
       setQuestionActive(responseQuestions.data.question);
       getAnswers(responseQuestions.data.question_id);
       getRecord(responseQuestions.data.question_id, responseQuestions.data.package_question_id);
@@ -79,26 +84,20 @@ const Assesment = () => {
     }
   }
 
-  const backQuestion = () => {
-    if (indexQuestion > 1 && indexQuestion <= questions.length) {
-      changeQuestion(indexQuestion - 1)
-      setIndexQuestion(null);
-    }
-  }
-
   const handleChange = async (e) => {
     const questionId = e.target.getAttribute("data-question");
     const packageQuestionId = e.target.getAttribute("data-package");
     const answerId = e.target.value;
 
     const data = {
+      number: indexQuestion,
       question_user_id: indexQuestion,
       question_id: questionId,
       package_question_id: packageQuestionId,
       answer_id: answerId,
       user_id: 1,
     }
-
+    setSelectedAnswer(event.target.value);
     setRecord(data);
   }
 
@@ -118,7 +117,7 @@ const Assesment = () => {
         });
 
         if (update) {
-          const response = await axios.patch(`https://sbpmb-express.amisbudi.cloud/records/${record.question_id}/${record.package_question_id}`, {
+          const response = await axios.patch(`http://localhost:3000/records/${record.question_id}/${record.package_question_id}`, {
             user_id: 1,
             answer_id: record.answer_id,
             photo: imageDataURL,
@@ -129,7 +128,7 @@ const Assesment = () => {
             }, 500);
           }
         } else {
-          const response = await axios.post(`https://sbpmb-express.amisbudi.cloud/records`, {
+          const response = await axios.post(`http://localhost:3000/records`, {
             question_user_id: record.question_user_id,
             question_id: record.question_id,
             package_question_id: record.package_question_id,
@@ -143,13 +142,14 @@ const Assesment = () => {
             }, 500);
           }
         }
-        const nextPage = record.question_user_id + 1;
+        const nextPage = record.number + 1;
         if (nextPage <= questions.length) {
-          changeQuestion(nextPage);
+          changeQuestion(nextPage, record.package_question_id);
         } else {
-          changeQuestion(1);
+          changeQuestion(1, record.package_question_id);
         }
         setIndexQuestion(null);
+        setSelectedAnswer(null);
       } else {
         alert('Kamera tidak aktif!');
       }
@@ -176,7 +176,6 @@ const Assesment = () => {
       }
     };
 
-    getQuestions();
     startCamera();
 
     return () => {
@@ -186,6 +185,29 @@ const Assesment = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+  if (!scheduleTime) return;
+
+  const countdown = setInterval(() => {
+    const now = new Date();
+    const timeDiff = scheduleTime - now;
+    if (timeDiff <= 0) {
+      clearInterval(countdown);
+      localStorage.removeItem('CBT:package');
+      alert("Waktu anda telah habis!");
+      navigate('/dashboard');
+    } else {
+      const hours = Math.floor(timeDiff / (1000 * 60 * 60)).toString().padStart(2, '0');
+  const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+  const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+      setTimeLeft(`${hours}:${minutes}:${seconds}`);
+    }
+  }, 1000);
+
+  return () => clearInterval(countdown);
+}, [scheduleTime]);
+
   return (
     <main className='h-screen bg-gray-100 flex md:py-10'>
       <div className='w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center md:gap-5'>
@@ -203,25 +225,28 @@ const Assesment = () => {
                 answersActive.length > 0 ? (
                   answersActive.map((answer, index) =>
                     <div key={index} className="flex items-center ps-4 border border-gray-200 hover:bg-gray-50 transition ease-in-out rounded-2xl">
-                      <input id={`answer-${answer.id}`} name="answer" data-question={answer.question_id} data-package={answer.question.package_question_id} value={answer.id} onChange={handleChange} type="radio" className="w-4 h-4 text-emerald-600 bg-gray-100 border-gray-300 rounded-2xl focus:ring-emerald-500" />
+                      <input id={`answer-${answer.id}`} name="answer" data-question={answer.question_id} data-package={answer.question.package_question_id} value={answer.id} onChange={handleChange} type="radio" className="w-4 h-4 text-emerald-600 bg-gray-100 border-gray-300 rounded-2xl focus:ring-emerald-500" checked={selectedAnswer === answer.id.toString()} />
                       <label htmlFor={`answer-${answer.id}`} className="w-full py-4 ms-2 text-sm font-medium text-gray-900">{answer.name}</label>
                     </div>
                   )
                 ) : (
-                  <p>Tidak ada</p>
+                  <div>
+                    <h4 className='text-lg text-red-500 font-bold'>Peringatan!</h4>
+                    <p className='text-gray-600 text-sm'>Maka ujian untuk sementara tidak bisa dilanjutkan. Silahkan aktifkan kamera atau minta izin ke panitia tes seleksi masuk.</p>
+                  </div>
                 )
               }
             </div>
             {
               !loading &&
               <div className='flex justify-center md:justify-start items-center gap-3'>
-                {/* <button type='button' onClick={backQuestion} className='bg-gray-100 hover:bg-gray-300 text-gray-400 transition-all ease-in-out w-10 h-10 rounded-full'>
-                  <FontAwesomeIcon icon={faChevronLeft} />
-                </button> */}
-                <button type='button' onClick={saveRecord} className='bg-sky-500 hover:bg-sky-600 text-white transition-all ease-in-out px-5 py-2.5 text-sm rounded-xl'>
-                  {/* <FontAwesomeIcon icon={faChevronRight} /> */}
-                  Simpan Jawaban
-                </button>
+                {
+                  questions.length > 0 &&
+                  <button type='button' onClick={saveRecord} className='bg-sky-500 hover:bg-sky-600 text-white transition-all ease-in-out px-5 py-2.5 space-x-1 text-sm rounded-xl'>
+                    <FontAwesomeIcon icon={faSave} />
+                    <span>Simpan Jawaban</span>
+                  </button>
+                }
               </div>
             }
           </div>
@@ -234,19 +259,17 @@ const Assesment = () => {
                 className="h-20"
                 alt="Logo-Usakti"
               />
-              <h5 className='w-full text-center font-bold text-md rounded-2xl py-2.5 text-white border-2 border-sky-600'>00:30:32</h5>
+              <h5 className='w-full text-center font-bold text-md rounded-2xl py-2.5 text-white border-2 border-sky-600'>{timeLeft}</h5>
             </div>
             {
-              questions.length > 0 ? (
+              questions.length > 0 && (
                 <div className='h-full grid grid-cols-10 md:grid-cols-5 gap-2 overflow-y-auto'>
                   {
                     questions.map((question, index) =>
-                      <button key={index} type='button' onClick={() => changeQuestion(question.id)} className="flex items-center justify-center w-10 h-10 rounded-xl border-2 font-bold transition-all ease-in-out bg-gray-100 text-sky-800 hover:text-white hover:bg-sky-700 border-sky-600">{index + 1}</button>
+                      <button key={index} type='button' onClick={() => changeQuestion(question.number, question.package_question_id)} className="flex items-center justify-center w-10 h-10 rounded-xl border-2 font-bold transition-all ease-in-out bg-gray-100 text-sky-800 hover:text-white hover:bg-sky-700 border-sky-600">{index + 1}</button>
                     )
                   }
                 </div>
-              ) : (
-                <p className="text-center text-sm">Belum ada soal</p>
               )
             }
             <div className='h-full'>

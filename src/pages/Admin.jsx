@@ -14,7 +14,7 @@ const Admin = () => {
       case 'packagequestions':
         return <PackageQuestions/>;
       case 'questions':
-        return <PackageQuestions/>
+        return <Questions/>
       default:
         return <PackageQuestions/>;
     }
@@ -40,12 +40,6 @@ const Admin = () => {
                   <p className='space-x-3'>
                     <FontAwesomeIcon icon={faTags} />
                     <span>Package Questions</span>
-                  </p>
-                </a>
-                <a href={`/admin?page=questionusers`} className='block cursor-pointer text-gray-200 hover:text-gray-300 text-sm bg-gray-700 hover:bg-gray-900 py-4 px-5 rounded-xl transition-all ease-in-out'>
-                  <p type='button' className='space-x-3'>
-                    <FontAwesomeIcon icon={faUsers} />
-                    <span>Question Users</span>
                   </p>
                 </a>
                 <a href={`/admin?page=questions`} className='block cursor-pointer text-gray-200 hover:text-gray-300 text-sm bg-gray-700 hover:bg-gray-900 py-4 px-5 rounded-xl transition-all ease-in-out'>

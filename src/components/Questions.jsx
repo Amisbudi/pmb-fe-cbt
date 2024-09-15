@@ -35,7 +35,7 @@ const Questions = () => {
   });
 
   const getData = async (page = 1) => {
-    await axios.get(`https://localhost:3000/questions?page=${page}`)
+    await axios.get(`http://localhost:3000/questions?page=${page}`)
       .then((response) => {
         setQuestions(response.data.data);
         setCurrentPage(response.data.currentPage);
@@ -68,18 +68,20 @@ const Questions = () => {
             );
           }
 
-          if (i === response.data.totalItems - 1 && response.data.totalItems > maxButtons) {
-            paginate.push(
-              <li key={i} className='hidden md:inline-block'>
-                <button
-                  type='button'
-                  onClick={() => getData(response.data.totalPages)}
-                  className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
-                >
-                  {response.data.totalPages}
-                </button>
-              </li>
-            );
+          if(response.data.totalItems > 10){
+            if (i === response.data.totalItems - 1 && response.data.totalItems > maxButtons) {
+              paginate.push(
+                <li key={i} className='hidden md:inline-block'>
+                  <button
+                    type='button'
+                    onClick={() => getData(response.data.totalPages)}
+                    className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
+                  >
+                    {response.data.totalPages}
+                  </button>
+                </li>
+              );
+            }
           }
 
           if (response.data.totalItems <= maxButtons && i >= 2 && i < response.data.totalItems - 1) {
@@ -104,7 +106,7 @@ const Questions = () => {
   }
 
   const getPackageQuestions = async () => {
-    await axios.get(`https://localhost:3000/packagequestions`)
+    await axios.get(`http://localhost:3000/packagequestions`)
       .then((response) => {
         setPackageQuestions(response.data.data);
       })
@@ -121,7 +123,7 @@ const Questions = () => {
   };
 
   const handleEdit = async (content) => {
-    await axios.get(`https://localhost:3000/answers/question/${content.id}`)
+    await axios.get(`http://localhost:3000/answers/question/${content.id}`)
       .then((response) => {
         setFormData({
           id: content.id,
@@ -150,10 +152,18 @@ const Questions = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    await axios.post(`https://localhost:3000/questions`, {
+    await axios.post(`http://localhost:3000/questions`, {
       package_question_id: formData.package_question_id,
       name: formData.name,
       status: true,
+      answer_1: formData.answer_1,
+      answer_1_status: formData.answer_1_status,
+      answer_2: formData.answer_2,
+      answer_2_status: formData.answer_2_status,
+      answer_3: formData.answer_3,
+      answer_3_status: formData.answer_3_status,
+      answer_4: formData.answer_4,
+      answer_4_status: formData.answer_4_status,
     })
       .then((response) => {
         alert(response.data.message);
@@ -167,10 +177,22 @@ const Questions = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    await axios.patch(`https://localhost:3000/questions/${formData.id}`, {
+    await axios.patch(`http://localhost:3000/questions/${formData.id}`, {
       package_question_id: formData.package_question_id,
       name: formData.name,
       status: formData.status,
+      answer_1: formData.answer_1,
+      answer_1_id: formData.answer_1_id,
+      answer_1_status: formData.answer_1_status,
+      answer_2: formData.answer_2,
+      answer_2_id: formData.answer_2_id,
+      answer_2_status: formData.answer_2_status,
+      answer_3: formData.answer_3,
+      answer_3_id: formData.answer_3_id,
+      answer_3_status: formData.answer_3_status,
+      answer_4: formData.answer_4,
+      answer_4_id: formData.answer_4_id,
+      answer_4_status: formData.answer_4_status,
     })
       .then((response) => {
         alert(response.data.message);
@@ -184,7 +206,7 @@ const Questions = () => {
 
   const handleDelete = async (id) => {
     if (confirm('Apakah yakin akan menghapus paket soal?')) {
-      await axios.delete(`https://localhost:3000/questions/${id}`)
+      await axios.delete(`http://localhost:3000/questions/${id}`)
         .then((response) => {
           alert(response.data.message);
           getData();

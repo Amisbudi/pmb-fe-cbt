@@ -24,7 +24,7 @@ const PackageQuestions = () => {
   });
 
   const getData = async (page = 1) => {
-    await axios.get(`https://sbpmb-express.amisbudi.cloud/packagequestions?page=${page}`)
+    await axios.get(`http://localhost:3000/packagequestions?page=${page}`)
       .then((response) => {
         setPackageQuestions(response.data.data);
         setCurrentPage(response.data.currentPage);
@@ -57,18 +57,20 @@ const PackageQuestions = () => {
             );
           }
 
-          if (i === response.data.totalItems - 1 && response.data.totalItems > maxButtons) {
-            paginate.push(
-              <li key={i} className='hidden md:inline-block'>
-                <button
-                  type='button'
-                  onClick={() => getData(response.data.totalPages)}
-                  className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
-                >
-                  {response.data.totalPages}
-                </button>
-              </li>
-            );
+          if (response.data.totalItems > 10) {
+            if (i === response.data.totalItems - 1 && response.data.totalItems > maxButtons) {
+              paginate.push(
+                <li key={i} className='hidden md:inline-block'>
+                  <button
+                    type='button'
+                    onClick={() => getData(response.data.totalPages)}
+                    className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
+                  >
+                    {response.data.totalPages}
+                  </button>
+                </li>
+              );
+            }
           }
 
           if (response.data.totalItems <= maxButtons && i >= 2 && i < response.data.totalItems - 1) {
@@ -93,7 +95,7 @@ const PackageQuestions = () => {
   }
 
   const getTypes = async () => {
-    await axios.get(`https://sbpmb-express.amisbudi.cloud/types`)
+    await axios.get(`http://localhost:3000/types`)
       .then((response) => {
         setTypes(response.data);
       })
@@ -121,7 +123,7 @@ const PackageQuestions = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    await axios.post(`https://sbpmb-express.amisbudi.cloud/packagequestions`, {
+    await axios.post(`http://localhost:3000/packagequestions`, {
       type_id: formData.type_id,
       name: formData.name,
       status: true,
@@ -138,7 +140,7 @@ const PackageQuestions = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    await axios.patch(`https://sbpmb-express.amisbudi.cloud/packagequestions/${formData.id}`, {
+    await axios.patch(`http://localhost:3000/packagequestions/${formData.id}`, {
       type_id: formData.type_id,
       name: formData.name,
       status: formData.status,
@@ -155,7 +157,7 @@ const PackageQuestions = () => {
 
   const handleDelete = async (id) => {
     if (confirm('Apakah yakin akan menghapus paket soal?')) {
-      await axios.delete(`https://sbpmb-express.amisbudi.cloud/packagequestions/${id}`)
+      await axios.delete(`http://localhost:3000/packagequestions/${id}`)
         .then((response) => {
           alert(response.data.message);
           getData();
