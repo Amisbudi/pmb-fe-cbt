@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TrisaktiLogo from '../assets/img/Logo-Usakti-White.png'
-import { faBars, faQuestionCircle, faTags, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faQuestionCircle, faRankingStar, faTags, faUsers } from '@fortawesome/free-solid-svg-icons'
 import PackageQuestions from '../components/PackageQuestions'
 import Questions from '../components/Questions'
+import Results from '../components/Results'
 
 const Admin = () => {
   const [sidebar, setSidebar] = useState(true);
@@ -12,11 +13,13 @@ const Admin = () => {
   const renderContent = () => {
     switch (page) {
       case 'packagequestions':
-        return <PackageQuestions/>;
+        return <PackageQuestions />;
       case 'questions':
-        return <Questions/>
+        return <Questions />
+      case 'results':
+        return <Results />
       default:
-        return <PackageQuestions/>;
+        return <PackageQuestions />;
     }
   };
 
@@ -46,6 +49,12 @@ const Admin = () => {
                   <p className='space-x-3'>
                     <FontAwesomeIcon icon={faQuestionCircle} />
                     <span>Questions</span>
+                  </p>
+                </a>
+                <a href={`/admin?page=results`} className='block cursor-pointer text-gray-200 hover:text-gray-300 text-sm bg-gray-700 hover:bg-gray-900 py-4 px-5 rounded-xl transition-all ease-in-out'>
+                  <p className='space-x-3'>
+                    <FontAwesomeIcon icon={faRankingStar} />
+                    <span>Results</span>
                   </p>
                 </a>
               </ul>

@@ -62,8 +62,11 @@ const Dashboard = () => {
             package_question_id: pkg.id,
             user_id: 1,
           }
+          const response = await axios.get(`http://localhost:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`);
+          if (!response.data.length > 0) {
+            await axios.post(`http://localhost:3000/questionusers`, data);
+          }
           localStorage.setItem('CBT:package', JSON.stringify(data));
-          await axios.post(`http://localhost:3000/questionusers`, data);
           navigate('/assesment');
         }
       }

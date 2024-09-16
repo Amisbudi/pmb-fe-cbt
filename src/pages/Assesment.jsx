@@ -44,7 +44,7 @@ const Assesment = () => {
         navigate('/dashboard');
       }
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
     }
   }
 
