@@ -11,30 +11,31 @@ const Dashboard = () => {
 
   const getInfo = () => {
     try {
-      const token = localStorage.getItem('CBTtrisakti:token');
-      if (!token) {
-        throw new Error('Token tidak ditemukan');
-      }
-      const decoded = jwtDecode(token);
-      console.log(decoded);
+      // const token = localStorage.getItem('CBTtrisakti:token');
+      // if (!token) {
+      //   throw new Error('Token tidak ditemukan');
+      // }
+      // const decoded = jwtDecode(token);
       const data = {
         userId: 1,
       }
-      getPackageQuestions(data);
+      getPackageQuestionUsers(data);
     } catch (error) {
       console.log(error.message);
     }
   }
 
-  const getPackageQuestions = async () => {
+  const getPackageQuestionUsers = async (data) => {
     try {
-      const responsePackageQuestions = await axios.get(`http://localhost:3000/packagequestions`);
+      const responsePackageQuestionUsers = await axios.get(`http://localhost:3000/packagequestionusers/user/${data.userId}`);
       const responseRecords = await axios.get(`http://localhost:3000/records`);
 
-      const packageQuestions = responsePackageQuestions.data.data;
+      const packageQuestionUsers = responsePackageQuestionUsers.data;
+      console.log(packageQuestionUsers);
+      
       const records = responseRecords.data;
 
-      const filteredPackageQuestions = packageQuestions.filter((pq) => {
+      const filteredPackageQuestions = packageQuestionUsers.filter((pq) => {
         return !records.some((record) => record.package_question_id === pq.id && record.user_id === 1);
       });
 
@@ -51,24 +52,41 @@ const Dashboard = () => {
     }
   }
 
+  function isSameDate(date1, date2) {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  }
+
   const checkoutPackage = async (pkg) => {
     try {
-      if (window.confirm(`Apakah anda yakin akan memulai tes ${pkg.name}?`)) {
-        const activePackage = localStorage.getItem('CBT:package');
-        if (activePackage) {
-          navigate('/assesment');
-        } else {
-          const data = {
-            package_question_id: pkg.id,
-            user_id: 1,
+      const today = new Date();
+      const examDate = new Date(pkg.date_exam);
+      console.log(today);
+      console.log(examDate);
+      console.log(examDate < today && isSameDate(examDate, today));
+      if (examDate < today && isSameDate(examDate, today)) {
+        if (window.confirm(`Apakah anda yakin akan memulai tes ${pkg.package.name}?`)) {
+          const activePackage = localStorage.getItem('CBT:package');
+          if (activePackage) {
+            navigate('/assesment');
+          } else {
+            const data = {
+              package_question_id: pkg.package_question_id,
+              user_id: pkg.user_id,
+            }
+            const response = await axios.get(`http://localhost:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`);
+            if (!response.data.length > 0) {
+              await axios.post(`http://localhost:3000/questionusers`, data);
+            }
+            localStorage.setItem('CBT:package', JSON.stringify(data));
+            navigate('/assesment');
           }
-          const response = await axios.get(`http://localhost:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`);
-          if (!response.data.length > 0) {
-            await axios.post(`http://localhost:3000/questionusers`, data);
-          }
-          localStorage.setItem('CBT:package', JSON.stringify(data));
-          navigate('/assesment');
         }
+      } else {
+        alert('Belum masuk jadwal!');
       }
     } catch (error) {
       console.log(error.message);
@@ -142,7 +160,7 @@ const Dashboard = () => {
                 data-aos-delay={index + 1 * 200}
               >
                 <span className="block text-gray-800 text-sm bg-white hover:bg-gray-100 font-medium p-5 rounded-2xl">
-                  {pkg.name || `TPA ${index + 1}`}
+                  {pkg.package.name}
                 </span>
               </button>
             ))}
