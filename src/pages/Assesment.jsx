@@ -1,9 +1,10 @@
 import { useRef, useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faSave } from '@fortawesome/free-solid-svg-icons';
 import TrisaktiLogo from "../assets/img/Logo-Usakti-White.png";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from 'jwt-decode';
 
 const Assesment = () => {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ const Assesment = () => {
   const [update, setUpdate] = useState(false);
 
   const getQuestions = async () => {
+    setLoading(true);
     try {
       const activePackage = localStorage.getItem('CBT:package');
       if (activePackage) {
@@ -40,8 +42,24 @@ const Assesment = () => {
         setScheduleTime(new Date(responseQuestions.data[0].date_end));
         getRecord(responseQuestions.data[0].question_id, responseQuestions.data[0].package_question_id);
         getAnswers(responseQuestions.data[0].question_id);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       } else {
         navigate('/dashboard');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const updateQuestions = async () => {
+    try {
+      const activePackage = localStorage.getItem('CBT:package');
+      if (activePackage) {
+        const data = JSON.parse(activePackage)
+        const responseQuestions = await axios.get(`http://localhost:3000/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`);
+        setQuestions(responseQuestions.data)
       }
     } catch (error) {
       console.log(error);
@@ -150,6 +168,7 @@ const Assesment = () => {
         }
         setIndexQuestion(null);
         setSelectedAnswer(null);
+        updateQuestions();
       } else {
         alert('Kamera tidak aktif!');
       }
@@ -159,11 +178,31 @@ const Assesment = () => {
   }
 
   const handleFinish = () => {
-    localStorage.removeItem('CBT:package');
-    navigate('/dashboard');
+    if (window.confirm('Apakah anda yakin akan menyelesaikan tes ini?')) {
+      localStorage.removeItem('CBT:package');
+      navigate('/dashboard');
+    }
   }
 
   useEffect(() => {
+    const getInfo = () => {
+      try {
+        const token = localStorage.getItem('CBTtrisakti:token');
+        if (!token) {
+          navigate('/');
+          throw new Error('Token tidak ditemukan');
+        }
+        const decoded = jwtDecode(token);
+        if (decoded.role == 'admin') {
+          return navigate('/admin');
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+
+    getInfo();
+
     const startCamera = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -187,26 +226,26 @@ const Assesment = () => {
   }, []);
 
   useEffect(() => {
-  if (!scheduleTime) return;
+    if (!scheduleTime) return;
 
-  const countdown = setInterval(() => {
-    const now = new Date();
-    const timeDiff = scheduleTime - now;
-    if (timeDiff <= 0) {
-      clearInterval(countdown);
-      localStorage.removeItem('CBT:package');
-      alert("Waktu anda telah habis!");
-      navigate('/dashboard');
-    } else {
-      const hours = Math.floor(timeDiff / (1000 * 60 * 60)).toString().padStart(2, '0');
-  const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-  const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000).toString().padStart(2, '0');
-      setTimeLeft(`${hours}:${minutes}:${seconds}`);
-    }
-  }, 1000);
+    const countdown = setInterval(() => {
+      const now = new Date();
+      const timeDiff = scheduleTime - now;
+      if (timeDiff <= 0) {
+        clearInterval(countdown);
+        localStorage.removeItem('CBT:package');
+        alert("Waktu anda telah habis!");
+        navigate('/dashboard');
+      } else {
+        const hours = Math.floor(timeDiff / (1000 * 60 * 60)).toString().padStart(2, '0');
+        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+        const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+        setTimeLeft(`${hours}:${minutes}:${seconds}`);
+      }
+    }, 1000);
 
-  return () => clearInterval(countdown);
-}, [scheduleTime]);
+    return () => clearInterval(countdown);
+  }, [scheduleTime]);
 
   return (
     <main className='h-screen bg-gray-100 flex md:py-10'>
@@ -266,7 +305,7 @@ const Assesment = () => {
                 <div className='h-full grid grid-cols-10 md:grid-cols-5 gap-2 overflow-y-auto'>
                   {
                     questions.map((question, index) =>
-                      <button key={index} type='button' onClick={() => changeQuestion(question.number, question.package_question_id)} className="flex items-center justify-center w-10 h-10 rounded-xl border-2 font-bold transition-all ease-in-out bg-gray-100 text-sky-800 hover:text-white hover:bg-sky-700 border-sky-600">{index + 1}</button>
+                      <button key={index} type='button' onClick={() => changeQuestion(question.number, question.package_question_id)} className={`flex items-center justify-center w-10 h-10 rounded-xl border-2 font-bold transition-all ease-in-out ${question.answered ? 'bg-emerald-500 text-white border-emerald-400' : 'bg-gray-100 text-sky-800 hover:text-white hover:bg-sky-700 border-sky-600'}`}>{index + 1}</button>
                     )
                   }
                 </div>

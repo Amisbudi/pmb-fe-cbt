@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faEye, faPlusCircle, faSave, faTrashAlt, faXmark, faXmarkCircle } from '@fortawesome/free-solid-svg-icons'
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 import axios from 'axios'
+import LoadingScreen from './LoadingScreen'
 
 const Results = () => {
   const [results, setResults] = useState([]);
@@ -12,7 +13,10 @@ const Results = () => {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
+  const [loading, setLoading] = useState(true);
+
   const getData = async (page = 1) => {
+    setLoading(true);
     await axios.get(`http://localhost:3000/questionusers/results?page=${page}`)
       .then((response) => {
         console.log(response.data);
@@ -78,6 +82,9 @@ const Results = () => {
           }
         }
         setPaginations(paginate);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       })
       .catch((error) => {
         console.log(error);
@@ -101,7 +108,10 @@ const Results = () => {
     getData();
   }, []);
   return (
-    <main className='w-full md:w-10/12 h-screen bg-gray-100 pt-10 px-4 md:px-8'>
+    loading ? (
+      <LoadingScreen/>
+    ) : (
+      <main className='w-full md:w-10/12 h-screen bg-gray-100 pt-10 px-4 md:px-8'>
       <div className='space-y-1'>
         <h2 className='font-bold text-xl text-gray-900'>Results</h2>
         <p className='text-sm text-gray-700'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic, cumque!</p>
@@ -197,6 +207,7 @@ const Results = () => {
         </div>
       </section>
     </main>
+    )
   )
 }
 

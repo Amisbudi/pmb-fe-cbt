@@ -4,18 +4,25 @@ import AOS from "aos";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode'
+import moment from "moment-timezone";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState('');
   const [packages, setPackages] = useState([]);
 
   const getInfo = () => {
     try {
-      // const token = localStorage.getItem('CBTtrisakti:token');
-      // if (!token) {
-      //   throw new Error('Token tidak ditemukan');
-      // }
-      // const decoded = jwtDecode(token);
+      const token = localStorage.getItem('CBTtrisakti:token');
+      if (!token) {
+        navigate('/');
+        throw new Error('Token tidak ditemukan');
+      }
+      const decoded = jwtDecode(token);
+      if (decoded.role == 'admin') {
+        return navigate('/admin');
+      }
+      setName(decoded.name);
       const data = {
         userId: 1,
       }
@@ -32,7 +39,7 @@ const Dashboard = () => {
 
       const packageQuestionUsers = responsePackageQuestionUsers.data;
       console.log(packageQuestionUsers);
-      
+
       const records = responseRecords.data;
 
       const filteredPackageQuestions = packageQuestionUsers.filter((pq) => {
@@ -63,30 +70,54 @@ const Dashboard = () => {
   const checkoutPackage = async (pkg) => {
     try {
       const today = new Date();
-      const examDate = new Date(pkg.date_exam);
-      console.log(today);
-      console.log(examDate);
-      console.log(examDate < today && isSameDate(examDate, today));
-      if (examDate < today && isSameDate(examDate, today)) {
-        if (window.confirm(`Apakah anda yakin akan memulai tes ${pkg.package.name}?`)) {
-          const activePackage = localStorage.getItem('CBT:package');
-          if (activePackage) {
-            navigate('/assesment');
-          } else {
-            const data = {
-              package_question_id: pkg.package_question_id,
-              user_id: pkg.user_id,
+      if (pkg.classes == 'Reguler') {
+        const examDate = new Date(pkg.date_exam);
+        if (examDate < today && isSameDate(examDate, today)) {
+          if (window.confirm(`Apakah anda yakin akan memulai tes ${pkg.package.name}?`)) {
+            const activePackage = localStorage.getItem('CBT:package');
+            if (activePackage) {
+              navigate('/assesment');
+            } else {
+              const data = {
+                package_question_id: pkg.package_question_id,
+                user_id: pkg.user_id,
+              }
+              const response = await axios.get(`http://localhost:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`);
+              if (!response.data.length > 0) {
+                await axios.post(`http://localhost:3000/questionusers`, data);
+              }
+              localStorage.setItem('CBT:package', JSON.stringify(data));
+              navigate('/assesment');
             }
-            const response = await axios.get(`http://localhost:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`);
-            if (!response.data.length > 0) {
-              await axios.post(`http://localhost:3000/questionusers`, data);
-            }
-            localStorage.setItem('CBT:package', JSON.stringify(data));
-            navigate('/assesment');
           }
+        } else {
+          alert('Belum masuk jadwal!');
         }
-      } else {
-        alert('Belum masuk jadwal!');
+      } else if (pkg.classes === 'Employee') {
+        const startDate = new Date(pkg.date_start);
+        const endDate = new Date(pkg.date_end);
+
+        if (today >= startDate && today <= endDate) {
+          if (window.confirm(`Apakah anda yakin akan memulai tes ${pkg.package.name}?`)) {
+            const activePackage = localStorage.getItem('CBT:package');
+            if (activePackage) {
+              navigate('/assesment');
+            } else {
+              const data = {
+                package_question_id: pkg.package_question_id,
+                user_id: pkg.user_id,
+              };
+              const response = await axios.get(`http://localhost:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`);
+              if (!response.data.length > 0) {
+                await axios.post(`http://localhost:3000/questionusers`, data);
+              }
+              localStorage.setItem('CBT:package', JSON.stringify(data));
+              navigate('/assesment');
+            }
+          }
+        } else {
+          alert('Tes tidak dalam rentang jadwal yang diperbolehkan!');
+        }
       }
     } catch (error) {
       console.log(error.message);
@@ -131,7 +162,7 @@ const Dashboard = () => {
           data-aos-offset="300"
           data-aos-delay="100"
         >
-          <h2>Halo Nabila Azzahra</h2>
+          <h2>Halo {name}</h2>
         </div>
         <div data-aos="fade-right" data-aos-offset="300" data-aos-delay="100">
           <p className="text-sm">Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis dolor esse accusantium, doloremque rerum non voluptates saepe distinctio reiciendis corrupti explicabo debitis eaque laborum ab rem odio ipsam sed ea. Accusantium ab illum commodi aliquam quos, fugiat cum doloribus, soluta nulla ipsam omnis blanditiis et voluptatem tempora. Dolorem, aut dolores!</p>
@@ -147,30 +178,44 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <div className="w-full">
+      <section className="w-full">
         {packages && packages.length > 0 ? (
-          <div className="flex items-center justify-center flex-wrap">
-            {packages.map((pkg, index) => (
-              <button
-                type="button"
-                key={index}
-                onClick={() => checkoutPackage(pkg)}
-                className="block w-1/2 md:w-1/6 p-1"
-                data-aos="fade-down"
-                data-aos-delay={index + 1 * 200}
-              >
-                <span className="block text-gray-800 text-sm bg-white hover:bg-gray-100 font-medium p-5 rounded-2xl">
-                  {pkg.package.name}
-                </span>
-              </button>
-            ))}
+          <div>
+            <div className="flex items-center justify-center flex-wrap">
+              {packages.map((pkg, index) => (
+                <button
+                  type="button"
+                  key={index}
+                  onClick={() => checkoutPackage(pkg)}
+                  className="block w-1/2 md:w-1/6 p-1"
+                  data-aos="fade-down"
+                  data-aos-delay={index + 1 * 200}
+                >
+                  <div className="block text-gray-800 text-sm bg-white hover:bg-gray-100 font-medium p-5 space-y-2 rounded-2xl">
+                    <h2 className="font-medium text-base">{pkg.package.name}</h2>
+                    {
+                      pkg.classes == 'Reguler' && pkg.date_exam &&
+                      <p className="text-xs">{moment.tz(pkg.date_exam, "Asia/Jakarta").format('lll')}</p>
+                    }
+                    {
+                      pkg.classes == 'Employee' && pkg.date_start && pkg.date_end &&
+                      <p className="flex flex-col gap-2 text-xs">
+                        <span>{moment.tz(pkg.date_start, "Asia/Jakarta").format('lll')}</span>
+                        <span>{moment.tz(pkg.date_end, "Asia/Jakarta").format('lll')}</span>
+                      </p>
+                    }
+                  </div>
+                </button>
+              ))}
+            </div>
+            <p className="text-center text-sm mt-5">Kerjakan soal sesuai dengan jadwal yang ditetapkan.</p>
           </div>
         ) : (
           <p className="text-center text-sm underline"
             data-aos="fade-down"
             data-aos-delay={200}>Paket soal belum tersedia, silahkan hubungi panitia PMB.</p>
         )}
-      </div>
+      </section>
     </div>
   );
 }

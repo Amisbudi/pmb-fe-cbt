@@ -9,8 +9,8 @@ import App from './App.jsx'
 import Login from './auth/Login.jsx'
 import Assesment from './pages/Assesment.jsx'
 import Dashboard from './Dashboard.jsx'
-import Record from './pages/Record.jsx'
 import Admin from './pages/Admin.jsx'
+import OAuth from './auth/OAuth.jsx'
 
 const router = createBrowserRouter([
   {
@@ -30,12 +30,12 @@ const router = createBrowserRouter([
     element: <Dashboard />
   },
   {
-    path: "/record",
-    element: <Record />
-  },
-  {
     path: "/admin",
     element: <Admin />
+  },
+  {
+    path: "/oauth",
+    element: <OAuth />
   },
 ]);
 

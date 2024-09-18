@@ -5,19 +5,39 @@ import { faBars, faQuestionCircle, faRankingStar, faTags, faUsers } from '@forta
 import PackageQuestions from '../components/PackageQuestions'
 import Questions from '../components/Questions'
 import Results from '../components/Results'
+import LoadingScreen from '../components/LoadingScreen'
+import { jwtDecode } from 'jwt-decode'
+import { useNavigate } from 'react-router-dom'
 
 const Admin = () => {
+  const navigate = useNavigate();
   const [sidebar, setSidebar] = useState(true);
   const [page, setPage] = useState('packagequestions');
+
+  const getInfo = () => {
+    try {
+      const token = localStorage.getItem('CBTtrisakti:token');
+      if (!token) {
+        navigate('/');
+        throw new Error('Token tidak ditemukan');
+      }
+      const decoded = jwtDecode(token);
+      if(decoded.role == 'participant'){
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
   const renderContent = () => {
     switch (page) {
       case 'packagequestions':
         return <PackageQuestions />;
       case 'questions':
-        return <Questions />
+        return <Questions />;
       case 'results':
-        return <Results />
+        return <Results />;
       default:
         return <PackageQuestions />;
     }
@@ -27,6 +47,7 @@ const Admin = () => {
     const params = new URLSearchParams(window.location.search);
     const pageParam = params.get('page') || 'packagequestions';
     setPage(pageParam);
+    getInfo();
   }, []);
   return (
     <div className='relative flex'>
