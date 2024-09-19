@@ -7,11 +7,13 @@ const OAuth = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
-    if(token){
+    const username = params.get('username');
+    if(token && username){
       const decoded = jwtDecode(token);
       if(decoded.scopes[0] == 'admission-admin'){
         const data = {
           expired: 86400,
+          username: username,
           received: Math.floor(Date.now() / 1000),
           token: token,
         }
@@ -20,6 +22,7 @@ const OAuth = () => {
       } else if(decoded.scopes[0] == 'admission-participant'){
         const data = {
           expired: 86400,
+          username: username,
           received: Math.floor(Date.now() / 1000),
           token: token,
         }
@@ -28,8 +31,6 @@ const OAuth = () => {
       } else {
         navigate('/');
       }
-    } else {
-      console.log('tidak ada');
     }
   }, []);
   return (

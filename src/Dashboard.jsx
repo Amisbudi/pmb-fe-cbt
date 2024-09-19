@@ -25,12 +25,12 @@ const Dashboard = () => {
 
       if (currentTime - tokenReceivedTime >= expiredTime) {
         alert('Mohon maaf, sesi telah habis!');
-        localStorage.removeItem('CBTtrisakti:token'); 
+        localStorage.removeItem('CBTtrisakti:token');
         navigate('/');
         throw new Error('Token sudah kedaluwarsa');
       }
 
-      const response = await axios.get('https://dev-gateway.trisakti.ac.id/d3b1b0f38e11d357db8a6ae20b09ff23?username=haisyammaulana22@gmail.com',{
+      const response = await axios.get(`https://dev-gateway.trisakti.ac.id/d3b1b0f38e11d357db8a6ae20b09ff23?username=${authData.username}`, {
         headers: {
           Authorization: `Bearer ${authData.token}`
         }

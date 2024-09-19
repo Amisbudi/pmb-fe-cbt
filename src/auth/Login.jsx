@@ -37,6 +37,7 @@ function Login() {
     .then((response) => {
       const data = {
         expired: 86400,
+        username: formData.username,
         received: Math.floor(Date.now() / 1000),
         token: response.data.token,
       }
