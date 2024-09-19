@@ -13,6 +13,8 @@ const Assesment = () => {
   const [timeLeft, setTimeLeft] = useState('');
   const [scheduleTime, setScheduleTime] = useState(null);
 
+  const [identityNumber, setIdentityNumber] = useState('');
+
   const [loading, setLoading] = useState(false);
 
   const [questions, setQuestions] = useState([]);
@@ -113,7 +115,7 @@ const Assesment = () => {
       question_id: questionId,
       package_question_id: packageQuestionId,
       answer_id: answerId,
-      user_id: 1,
+      user_id: identityNumber,
     }
     setSelectedAnswer(event.target.value);
     setRecord(data);
@@ -150,7 +152,7 @@ const Assesment = () => {
             question_user_id: record.question_user_id,
             question_id: record.question_id,
             package_question_id: record.package_question_id,
-            user_id: 1,
+            user_id: identityNumber,
             answer_id: record.answer_id,
             photo: imageDataURL,
           });
@@ -185,15 +187,32 @@ const Assesment = () => {
   }
 
   useEffect(() => {
-    const getInfo = () => {
+    const getInfo = async () => {
       try {
         const token = localStorage.getItem('CBTtrisakti:token');
         if (!token) {
           navigate('/');
           throw new Error('Token tidak ditemukan');
         }
+        const authData = JSON.parse(token);
+        const currentTime = Math.floor(Date.now() / 1000);
+        const tokenReceivedTime = authData.received;
+        const expiredTime = authData.expired;
+
+        if (currentTime - tokenReceivedTime >= expiredTime) {
+          alert('Mohon maaf, sesi telah habis!');
+          localStorage.removeItem('CBTtrisakti:token');
+          navigate('/');
+          throw new Error('Token sudah kedaluwarsa');
+        }
+        const response = await axios.get('https://dev-gateway.trisakti.ac.id/d3b1b0f38e11d357db8a6ae20b09ff23?username=haisyammaulana22@gmail.com',{
+          headers: {
+            Authorization: `Bearer ${authData.token}`
+          }
+        });
+        setIdentityNumber(response.data.identify_number);
         const decoded = jwtDecode(token);
-        if (decoded.role == 'admin') {
+        if (decoded.scopes[0] == 'admission-admin') {
           return navigate('/admin');
         }
       } catch (error) {

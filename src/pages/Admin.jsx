@@ -1,28 +1,47 @@
 import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TrisaktiLogo from '../assets/img/Logo-Usakti-White.png'
-import { faBars, faQuestionCircle, faRankingStar, faTags, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faQuestionCircle, faRankingStar, faSignOut, faTags, faUserCircle } from '@fortawesome/free-solid-svg-icons'
 import PackageQuestions from '../components/PackageQuestions'
 import Questions from '../components/Questions'
 import Results from '../components/Results'
-import LoadingScreen from '../components/LoadingScreen'
 import { jwtDecode } from 'jwt-decode'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 const Admin = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState('loading...');
   const [sidebar, setSidebar] = useState(true);
   const [page, setPage] = useState('packagequestions');
 
-  const getInfo = () => {
+  const getInfo = async () => {
     try {
       const token = localStorage.getItem('CBTtrisakti:token');
       if (!token) {
         navigate('/');
         throw new Error('Token tidak ditemukan');
       }
-      const decoded = jwtDecode(token);
-      if(decoded.role == 'participant'){
+      const authData = JSON.parse(token);
+      const currentTime = Math.floor(Date.now() / 1000);
+      const tokenReceivedTime = authData.received;
+      const expiredTime = authData.expired;
+
+      if (currentTime - tokenReceivedTime >= expiredTime) {
+        alert('Mohon maaf, sesi telah habis!');
+        localStorage.removeItem('CBTtrisakti:token'); 
+        navigate('/');
+        throw new Error('Token sudah kedaluwarsa');
+      }
+
+      const response = await axios.get('https://dev-gateway.trisakti.ac.id/issueprofile', {
+        headers: {
+          Authorization: `Bearer ${authData.token}`
+        }
+      });
+      setName(response.data.fullname);
+      const decoded = jwtDecode(authData.token);
+      if (decoded.scopes[0] == 'admission-participant') {
         navigate('/dashboard');
       }
     } catch (error) {
@@ -42,6 +61,18 @@ const Admin = () => {
         return <PackageQuestions />;
     }
   };
+
+  const handleLogout = () => {
+    if (window.confirm('Apakah anda yakin akan keluar?')) {
+      const token = localStorage.getItem('CBTtrisakti:token');
+      if (!token) {
+        alert('Mohon maaf, token tidak valid!');
+      } else {
+        localStorage.removeItem('CBTtrisakti:token');
+        navigate('/')
+      }
+    }
+  }
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -79,6 +110,16 @@ const Admin = () => {
                   </p>
                 </a>
               </ul>
+            </div>
+            <div className='w-full space-y-4'>
+              <h2 className="text-white space-x-2 text-center">
+                <FontAwesomeIcon icon={faUserCircle} />
+                <span className='font-medium'>{name}</span>
+              </h2>
+              <button type='button' onClick={handleLogout} className='w-full block bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-xl text-sm space-x-1'>
+                <FontAwesomeIcon icon={faSignOut} />
+                <span>Keluar</span>
+              </button>
             </div>
             <p className='text-center text-xs py-3 text-gray-400'>© 2023 Universitas Trisakti</p>
           </aside>

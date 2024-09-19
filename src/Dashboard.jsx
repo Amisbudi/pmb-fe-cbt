@@ -8,42 +8,57 @@ import moment from "moment-timezone";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState('');
+  const [name, setName] = useState('...');
   const [packages, setPackages] = useState([]);
 
-  const getInfo = () => {
+  const getInfo = async () => {
     try {
       const token = localStorage.getItem('CBTtrisakti:token');
       if (!token) {
         navigate('/');
         throw new Error('Token tidak ditemukan');
       }
-      const decoded = jwtDecode(token);
-      if (decoded.role == 'admin') {
+      const authData = JSON.parse(token);
+      const currentTime = Math.floor(Date.now() / 1000);
+      const tokenReceivedTime = authData.received;
+      const expiredTime = authData.expired;
+
+      if (currentTime - tokenReceivedTime >= expiredTime) {
+        alert('Mohon maaf, sesi telah habis!');
+        localStorage.removeItem('CBTtrisakti:token'); 
+        navigate('/');
+        throw new Error('Token sudah kedaluwarsa');
+      }
+
+      const response = await axios.get('https://dev-gateway.trisakti.ac.id/d3b1b0f38e11d357db8a6ae20b09ff23?username=haisyammaulana22@gmail.com',{
+        headers: {
+          Authorization: `Bearer ${authData.token}`
+        }
+      });
+      setName(response.data.fullname);
+      const decoded = jwtDecode(authData.token);
+      if (decoded.scopes[0] == 'admission-admin') {
         return navigate('/admin');
       }
-      setName(decoded.name);
       const data = {
-        userId: 1,
+        userId: response.data.identify_number,
       }
-      getPackageQuestionUsers(data);
+      getPackageQuestionUsers(data, response.data.identify_number);
     } catch (error) {
       console.log(error.message);
     }
   }
 
-  const getPackageQuestionUsers = async (data) => {
+  const getPackageQuestionUsers = async (data, identityNumber) => {
     try {
       const responsePackageQuestionUsers = await axios.get(`http://localhost:3000/packagequestionusers/user/${data.userId}`);
       const responseRecords = await axios.get(`http://localhost:3000/records`);
 
       const packageQuestionUsers = responsePackageQuestionUsers.data;
-      console.log(packageQuestionUsers);
-
       const records = responseRecords.data;
 
       const filteredPackageQuestions = packageQuestionUsers.filter((pq) => {
-        return !records.some((record) => record.package_question_id === pq.id && record.user_id === 1);
+        return !records.some((record) => record.package_question_id == pq.id && record.user_id == identityNumber);
       });
 
       setPackages(filteredPackageQuestions);

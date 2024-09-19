@@ -35,7 +35,12 @@ function Login() {
       password: formData.password,
     })
     .then((response) => {
-      localStorage.setItem('CBTtrisakti:token', JSON.stringify(response.data));
+      const data = {
+        expired: 86400,
+        received: Math.floor(Date.now() / 1000),
+        token: response.data.token,
+      }
+      localStorage.setItem('CBTtrisakti:token', JSON.stringify(data));
       const decoded = jwtDecode(response.data.token);
       if(decoded.scopes[0] == 'admission-admin'){
         return navigate('/admin');
@@ -56,7 +61,7 @@ function Login() {
     <div className="bg-gradient-to-b from-[#005D99] to-[#005083] h-screen flex-col lg:flex-row lg:flex items-center justify-center p-4">
       <div>
         <div className="flex items-center justify-center mt-[180px] lg:mt-0">
-          {/* <a href="/">
+          <a href="/">
             <img
               src={TrisaktiLogo}
               className="lg:w-36 w-32 -ml-1 flex items-start"
@@ -64,7 +69,7 @@ function Login() {
               data-aos="zoom-in"
               data-aos-delay="50"
             />
-          </a> */}
+          </a>
         </div>
         <div
           className="p-5 border-2 rounded-3xl mt-4 bg-white text-black lg:w-[600px] w-full"

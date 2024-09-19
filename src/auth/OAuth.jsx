@@ -9,11 +9,21 @@ const OAuth = () => {
     const token = params.get('token');
     if(token){
       const decoded = jwtDecode(token);
-      if(decoded.role == 'admin'){
-        localStorage.setItem('CBTtrisakti:token', token);
+      if(decoded.scopes[0] == 'admission-admin'){
+        const data = {
+          expired: 86400,
+          received: Math.floor(Date.now() / 1000),
+          token: token,
+        }
+        localStorage.setItem('CBTtrisakti:token', JSON.stringify(data));
         navigate('/admin');
-      } else if(decoded.role == 'participant'){
-        localStorage.setItem('CBTtrisakti:token', token);
+      } else if(decoded.scopes[0] == 'admission-participant'){
+        const data = {
+          expired: 86400,
+          received: Math.floor(Date.now() / 1000),
+          token: token,
+        }
+        localStorage.setItem('CBTtrisakti:token', JSON.stringify(data));
         navigate('/dashboard')
       } else {
         navigate('/');
