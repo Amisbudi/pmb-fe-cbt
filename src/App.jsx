@@ -1,48 +1,39 @@
-// import React from "react";
 import TrisaktiLogo from "../src/assets/img/Logo-Usakti-White.png";
 import LandingAnimation from "../src/assets/animation/landing.json";
 import Lottie from "lottie-react";
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSignIn } from "@fortawesome/free-solid-svg-icons";
 
-function App(){
+const App = () => {
   const navigate = useNavigate();
   const LoginFunc = async () => {
     navigate('/login');
   };
 
   return (
-    <div className="bg-gradient-to-b from-[#005D99] to-[#005083] lg:h-screen flex-col lg:flex-row lg:flex items-center justify-center lg:gap-48 p-4">
-      <div>
-        <div>
-          <img
-            src={TrisaktiLogo}
-            className="lg:w-36 w-28 lg:-ml-3 flex items-start ml-36 mt-[135px] lg:mt-0"
-            alt="Logo-Usakti"
-          />
-        </div>
-        <div className="text-white mt-6 flex items-start lg:text-[35px] text-[25px] text-wrap font-bold lg:w-[550px] w-full">
-          Computer Based Test Kampus
-        </div>
-        <div className="text-white mt-1 flex items-start lg:text-[17px] text-md text-wrap lg:w-[550px] w-full">
-          Wujudkan Aspirasi dan Cita-Citamu dengan Pendidikan Berkualitas!
-          Bergabunglah dengan kampus, tempat di mana ilmu
-          pengetahuan, inovasi, dan kepemimpinan berpadu untuk menciptakan
-          generasi unggul.
-        </div>
-        <div className="flex gap-5">
+    <main className="bg-gradient-to-b from-[#005D99] to-[#005083]">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-center gap-5 md:h-screen md:p-8">
+        <section className="w-full md:w-1/2 space-y-5">
+          <img src={TrisaktiLogo} className="w-24 md:w-28" alt="Universitas Trisakti" />
+          <div className="space-y-2">
+            <h4 className="text-base md:text-lg text-white font-medium">Tes CBT Universitas Trisakti</h4>
+            <h2 className="text-2xl md:text-3xl font-bold text-white">Solusi Ujian Berbasis Komputer yang Modern dan Efisien</h2>
+          </div>
+          <p className="text-white text-sm md:text-base">Selamat datang di platform resmi Computer Based Test (CBT) Universitas Trisakti! Aplikasi ini dirancang khusus untuk memudahkan pelaksanaan ujian berbasis komputer, baik bagi mahasiswa maupun dosen. Dengan fitur-fitur canggih, kemudahan akses, serta sistem yang aman dan terpercaya, kami berkomitmen untuk memberikan pengalaman ujian yang transparan dan efisien. Mulailah perjalanan akademis Anda dengan tes yang lebih mudah dan modern di sini.</p>
           <button
             onClick={LoginFunc}
-            className="mt-4 bg-black p-2 w-52 flex items-center justify-center rounded-xl text-white hover:bg-white hover:text-black hover:border hover:border-2 hover:border-black"
+            className="bg-red-500 hover:bg-red-600 text-white px-8 py-2.5 rounded-xl text-sm space-x-2"
           >
-            <i className="fi fi-br-sign-in-alt mr-2"></i>
-            Masuk
+            <FontAwesomeIcon icon={faSignIn} />
+            <span>Masuk</span>
           </button>
-        </div>
+        </section>
+        <section className="w-full md:w-1/2 flex justify-end">
+          <Lottie animationData={LandingAnimation} loop={true} />
+        </section>
       </div>
-      <div className="">
-        <Lottie animationData={LandingAnimation} loop={true} className='' />
-      </div>
-    </div>
+    </main>
   );
 };
 

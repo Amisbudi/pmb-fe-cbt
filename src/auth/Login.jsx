@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import TrisaktiLogo from "../../src/assets/img/Logo-Usakti-White.png";
 import "aos/dist/aos.css";
 import AOS from "aos";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode'
 import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope, faEye, faEyeSlash, faKey, faSign, faSignIn } from "@fortawesome/free-solid-svg-icons";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -34,61 +36,45 @@ function Login() {
       username: formData.username,
       password: formData.password,
     })
-    .then((response) => {
-      const data = {
-        expired: 86400,
-        username: formData.username,
-        received: Math.floor(Date.now() / 1000),
-        token: response.data.token,
-      }
-      localStorage.setItem('CBTtrisakti:token', JSON.stringify(data));
-      const decoded = jwtDecode(response.data.token);
-      if(decoded.scopes[0] == 'admission-admin'){
-        return navigate('/admin');
-      }
-      if(decoded.scopes[0] == 'admission-participant'){
-        return navigate('/dashboard');
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+      .then((response) => {
+        const data = {
+          expired: 86400,
+          username: formData.username,
+          received: Math.floor(Date.now() / 1000),
+          token: response.data.token,
+        }
+        localStorage.setItem('CBTtrisakti:token', JSON.stringify(data));
+        const decoded = jwtDecode(response.data.token);
+        if (decoded.scopes[0] == 'admission-admin') {
+          return navigate('/admin');
+        }
+        if (decoded.scopes[0] == 'admission-participant') {
+          return navigate('/dashboard');
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   useEffect(() => {
     AOS.init();
   }, []);
   return (
-    <div className="bg-gradient-to-b from-[#005D99] to-[#005083] h-screen flex-col lg:flex-row lg:flex items-center justify-center p-4">
-      <div>
-        <div className="flex items-center justify-center mt-[180px] lg:mt-0">
-          <a href="/">
-            <img
-              src={TrisaktiLogo}
-              className="lg:w-36 w-32 -ml-1 flex items-start"
-              alt="Logo-Usakti"
-              data-aos="zoom-in"
-              data-aos-delay="50"
-            />
-          </a>
-        </div>
-        <div
-          className="p-5 border-2 rounded-3xl mt-4 bg-white text-black lg:w-[600px] w-full"
-          data-aos="fade-down"
-          data-aos-easing="linear"
-          data-aos-duration="800"
-        >
+    <main className="bg-gradient-to-b from-[#005D99] to-[#005083]">
+      <div className="max-w-lg mx-auto flex flex-col items-center justify-center gap-5 h-screen">
+        <Link to={`/`}>
+          <img src={TrisaktiLogo} className="w-28 md:w-32" alt="Universitas Trisakti" />
+        </Link>
+        <div className="w-full bg-white p-6 rounded-3xl">
           <form onSubmit={handleLogin}>
             <div className="mb-5">
-              <label
-                htmlFor="username"
-                className="block mb-2 text-sm font-medium text-gray-900"
-              >
+              <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900">
                 Username
               </label>
               <div className="flex">
-                <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-e-0 border-gray-300 rounded-s-xl">
-                  <i className="fi fi-sr-envelopes text-sky-800 mt-1" />
+                <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 rounded-s-xl">
+                  <FontAwesomeIcon icon={faEnvelope} className="text-sky-900" />
                 </span>
                 <input
                   type="username"
@@ -96,7 +82,7 @@ function Login() {
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
-                  className="rounded-none rounded-e-xl bg-gray-50 border border-sky-800 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm p-2.5"
+                  className="rounded-none rounded-e-xl bg-gray-100 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5"
                   placeholder="Username"
                 />
               </div>
@@ -109,8 +95,8 @@ function Login() {
                 Kata Sandi
               </label>
               <div className="flex">
-                <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-e-0 border-gray-300 rounded-s-xl">
-                  <i className="fi fi-sr-key text-sky-800 mt-1" />
+                <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 rounded-s-xl">
+                  <FontAwesomeIcon icon={faKey} className="text-sky-900" />
                 </span>
                 <input
                   type={showPassword ? "text" : "password"}
@@ -118,7 +104,7 @@ function Login() {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="rounded-none  bg-gray-50 border border-sky-800 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm p-2.5"
+                  className="bg-gray-100 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5"
                   placeholder="Password"
                 />
                 <span
@@ -126,33 +112,23 @@ function Login() {
                   className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 borderborder-sky-800 border-s-0 rounded-e-xl cursor-pointer"
                 >
                   {showPassword ? (
-                    <i className="fi fi-sr-eye-crossed text-sky-800 mt-1" />
+                    <FontAwesomeIcon icon={faEyeSlash} className="text-sky-900" />
                   ) : (
-                    <i className="fi fi-sr-eye text-sky-800 mt-1" />
+                    <FontAwesomeIcon icon={faEye} className="text-sky-900" />
                   )}
                 </span>
               </div>
             </div>
-            <div className="text-sm mb-4">
-              Apakah anda{" "}
-              <a href="#" className="underline font-bold text-sky-800">
-                lupa kata sandi?
-              </a>
-            </div>
-            <div className="flex items-center gap-5">
-              <div>
-                <button type="submit" className="bg-sky-700 text-white w-28 text-sm font-bold rounded-xl flex gap-2 items-center justify-center px-4 py-2">
-                  <div className="flex items-center">Masuk</div>
-                  <div className="pt-1">
-                    <i className="fi fi-br-sign-in-alt w-1" />
-                  </div>
-                </button>
-              </div>
+            <div className="w-full mt-5">
+              <button type="submit" className="w-full bg-sky-700 hover:bg-sky-800 text-white text-sm rounded-xl px-5 py-2.5 space-x-1">
+                <FontAwesomeIcon icon={faSignIn} />
+                <span>Masuk</span>
+              </button>
             </div>
           </form>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 
