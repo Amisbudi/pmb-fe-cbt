@@ -39,7 +39,7 @@ const Questions = () => {
 
   const getData = async (page = 1) => {
     setLoading(true);
-    await axios.get(`http://localhost:3000/questions?page=${page}`)
+    await axios.get(`https://sbpmb-express.amisbudi.cloud/questions?page=${page}`)
       .then((response) => {
         setQuestions(response.data.data);
         setCurrentPage(response.data.currentPage);
@@ -113,7 +113,7 @@ const Questions = () => {
   }
 
   const getPackageQuestions = async () => {
-    await axios.get(`http://localhost:3000/packagequestions`)
+    await axios.get(`https://sbpmb-express.amisbudi.cloud/packagequestions`)
       .then((response) => {
         setPackageQuestions(response.data.data);
       })
@@ -130,7 +130,7 @@ const Questions = () => {
   };
 
   const handleEdit = async (content) => {
-    await axios.get(`http://localhost:3000/answers/question/${content.id}`)
+    await axios.get(`https://sbpmb-express.amisbudi.cloud/answers/question/${content.id}`)
       .then((response) => {
         setFormData({
           id: content.id,
@@ -160,7 +160,7 @@ const Questions = () => {
   const handleSave = async (e) => {
     setLoading(true);
     e.preventDefault();
-    await axios.post(`http://localhost:3000/questions`, {
+    await axios.post(`https://sbpmb-express.amisbudi.cloud/questions`, {
       package_question_id: formData.package_question_id,
       name: formData.name,
       status: true,
@@ -192,7 +192,7 @@ const Questions = () => {
   const handleUpdate = async (e) => {
     setLoading(true);
     e.preventDefault();
-    await axios.patch(`http://localhost:3000/questions/${formData.id}`, {
+    await axios.patch(`https://sbpmb-express.amisbudi.cloud/questions/${formData.id}`, {
       package_question_id: formData.package_question_id,
       name: formData.name,
       status: formData.status,
@@ -227,7 +227,7 @@ const Questions = () => {
 
   const handleDelete = async (id) => {
     if (confirm('Apakah yakin akan menghapus paket soal?')) {
-      await axios.delete(`http://localhost:3000/questions/${id}`)
+      await axios.delete(`https://sbpmb-express.amisbudi.cloud/questions/${id}`)
         .then((response) => {
           alert(response.data.message);
           getData();

@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode'
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faEye, faEyeSlash, faKey, faSign, faSignIn } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faEye, faEyeSlash, faKey, faSignIn } from "@fortawesome/free-solid-svg-icons";
 
 function Login() {
   const [formData, setFormData] = useState({
