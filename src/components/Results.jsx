@@ -168,9 +168,6 @@ const Results = () => {
                         {result.user_id}
                       </td>
                       <td className="px-6 py-4 flex flex-col md:flex-row gap-1">
-                        <button type="button" onClick={() => handleDelete(result)} className="text-white bg-sky-600 hover:bg-sky-700 font-medium rounded-xl text-xs px-3 py-1.5 text-center">
-                          <FontAwesomeIcon icon={faEye} />
-                        </button>
                         <button type="button" onClick={() => handleDelete(result)} className="text-white bg-red-600 hover:bg-red-700 font-medium rounded-xl text-xs px-3 py-1.5 text-center">
                           <FontAwesomeIcon icon={faTrashAlt} />
                         </button>
