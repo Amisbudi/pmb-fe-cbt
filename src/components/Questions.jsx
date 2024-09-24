@@ -22,6 +22,7 @@ const Questions = () => {
     id: '',
     package_question_id: '',
     name: '',
+    image: '',
     status: false,
     answer_1: '',
     answer_1_id: null,
@@ -39,7 +40,7 @@ const Questions = () => {
 
   const getData = async (page = 1) => {
     setLoading(true);
-    await axios.get(`http://localhost:3000/questions?page=${page}`)
+    await axios.get(`https://sbpmb-amisbudi.cloud/questions?page=${page}`)
       .then((response) => {
         setQuestions(response.data.data);
         setCurrentPage(response.data.currentPage);
@@ -113,7 +114,7 @@ const Questions = () => {
   }
 
   const getPackageQuestions = async () => {
-    await axios.get(`http://localhost:3000/packagequestions`)
+    await axios.get(`https://sbpmb-amisbudi.cloud/packagequestions`)
       .then((response) => {
         setPackageQuestions(response.data.data);
       })
@@ -123,19 +124,32 @@ const Questions = () => {
   }
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    if (e.target.name === 'image' && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          image: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.value,
+      });
+    }
   };
 
   const handleEdit = async (content) => {
-    await axios.get(`http://localhost:3000/answers/question/${content.id}`)
+    await axios.get(`https://sbpmb-amisbudi.cloud/answers/question/${content.id}`)
       .then((response) => {
         setFormData({
           id: content.id,
           package_question_id: content.package_question_id,
           name: content.name,
+          image: content.image,
           status: content.status,
           answer_1: response.data[0].name,
           answer_1_id: response.data[0].id,
@@ -160,9 +174,10 @@ const Questions = () => {
   const handleSave = async (e) => {
     setLoading(true);
     e.preventDefault();
-    await axios.post(`http://localhost:3000/questions`, {
+    await axios.post(`https://sbpmb-amisbudi.cloud/questions`, {
       package_question_id: formData.package_question_id,
       name: formData.name,
+      image: formData.image,
       status: true,
       answer_1: formData.answer_1,
       answer_1_status: formData.answer_1_status,
@@ -192,9 +207,10 @@ const Questions = () => {
   const handleUpdate = async (e) => {
     setLoading(true);
     e.preventDefault();
-    await axios.patch(`http://localhost:3000/questions/${formData.id}`, {
+    await axios.patch(`https://sbpmb-amisbudi.cloud/questions/${formData.id}`, {
       package_question_id: formData.package_question_id,
       name: formData.name,
+      image: formData.image,
       status: formData.status,
       answer_1: formData.answer_1,
       answer_1_id: formData.answer_1_id,
@@ -227,7 +243,7 @@ const Questions = () => {
 
   const handleDelete = async (id) => {
     if (confirm('Apakah yakin akan menghapus paket soal?')) {
-      await axios.delete(`http://localhost:3000/questions/${id}`)
+      await axios.delete(`https://sbpmb-amisbudi.cloud/questions/${id}`)
         .then((response) => {
           alert(response.data.message);
           getData();
@@ -246,7 +262,7 @@ const Questions = () => {
     loading ? (
       <LoadingScreen />
     ) : (
-      <main className='w-full md:w-10/12 h-screen bg-gray-100 pt-10 px-4 md:px-8'>
+      <main className='w-full md:w-10/12 h-screen bg-gray-100 pt-10 px-4 md:px-8 overflow-auto pb-10'>
         <div className='space-y-1'>
           <h2 className='font-bold text-xl text-gray-900'>Questions</h2>
           <p className='text-sm text-gray-700'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic, cumque!</p>
@@ -265,6 +281,9 @@ const Questions = () => {
                   </th>
                   <th scope="col" className="px-6 py-4">
                     Nama Paket Soal
+                  </th>
+                  <th scope="col" className="px-6 py-4">
+                    Gambar
                   </th>
                   <th scope="col" className="px-6 py-4">
                     Tipe
@@ -287,6 +306,19 @@ const Questions = () => {
                         </th>
                         <td className="px-6 py-4">
                           {question.name}
+                        </td>
+                        <td className="px-6 py-4">
+                          {
+                            question.image ? (
+                              <img
+                                src={`https://sbpmb-amisbudi.cloud/questions/image/${question.id}`}
+                                alt="Question Image"
+                                className='w-32 rounded-xl'
+                              />
+                            ) : (
+                              <span>Tidak ada gambar</span>
+                            )
+                          }
                         </td>
                         <td className="px-6 py-4">
                           {question.package.name}
@@ -346,7 +378,7 @@ const Questions = () => {
                     <FontAwesomeIcon icon={faXmark} />
                   </button>
                 </div>
-                <form onSubmit={handleSave} className="p-4 md:p-5">
+                <form onSubmit={handleSave} encType="multipart/form-data" className="p-4 md:p-5">
                   <div className="grid gap-4 mb-4 grid-cols-2">
                     <div className="col-span-2">
                       <label htmlFor="package_question_id" className="block mb-2 text-sm font-medium text-gray-900">Paket Soal</label>
@@ -359,6 +391,10 @@ const Questions = () => {
                           )
                         }
                       </select>
+                    </div>
+                    <div className="col-span-2">
+                      <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-900">Gambar</label>
+                      <input type='file' name="image" id="image" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" />
                     </div>
                     <div className="col-span-2">
                       <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">Soal</label>
@@ -467,11 +503,15 @@ const Questions = () => {
                     <FontAwesomeIcon icon={faXmark} />
                   </button>
                 </div>
-                <form onSubmit={handleUpdate} className="p-4 md:p-5">
+                <form onSubmit={handleUpdate} encType="multipart/form-data" className="p-4 md:p-5">
                   <div className="grid gap-4 mb-5 grid-cols-2">
                     <div className="col-span-2">
                       <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">Soal</label>
                       <textarea name="name" id="name" value={formData.name} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Questions" required></textarea>
+                    </div>
+                    <div className="col-span-2">
+                      <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-900">Gambar</label>
+                      <input type='file' name="image" id="image" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" />
                     </div>
                     <div className="col-span-1">
                       <label htmlFor="package_question_id" className="block mb-2 text-sm font-medium text-gray-900">Paket Soal</label>

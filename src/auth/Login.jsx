@@ -53,7 +53,11 @@ function Login() {
         }
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response && error.response.status === 400) {
+          alert(error.response.data.message);
+        } else {
+          console.log(error);
+        }
       });
   };
 
@@ -62,7 +66,7 @@ function Login() {
   }, []);
   return (
     <main className="bg-gradient-to-b from-[#005D99] to-[#005083]">
-      <div className="max-w-lg mx-auto flex flex-col items-center justify-center gap-5 h-screen">
+      <div className="max-w-lg mx-auto flex flex-col items-center justify-center gap-5 h-screen p-8">
         <Link to={`/`}>
           <img src={TrisaktiLogo} className="w-28 md:w-32" alt="Universitas Trisakti" />
         </Link>

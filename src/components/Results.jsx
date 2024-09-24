@@ -17,7 +17,7 @@ const Results = () => {
 
   const getData = async (page = 1) => {
     setLoading(true);
-    await axios.get(`http://localhost:3000/questionusers/results?page=${page}`)
+    await axios.get(`https://sbpmb-amisbudi.cloud/questionusers/results?page=${page}`)
       .then((response) => {
         console.log(response.data);
         setResults(response.data.data);
@@ -93,7 +93,7 @@ const Results = () => {
 
   const handleDelete = async (data) => {
     if (confirm('Apakah yakin akan menghapus riwayat pengerjaan soal?')) {
-      await axios.delete(`http://localhost:3000/questionusers/results/${data.package_question_id}/${data.user_id}`)
+      await axios.delete(`https://sbpmb-amisbudi.cloud/questionusers/results/${data.package_question_id}/${data.user_id}`)
         .then((response) => {
           alert(response.data.message);
           getData();
@@ -111,7 +111,7 @@ const Results = () => {
     loading ? (
       <LoadingScreen/>
     ) : (
-      <main className='w-full md:w-10/12 h-screen bg-gray-100 pt-10 px-4 md:px-8'>
+      <main className='w-full md:w-10/12 h-screen bg-gray-100 pt-10 px-4 md:px-8 overflow-auto pb-10'>
       <div className='space-y-1'>
         <h2 className='font-bold text-xl text-gray-900'>Results</h2>
         <p className='text-sm text-gray-700'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic, cumque!</p>

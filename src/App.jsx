@@ -13,7 +13,7 @@ const App = () => {
 
   return (
     <main className="bg-gradient-to-b from-[#005D99] to-[#005083]">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-center gap-5 md:h-screen md:p-8">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-center gap-5 md:h-screen p-8 md:p-0">
         <section className="w-full md:w-1/2 space-y-5">
           <img src={TrisaktiLogo} className="w-24 md:w-28" alt="Universitas Trisakti" />
           <div className="space-y-2">

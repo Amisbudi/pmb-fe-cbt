@@ -10,7 +10,7 @@ const Assesment = () => {
   const navigate = useNavigate();
   const videoRef = useRef(null);
 
-  const [timeLeft, setTimeLeft] = useState('');
+  const [timeLeft, setTimeLeft] = useState('00:00:00');
   const [scheduleTime, setScheduleTime] = useState(null);
 
   const [identityNumber, setIdentityNumber] = useState('');
@@ -37,7 +37,7 @@ const Assesment = () => {
       const activePackage = localStorage.getItem('CBT:package');
       if (activePackage) {
         const data = JSON.parse(activePackage)
-        const responseQuestions = await axios.get(`http://localhost:3000/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`);
+        const responseQuestions = await axios.get(`https://sbpmb-amisbudi.cloud/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`);
         setQuestions(responseQuestions.data)
         setQuestionActive(responseQuestions.data[0].question);
         setIndexQuestion(responseQuestions.data[0].number);
@@ -60,7 +60,7 @@ const Assesment = () => {
       const activePackage = localStorage.getItem('CBT:package');
       if (activePackage) {
         const data = JSON.parse(activePackage)
-        const responseQuestions = await axios.get(`http://localhost:3000/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`);
+        const responseQuestions = await axios.get(`https://sbpmb-amisbudi.cloud/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`);
         setQuestions(responseQuestions.data)
       }
     } catch (error) {
@@ -69,7 +69,7 @@ const Assesment = () => {
   }
 
   const getRecord = async (question, pkg) => {
-    await axios.get(`http://localhost:3000/records/question/${question}/${pkg}`)
+    await axios.get(`https://sbpmb-amisbudi.cloud/records/question/${question}/${pkg}`)
       .then((response) => {
         setAnswered(response.data.answer.name);
         setIsAnswered(true);
@@ -85,7 +85,7 @@ const Assesment = () => {
 
   const getAnswers = async (id) => {
     try {
-      const responseAnwers = await axios.get(`http://localhost:3000/answers/question/${id}`);
+      const responseAnwers = await axios.get(`https://sbpmb-amisbudi.cloud/answers/question/${id}`);
       setAnswersActive(responseAnwers.data);
     } catch (error) {
       console.log(error.message);
@@ -94,7 +94,7 @@ const Assesment = () => {
 
   const changeQuestion = async (id, packageQuestion) => {
     try {
-      const responseQuestions = await axios.get(`http://localhost:3000/questionusers/${id}/${packageQuestion}`);
+      const responseQuestions = await axios.get(`https://sbpmb-amisbudi.cloud/questionusers/${id}/${packageQuestion}`);
       setQuestionActive(responseQuestions.data.question);
       getAnswers(responseQuestions.data.question_id);
       getRecord(responseQuestions.data.question_id, responseQuestions.data.package_question_id);
@@ -137,7 +137,7 @@ const Assesment = () => {
         });
 
         if (update) {
-          const response = await axios.patch(`http://localhost:3000/records/${record.question_id}/${record.package_question_id}`, {
+          const response = await axios.patch(`https://sbpmb-amisbudi.cloud/records/${record.question_id}/${record.package_question_id}`, {
             user_id: 1,
             answer_id: record.answer_id,
             photo: imageDataURL,
@@ -148,7 +148,7 @@ const Assesment = () => {
             }, 500);
           }
         } else {
-          const response = await axios.post(`http://localhost:3000/records`, {
+          const response = await axios.post(`https://sbpmb-amisbudi.cloud/records`, {
             question_user_id: record.question_user_id,
             question_id: record.question_id,
             package_question_id: record.package_question_id,
@@ -269,9 +269,17 @@ const Assesment = () => {
   return (
     <main className='h-screen bg-gray-100 flex md:py-10'>
       <div className='w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center md:gap-5'>
-        <section className='order-2 md:order-1 w-full md:w-9/12 bg-white shadow-md p-10 h-full md:rounded-3xl'>
+        <section className='order-2 md:order-1 w-full md:w-9/12 bg-white shadow-md p-10 h-screen md:h-full md:rounded-3xl md:overflow-y-auto'>
           <div className='space-y-8'>
-            <div className='space-y-2'>
+            <div className='space-y-3'>
+              {
+                questionActive.image &&
+                <img
+                src={`https://sbpmb-amisbudi.cloud/questions/image/${questionActive.id}`}
+                alt="Question Image"
+                className='w-64 rounded-xl'
+              />
+              }
               <p className='text-gray-900'>{questionActive.name}</p>
               {
                 isAnswered &&
@@ -309,7 +317,7 @@ const Assesment = () => {
             }
           </div>
         </section>
-        <section className='order-1 md:order-2 w-full md:w-3/12 bg-sky-700 shadow-md p-8 h-full md:rounded-3xl'>
+        <section className='order-1 md:order-2 w-full md:w-3/12 bg-sky-700 shadow-md p-8 h-screen md:h-full md:rounded-3xl md:overflow-y-auto'>
           <div className='flex flex-col gap-5'>
             <div className='h-full  flex flex-col items-center gap-4'>
               <img
