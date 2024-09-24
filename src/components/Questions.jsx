@@ -40,7 +40,7 @@ const Questions = () => {
 
   const getData = async (page = 1) => {
     setLoading(true);
-    await axios.get(`https://sbpmb-amisbudi.cloud/questions?page=${page}`)
+    await axios.get(`https://sbpmb-express.amisbudi.cloud/questions?page=${page}`)
       .then((response) => {
         setQuestions(response.data.data);
         setCurrentPage(response.data.currentPage);
@@ -114,7 +114,7 @@ const Questions = () => {
   }
 
   const getPackageQuestions = async () => {
-    await axios.get(`https://sbpmb-amisbudi.cloud/packagequestions`)
+    await axios.get(`https://sbpmb-express.amisbudi.cloud/packagequestions`)
       .then((response) => {
         setPackageQuestions(response.data.data);
       })
@@ -143,7 +143,7 @@ const Questions = () => {
   };
 
   const handleEdit = async (content) => {
-    await axios.get(`https://sbpmb-amisbudi.cloud/answers/question/${content.id}`)
+    await axios.get(`https://sbpmb-express.amisbudi.cloud/answers/question/${content.id}`)
       .then((response) => {
         setFormData({
           id: content.id,
@@ -174,7 +174,7 @@ const Questions = () => {
   const handleSave = async (e) => {
     setLoading(true);
     e.preventDefault();
-    await axios.post(`https://sbpmb-amisbudi.cloud/questions`, {
+    await axios.post(`https://sbpmb-express.amisbudi.cloud/questions`, {
       package_question_id: formData.package_question_id,
       name: formData.name,
       image: formData.image,
@@ -207,7 +207,7 @@ const Questions = () => {
   const handleUpdate = async (e) => {
     setLoading(true);
     e.preventDefault();
-    await axios.patch(`https://sbpmb-amisbudi.cloud/questions/${formData.id}`, {
+    await axios.patch(`https://sbpmb-express.amisbudi.cloud/questions/${formData.id}`, {
       package_question_id: formData.package_question_id,
       name: formData.name,
       image: formData.image,
@@ -243,7 +243,7 @@ const Questions = () => {
 
   const handleDelete = async (id) => {
     if (confirm('Apakah yakin akan menghapus paket soal?')) {
-      await axios.delete(`https://sbpmb-amisbudi.cloud/questions/${id}`)
+      await axios.delete(`https://sbpmb-express.amisbudi.cloud/questions/${id}`)
         .then((response) => {
           alert(response.data.message);
           getData();
@@ -311,7 +311,7 @@ const Questions = () => {
                           {
                             question.image ? (
                               <img
-                                src={`https://sbpmb-amisbudi.cloud/questions/image/${question.id}`}
+                                src={`https://sbpmb-express.amisbudi.cloud/questions/image/${question.id}`}
                                 alt="Question Image"
                                 className='w-32 rounded-xl'
                               />
