@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEdit, faKey, faPlusCircle, faSave, faTrashAlt, faXmark, faXmarkCircle } from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faKey, faPlusCircle, faSave, faTrashAlt, faUpload, faXmark, faXmarkCircle } from '@fortawesome/free-solid-svg-icons'
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 import axios from 'axios'
 import LoadingScreen from './LoadingScreen'
 
 const Questions = () => {
   const [createModal, setCreateModal] = useState(false);
+  const [importModal, setImportModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [packageQuestions, setPackageQuestions] = useState([]);
@@ -36,6 +37,7 @@ const Questions = () => {
     answer_4: '',
     answer_4_id: null,
     answer_4_status: false,
+    excel: ''
   });
 
   const getData = async (page = 1) => {
@@ -124,7 +126,17 @@ const Questions = () => {
   }
 
   const handleChange = (e) => {
-    if (e.target.name === 'image' && e.target.files.length > 0) {
+    if (e.target.name === 'excel' && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          excel: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    } else if (e.target.name === 'image' && e.target.files.length > 0) {
       const file = e.target.files[0];
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -168,6 +180,29 @@ const Questions = () => {
       })
       .catch((error) => {
         console.log(error.message);
+      });
+  }
+
+  const handleImport = async (e) => {
+    // setLoading(true);
+    e.preventDefault();
+    await axios.post(`https://sbpmb-express.amisbudi.cloud/questions/import`, {
+      package_question_id: formData.package_question_id,
+      excel: formData.excel,
+    })
+      .then((response) => {
+        alert(response.data.message);
+        setImportModal(false);
+        getData();
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        console.log(error.message);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       });
   }
 
@@ -268,10 +303,16 @@ const Questions = () => {
           <p className='text-sm text-gray-700'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic, cumque!</p>
         </div>
         <section className='mt-5'>
-          <button type="button" onClick={() => setCreateModal(!createModal)} className="text-white bg-sky-700 hover:bg-sky-800 font-medium rounded-xl text-sm px-5 py-2.5 space-x-2 mb-5 text-center">
-            <FontAwesomeIcon icon={faPlusCircle} />
-            <span>Tambah</span>
-          </button>
+          <div className='flex items-center justify-between'>
+            <button type="button" onClick={() => setCreateModal(!createModal)} className="text-white bg-sky-700 hover:bg-sky-800 font-medium rounded-xl text-sm px-5 py-2.5 space-x-2 mb-5 text-center">
+              <FontAwesomeIcon icon={faPlusCircle} />
+              <span>Tambah</span>
+            </button>
+            <button type="button" onClick={() => setImportModal(!importModal)} className="text-white bg-sky-700 hover:bg-sky-800 font-medium rounded-xl text-sm px-5 py-2.5 space-x-2 mb-5 text-center">
+              <FontAwesomeIcon icon={faUpload} />
+              <span>Import</span>
+            </button>
+          </div>
           <div className="overflow-x-auto border rounded-2xl">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50">
@@ -614,6 +655,47 @@ const Questions = () => {
                   <button type="submit" className="text-white inline-flex items-center bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-xl space-x-2 text-sm px-5 py-2.5 text-center">
                     <FontAwesomeIcon icon={faSave} />
                     <span>Simpan Perubahan</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        }
+        {
+          importModal &&
+          <div tabIndex={-1} className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
+            <div className="relative p-4 w-full max-w-lg max-h-full">
+              <div className="relative bg-white rounded-2xl shadow">
+                <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Import Soal
+                  </h3>
+                  <button type="button" onClick={() => setImportModal(!importModal)} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-xl text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                    <FontAwesomeIcon icon={faXmark} />
+                  </button>
+                </div>
+                <form onSubmit={handleImport} accept=".xlsx, .xls" encType="multipart/form-data" className="p-4 md:p-5">
+                  <div className="grid gap-4 mb-4 grid-cols-2">
+                    <div className="col-span-2">
+                      <label htmlFor="package_question_id" className="block mb-2 text-sm font-medium text-gray-900">Paket Soal</label>
+                      <select name="package_question_id" onChange={handleChange} id="package_question_id" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                        <option value="">Pilih</option>
+                        {
+                          packageQuestions.length > 0 &&
+                          packageQuestions.map((packageQuestion, index) =>
+                            <option value={packageQuestion.id} key={index}>{packageQuestion.name}</option>
+                          )
+                        }
+                      </select>
+                    </div>
+                    <div className="col-span-2">
+                      <label htmlFor="excel" className="block mb-2 text-sm font-medium text-gray-900">Excel</label>
+                      <input type='file' name="excel" id="excel" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" />
+                    </div>
+                  </div>
+                  <button type="submit" className="text-white inline-flex items-center bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-xl space-x-2 text-sm px-5 py-2.5 text-center">
+                    <FontAwesomeIcon icon={faSave} />
+                    <span>Simpan</span>
                   </button>
                 </form>
               </div>
