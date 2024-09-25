@@ -270,7 +270,11 @@ const Questions = () => {
         }, 1000);
       })
       .catch((error) => {
-        console.log(error.message);
+        if (error.response && error.response.status === 400) {
+          alert(error.response.data.message);
+        } else {
+          console.log(error);
+        }
         setTimeout(() => {
           setLoading(false);
         }, 1000);
