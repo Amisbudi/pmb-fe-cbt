@@ -112,7 +112,11 @@ const Questions = () => {
         }, 1000);
       })
       .catch((error) => {
-        console.log(error.message);
+        if (error.response && error.response.status === 400) {
+          alert(error.response.data.message);
+        } else {
+          console.log(error);
+        }
       });
   }
 
@@ -185,7 +189,7 @@ const Questions = () => {
   }
 
   const handleImport = async (e) => {
-    // setLoading(true);
+    setLoading(true);
     e.preventDefault();
     await axios.post(`https://sbpmb-express.amisbudi.cloud/questions/import`, {
       package_question_id: formData.package_question_id,
@@ -200,7 +204,11 @@ const Questions = () => {
         }, 1000);
       })
       .catch((error) => {
-        console.log(error.message);
+        if (error.response && error.response.status === 400) {
+          alert(error.response.data.message);
+        } else {
+          console.log(error);
+        }
         setTimeout(() => {
           setLoading(false);
         }, 1000);
@@ -233,7 +241,11 @@ const Questions = () => {
         }, 1000);
       })
       .catch((error) => {
-        console.log(error.message);
+        if (error.response && error.response.status === 400) {
+          alert(error.response.data.message);
+        } else {
+          console.log(error);
+        }
         setTimeout(() => {
           setLoading(false);
         }, 1000);
@@ -289,7 +301,11 @@ const Questions = () => {
           getData();
         })
         .catch((error) => {
-          console.log(error.message);
+          if (error.response && error.response.status === 400) {
+            alert(error.response.data.message);
+          } else {
+            console.log(error);
+          }
         })
     }
   }
