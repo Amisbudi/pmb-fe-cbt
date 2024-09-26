@@ -1,8 +1,45 @@
-# React + Vite
+# Deployment Front-End dengan Docker (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Panduan ini akan membantu Anda untuk melakukan deployment aplikasi front-end React yang dibangun dengan Vite menggunakan Docker. Proses deployment ini dikelola melalui Docker Compose, jadi pastikan file `docker-compose.yml` dan `Dockerfile` sudah dikonfigurasi dengan benar.
 
-Currently, two official plugins are available:
+## Prasyarat
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Docker terpasang di mesin Anda.
+- Docker Compose terpasang.
+- File `Dockerfile` dan `docker-compose.yml` telah disiapkan dengan benar.
+
+## Langkah-langkah Deployment
+
+### 1. Sesuaikan Port
+
+Pastikan konfigurasi port di `docker-compose.yml` sudah benar. Secara default, Vite berjalan di port `4200`, namun Anda dapat menyesuaikan port yang akan digunakan.
+
+### 2. Membangun dan Menjalankan Kontainer Docker
+
+Setelah port dikonfigurasi di docker-compose.yml, Anda dapat membangun dan menjalankan kontainer Docker dengan perintah berikut:
+
+```bash
+docker-compose up -d
+```
+
+Flag -d digunakan untuk menjalankan kontainer dalam mode detached, yang berarti kontainer akan berjalan di latar belakang.
+
+### 3. Mengakses Aplikasi
+
+Setelah kontainer berjalan, aplikasi React Anda dapat diakses melalui port yang telah ditentukan di file `docker-compose.yml`.
+
+Sebagai contoh, jika Anda memetakan port `4200`, buka browser dan akses alamat berikut:
+
+```bash
+http://localhost:4200
+```
+
+### 4. Menghentikan Aplikasi
+
+Untuk menghentikan kontainer yang berjalan, gunakan perintah berikut:
+
+```bash
+docker-compose down
+```
+
+Perintah ini akan menghentikan dan menghapus kontainer yang dibuat oleh Docker Compose.
