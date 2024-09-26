@@ -1,4 +1,4 @@
-# Deployment Front-End dengan Docker (React + Vite)
+# Deployment Front-End dengan Docker CBT Front-End (React Vite)
 
 Panduan ini akan membantu Anda untuk melakukan deployment aplikasi front-end React yang dibangun dengan Vite menggunakan Docker. Proses deployment ini dikelola melalui Docker Compose, jadi pastikan file `docker-compose.yml` dan `Dockerfile` sudah dikonfigurasi dengan benar.
 
