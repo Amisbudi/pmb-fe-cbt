@@ -16,7 +16,7 @@ Pastikan konfigurasi port di `docker-compose.yml` sudah benar. Secara default, V
 
 ### 2. Membangun dan Menjalankan Kontainer Docker
 
-Setelah port dikonfigurasi di docker-compose.yml, Anda dapat membangun dan menjalankan kontainer Docker dengan perintah berikut:
+Setelah port dikonfigurasi di `docker-compose.yml`, Anda dapat membangun dan menjalankan kontainer Docker dengan perintah berikut:
 
 ```bash
 docker-compose up -d

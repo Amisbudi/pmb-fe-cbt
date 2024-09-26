@@ -205,7 +205,7 @@ const Assesment = () => {
           navigate('/');
           throw new Error('Token sudah kedaluwarsa');
         }
-        const response = await axios.get('https://dev-gateway.trisakti.ac.id/d3b1b0f38e11d357db8a6ae20b09ff23?username=haisyammaulana22@gmail.com',{
+        const response = await axios.get('https://dev-gateway.trisakti.ac.id/d3b1b0f38e11d357db8a6ae20b09ff23?username=haisyammaulana22@gmail.com', {
           headers: {
             Authorization: `Bearer ${authData.token}`
           }
@@ -275,10 +275,10 @@ const Assesment = () => {
               {
                 questionActive.image &&
                 <img
-                src={`http://localhost:3000/questions/image/${questionActive.id}`}
-                alt="Question Image"
-                className='w-64 rounded-xl'
-              />
+                  src={`http://localhost:3000/questions/image/${questionActive.id}`}
+                  alt="Question Image"
+                  className='w-64 rounded-xl'
+                />
               }
               <p className='text-gray-900'>{questionActive.name}</p>
               {
@@ -290,9 +290,17 @@ const Assesment = () => {
               {
                 answersActive.length > 0 ? (
                   answersActive.map((answer, index) =>
-                    <div key={index} className="flex items-center ps-4 border border-gray-200 hover:bg-gray-50 transition ease-in-out rounded-2xl">
+                    <div key={index} className="flex items-center p-4 border border-gray-200 hover:bg-gray-50 transition ease-in-out rounded-2xl">
                       <input id={`answer-${answer.id}`} name="answer" data-question={answer.question_id} data-package={answer.question.package_question_id} value={answer.id} onChange={handleChange} type="radio" className="w-4 h-4 text-emerald-600 bg-gray-100 border-gray-300 rounded-2xl focus:ring-emerald-500" checked={selectedAnswer === answer.id.toString()} />
                       <label htmlFor={`answer-${answer.id}`} className="w-full py-4 ms-2 text-sm font-medium text-gray-900">{answer.name}</label>
+                      {
+                        answer.image &&
+                        <img
+                          src={`http://localhost:3000/answers/image/${answer.id}`}
+                          alt="Answer Image"
+                          className='w-36 rounded-xl'
+                        />
+                      }
                     </div>
                   )
                 ) : (

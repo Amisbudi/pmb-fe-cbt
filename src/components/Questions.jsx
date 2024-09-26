@@ -28,15 +28,19 @@ const Questions = () => {
     status: false,
     answer_1: '',
     answer_1_id: null,
+    answer_1_image: '',
     answer_1_status: false,
     answer_2: '',
     answer_2_id: null,
+    answer_2_image: '',
     answer_2_status: false,
     answer_3: '',
     answer_3_id: null,
+    answer_3_image: '',
     answer_3_status: false,
     answer_4: '',
     answer_4_id: null,
+    answer_4_image: '',
     answer_4_status: false,
     excel: ''
   });
@@ -151,6 +155,46 @@ const Questions = () => {
         });
       };
       reader.readAsDataURL(file);
+    } else if (e.target.name === 'answer_1_image' && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          answer_1_image: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    } else if (e.target.name === 'answer_2_image' && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          answer_2_image: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    } else if (e.target.name === 'answer_3_image' && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          answer_3_image: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    } else if (e.target.name === 'answer_4_image' && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          answer_4_image: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
     } else {
       setFormData({
         ...formData,
@@ -224,12 +268,16 @@ const Questions = () => {
       image: formData.image,
       status: true,
       answer_1: formData.answer_1,
+      answer_1_image: formData.answer_1_image,
       answer_1_status: formData.answer_1_status,
       answer_2: formData.answer_2,
+      answer_2_image: formData.answer_2_image,
       answer_2_status: formData.answer_2_status,
       answer_3: formData.answer_3,
+      answer_3_image: formData.answer_3_image,
       answer_3_status: formData.answer_3_status,
       answer_4: formData.answer_4,
+      answer_4_image: formData.answer_4_image,
       answer_4_status: formData.answer_4_status,
     })
       .then((response) => {
@@ -262,15 +310,19 @@ const Questions = () => {
       status: formData.status,
       answer_1: formData.answer_1,
       answer_1_id: formData.answer_1_id,
+      answer_1_image: formData.answer_1_image,
       answer_1_status: formData.answer_1_status,
       answer_2: formData.answer_2,
       answer_2_id: formData.answer_2_id,
+      answer_2_image: formData.answer_2_image,
       answer_2_status: formData.answer_2_status,
       answer_3: formData.answer_3,
       answer_3_id: formData.answer_3_id,
+      answer_3_image: formData.answer_3_image,
       answer_3_status: formData.answer_3_status,
       answer_4: formData.answer_4,
       answer_4_id: formData.answer_4_id,
+      answer_4_image: formData.answer_4_image,
       answer_4_status: formData.answer_4_status,
     })
       .then((response) => {
@@ -442,9 +494,9 @@ const Questions = () => {
                 </div>
                 <form onSubmit={handleSave} encType="multipart/form-data" className="p-4 md:p-5">
                   <div className="grid gap-4 mb-4 grid-cols-2">
-                    <div className="col-span-2">
-                      <label htmlFor="package_question_id" className="block mb-2 text-sm font-medium text-gray-900">Paket Soal</label>
-                      <select name="package_question_id" onChange={handleChange} id="package_question_id" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                    <div className="col-span-1">
+                      <label htmlFor="package_question_id" className="block mb-2 text-xs font-medium text-gray-900">Paket Soal</label>
+                      <select name="package_question_id" onChange={handleChange} id="package_question_id" className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">Pilih</option>
                         {
                           packageQuestions.length > 0 &&
@@ -454,25 +506,26 @@ const Questions = () => {
                         }
                       </select>
                     </div>
-                    <div className="col-span-2">
-                      <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-900">Gambar</label>
-                      <input type='file' name="image" id="image" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" />
+                    <div className="col-span-1">
+                      <label htmlFor="image" className="block mb-2 text-xs font-medium text-gray-900">Gambar</label>
+                      <input type='file' name="image" id="image" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" />
                     </div>
                     <div className="col-span-2">
-                      <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">Soal</label>
-                      <textarea name="name" id="name" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Questions" required></textarea>
+                      <label htmlFor="name" className="block mb-2 text-xs font-medium text-gray-900">Soal</label>
+                      <textarea name="name" id="name" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Questions" required></textarea>
                     </div>
                   </div>
                   <hr className='my-3' />
                   <div className="grid gap-4 mb-5 grid-cols-2">
                     <div>
-                      <label htmlFor="answer_1" className="block mb-2 text-sm font-medium text-gray-900">Jawaban A</label>
+                      <label htmlFor="answer_1" className="block mb-2 text-xs font-medium text-gray-900">Jawaban A</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                           <FontAwesomeIcon icon={faKey} className='text-gray-300 text-sm' />
                         </div>
-                        <input type="text" name="answer_1" id="answer_1" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban A" required />
+                        <input type="text" name="answer_1" id="answer_1" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban A" required />
                       </div>
+                      <input type='file' name="answer_1_image" id="answer_1_image" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2" />
                       <div className="flex mt-2 ml-2">
                         <div className="flex items-center me-4">
                           <input id="answer_1_true" name="answer_1" type="radio" defaultValue={true} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500" />
@@ -485,13 +538,14 @@ const Questions = () => {
                       </div>
                     </div>
                     <div>
-                      <label htmlFor="answer_2" className="block mb-2 text-sm font-medium text-gray-900">Jawaban B</label>
+                      <label htmlFor="answer_2" className="block mb-2 text-xs font-medium text-gray-900">Jawaban B</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                           <FontAwesomeIcon icon={faKey} className='text-gray-300 text-sm' />
                         </div>
-                        <input type="text" name="answer_2" id="answer_2" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban B" required />
+                        <input type="text" name="answer_2" id="answer_2" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban B" required />
                       </div>
+                      <input type='file' name="answer_2_image" id="answer_2_image" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2" />
                       <div className="flex mt-2 ml-2">
                         <div className="flex items-center me-4">
                           <input id="answer_2_true" name="answer_2" type="radio" defaultValue={true} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500" />
@@ -504,13 +558,14 @@ const Questions = () => {
                       </div>
                     </div>
                     <div>
-                      <label htmlFor="answer_3" className="block mb-2 text-sm font-medium text-gray-900">Jawaban C</label>
+                      <label htmlFor="answer_3" className="block mb-2 text-xs font-medium text-gray-900">Jawaban C</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                           <FontAwesomeIcon icon={faKey} className='text-gray-300 text-sm' />
                         </div>
-                        <input type="text" name="answer_3" id="answer_3" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban B" required />
+                        <input type="text" name="answer_3" id="answer_3" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban C" required />
                       </div>
+                      <input type='file' name="answer_3_image" id="answer_3_image" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2" />
                       <div className="flex mt-2 ml-2">
                         <div className="flex items-center me-4">
                           <input id="answer_3_true" name="answer_3" type="radio" defaultValue={true} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500" />
@@ -523,13 +578,14 @@ const Questions = () => {
                       </div>
                     </div>
                     <div>
-                      <label htmlFor="answer_4" className="block mb-2 text-sm font-medium text-gray-900">Jawaban D</label>
+                      <label htmlFor="answer_4" className="block mb-2 text-xs font-medium text-gray-900">Jawaban D</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                           <FontAwesomeIcon icon={faKey} className='text-gray-300 text-sm' />
                         </div>
-                        <input type="text" name="answer_4" id="answer_4" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban B" required />
+                        <input type="text" name="answer_4" id="answer_4" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban D" required />
                       </div>
+                      <input type='file' name="answer_4_image" id="answer_4_image" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2" />
                       <div className="flex mt-2 ml-2">
                         <div className="flex items-center me-4">
                           <input id="answer_4_true" name="answer_4" type="radio" defaultValue={true} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500" />
@@ -542,7 +598,7 @@ const Questions = () => {
                       </div>
                     </div>
                   </div>
-                  <button type="submit" className="text-white inline-flex items-center bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-xl space-x-2 text-sm px-5 py-2.5 text-center">
+                  <button type="submit" className="text-white inline-flex items-center bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-xl space-x-2 text-xs px-5 py-2.5 text-center">
                     <FontAwesomeIcon icon={faSave} />
                     <span>Simpan</span>
                   </button>
@@ -566,18 +622,10 @@ const Questions = () => {
                   </button>
                 </div>
                 <form onSubmit={handleUpdate} encType="multipart/form-data" className="p-4 md:p-5">
-                  <div className="grid gap-4 mb-5 grid-cols-2">
-                    <div className="col-span-2">
-                      <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">Soal</label>
-                      <textarea name="name" id="name" value={formData.name} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Questions" required></textarea>
-                    </div>
-                    <div className="col-span-2">
-                      <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-900">Gambar</label>
-                      <input type='file' name="image" id="image" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" />
-                    </div>
+                  <div className="grid gap-4 mb-5 grid-cols-3">
                     <div className="col-span-1">
-                      <label htmlFor="package_question_id" className="block mb-2 text-sm font-medium text-gray-900">Paket Soal</label>
-                      <select name="package_question_id" value={formData.package_question_id} onChange={handleChange} id="package_question_id" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                      <label htmlFor="package_question_id" className="block mb-2 text-xs font-medium text-gray-900">Paket Soal</label>
+                      <select name="package_question_id" value={formData.package_question_id} onChange={handleChange} id="package_question_id" className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         {
                           packageQuestions.length > 0 &&
                           packageQuestions.map((packageQuestion, index) =>
@@ -587,23 +635,32 @@ const Questions = () => {
                       </select>
                     </div>
                     <div className="col-span-1">
-                      <label htmlFor="status" className="block mb-2 text-sm font-medium text-gray-900">Status</label>
-                      <select name="status" value={formData.status} onChange={handleChange} id="status" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                      <label htmlFor="image" className="block mb-2 text-xs font-medium text-gray-900">Gambar</label>
+                      <input type='file' name="image" id="image" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" />
+                    </div>
+                    <div className="col-span-1">
+                      <label htmlFor="status" className="block mb-2 text-xs font-medium text-gray-900">Status</label>
+                      <select name="status" value={formData.status} onChange={handleChange} id="status" className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="true">Aktif</option>
                         <option value="false">Tidak aktif</option>
                       </select>
+                    </div>
+                    <div className="col-span-3">
+                      <label htmlFor="name" className="block mb-2 text-xs font-medium text-gray-900">Soal</label>
+                      <textarea name="name" id="name" value={formData.name} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Questions" required></textarea>
                     </div>
                   </div>
                   <hr className='my-3' />
                   <div className="grid gap-4 mb-5 grid-cols-2">
                     <div>
-                      <label htmlFor="answer_1" className="block mb-2 text-sm font-medium text-gray-900">Jawaban A</label>
+                      <label htmlFor="answer_1" className="block mb-2 text-xs font-medium text-gray-900">Jawaban A</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                           <FontAwesomeIcon icon={faKey} className='text-gray-300 text-sm' />
                         </div>
-                        <input type="text" name="answer_1" id="answer_1" value={formData.answer_1} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban A" required />
+                        <input type="text" name="answer_1" id="answer_1" value={formData.answer_1} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban A" required />
                       </div>
+                      <input type='file' name="answer_1_image" id="answer_1_image" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2" />
                       <div className="flex mt-2 ml-2">
                         <div className="flex items-center me-4">
                           <input id="answer_1_true" name="answer_1_status" type="radio" value="true" onChange={handleChange} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500" checked={formData.answer_1_status == "true"} />
@@ -616,13 +673,14 @@ const Questions = () => {
                       </div>
                     </div>
                     <div>
-                      <label htmlFor="answer_2" className="block mb-2 text-sm font-medium text-gray-900">Jawaban B</label>
+                      <label htmlFor="answer_2" className="block mb-2 text-xs font-medium text-gray-900">Jawaban B</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                           <FontAwesomeIcon icon={faKey} className='text-gray-300 text-sm' />
                         </div>
-                        <input type="text" name="answer_2" id="answer_2" value={formData.answer_2} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban B" required />
+                        <input type="text" name="answer_2" id="answer_2" value={formData.answer_2} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban B" required />
                       </div>
+                      <input type='file' name="answer_2_image" id="answer_2_image" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2" />
                       <div className="flex mt-2 ml-2">
                         <div className="flex items-center me-4">
                           <input id="answer_2_true" name="answer_2_status" type="radio" value="true" onChange={handleChange} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500" checked={formData.answer_2_status == "true"} />
@@ -635,13 +693,14 @@ const Questions = () => {
                       </div>
                     </div>
                     <div>
-                      <label htmlFor="answer_3" className="block mb-2 text-sm font-medium text-gray-900">Jawaban C</label>
+                      <label htmlFor="answer_3" className="block mb-2 text-xs font-medium text-gray-900">Jawaban C</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                           <FontAwesomeIcon icon={faKey} className='text-gray-300 text-sm' />
                         </div>
-                        <input type="text" name="answer_3" id="answer_3" value={formData.answer_3} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban B" required />
+                        <input type="text" name="answer_3" id="answer_3" value={formData.answer_3} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban C" required />
                       </div>
+                      <input type='file' name="answer_3_image" id="answer_3_image" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2" />
                       <div className="flex mt-2 ml-2">
                         <div className="flex items-center me-4">
                           <input id="answer_3_true" name="answer_3_status" type="radio" value="true" onChange={handleChange} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500" checked={formData.answer_3_status == "true"} />
@@ -654,13 +713,14 @@ const Questions = () => {
                       </div>
                     </div>
                     <div>
-                      <label htmlFor="answer_4" className="block mb-2 text-sm font-medium text-gray-900">Jawaban D</label>
+                      <label htmlFor="answer_4" className="block mb-2 text-xs font-medium text-gray-900">Jawaban D</label>
                       <div className="relative">
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                           <FontAwesomeIcon icon={faKey} className='text-gray-300 text-sm' />
                         </div>
-                        <input type="text" name="answer_4" id="answer_4" value={formData.answer_4} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban B" required />
+                        <input type="text" name="answer_4" id="answer_4" value={formData.answer_4} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5" placeholder="Jawaban D" required />
                       </div>
+                      <input type='file' name="answer_4_image" id="answer_4_image" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2" />
                       <div className="flex mt-2 ml-2">
                         <div className="flex items-center me-4">
                           <input id="answer_4_true" name="answer_4_status" type="radio" value="true" onChange={handleChange} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500" checked={formData.answer_4_status == "true"} />
@@ -698,8 +758,8 @@ const Questions = () => {
                 <form onSubmit={handleImport} accept=".xlsx, .xls" encType="multipart/form-data" className="p-4 md:p-5">
                   <div className="grid gap-4 mb-4 grid-cols-2">
                     <div className="col-span-2">
-                      <label htmlFor="package_question_id" className="block mb-2 text-sm font-medium text-gray-900">Paket Soal</label>
-                      <select name="package_question_id" onChange={handleChange} id="package_question_id" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                      <label htmlFor="package_question_id" className="block mb-2 text-xs font-medium text-gray-900">Paket Soal</label>
+                      <select name="package_question_id" onChange={handleChange} id="package_question_id" className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
                         <option value="">Pilih</option>
                         {
                           packageQuestions.length > 0 &&
@@ -710,8 +770,8 @@ const Questions = () => {
                       </select>
                     </div>
                     <div className="col-span-2">
-                      <label htmlFor="excel" className="block mb-2 text-sm font-medium text-gray-900">Excel</label>
-                      <input type='file' name="excel" id="excel" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" />
+                      <label htmlFor="excel" className="block mb-2 text-xs font-medium text-gray-900">Excel</label>
+                      <input type='file' name="excel" id="excel" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" />
                     </div>
                     <div className="col-span-2">
                       <a href={ExampleImportQuestion} className='text-xs underline' download="example-import-questions.xlsx">
