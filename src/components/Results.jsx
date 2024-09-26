@@ -162,7 +162,7 @@ const Results = () => {
                         {result.incorrect_answers}
                       </td>
                       <td className="px-6 py-4">
-                        {(result.correct_answers / result.total_questions) * 100}
+                        {((result.correct_answers / result.total_questions) * 100).toFixed()}
                       </td>
                       <td className="px-6 py-4">
                         {result.user_id}
