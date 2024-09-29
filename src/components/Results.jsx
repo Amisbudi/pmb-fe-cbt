@@ -17,7 +17,7 @@ const Results = () => {
 
   const getData = async (page = 1) => {
     setLoading(true);
-    await axios.get(`http://10.50.1.149:3000/questionusers/results?page=${page}`)
+    await axios.get(`https://be-cbt.trisakti.ac.id/questionusers/results?page=${page}`)
       .then((response) => {
         console.log(response.data);
         setResults(response.data.data);
@@ -93,7 +93,7 @@ const Results = () => {
 
   const handleDelete = async (data) => {
     if (confirm('Apakah yakin akan menghapus riwayat pengerjaan soal?')) {
-      await axios.delete(`http://10.50.1.149:3000/questionusers/results/${data.package_question_id}/${data.user_id}`)
+      await axios.delete(`https://be-cbt.trisakti.ac.id/questionusers/results/${data.package_question_id}/${data.user_id}`)
         .then((response) => {
           alert(response.data.message);
           getData();

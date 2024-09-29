@@ -47,7 +47,7 @@ const Questions = () => {
 
   const getData = async (page = 1) => {
     setLoading(true);
-    await axios.get(`http://10.50.1.149:3000/questions?page=${page}`)
+    await axios.get(`https://be-cbt.trisakti.ac.id/questions?page=${page}`)
       .then((response) => {
         setQuestions(response.data.data);
         setCurrentPage(response.data.currentPage);
@@ -125,7 +125,7 @@ const Questions = () => {
   }
 
   const getPackageQuestions = async () => {
-    await axios.get(`http://10.50.1.149:3000/packagequestions`)
+    await axios.get(`https://be-cbt.trisakti.ac.id/packagequestions`)
       .then((response) => {
         setPackageQuestions(response.data.data);
       })
@@ -204,7 +204,7 @@ const Questions = () => {
   };
 
   const handleEdit = async (content) => {
-    await axios.get(`http://10.50.1.149:3000/answers/question/${content.id}`)
+    await axios.get(`https://be-cbt.trisakti.ac.id/answers/question/${content.id}`)
       .then((response) => {
         setFormData({
           id: content.id,
@@ -235,7 +235,7 @@ const Questions = () => {
   const handleImport = async (e) => {
     setLoading(true);
     e.preventDefault();
-    await axios.post(`http://10.50.1.149:3000/questions/import`, {
+    await axios.post(`https://be-cbt.trisakti.ac.id/questions/import`, {
       package_question_id: formData.package_question_id,
       excel: formData.excel,
     })
@@ -262,7 +262,7 @@ const Questions = () => {
   const handleSave = async (e) => {
     setLoading(true);
     e.preventDefault();
-    await axios.post(`http://10.50.1.149:3000/questions`, {
+    await axios.post(`https://be-cbt.trisakti.ac.id/questions`, {
       package_question_id: formData.package_question_id,
       name: formData.name,
       image: formData.image,
@@ -303,7 +303,7 @@ const Questions = () => {
   const handleUpdate = async (e) => {
     setLoading(true);
     e.preventDefault();
-    await axios.patch(`http://10.50.1.149:3000/questions/${formData.id}`, {
+    await axios.patch(`https://be-cbt.trisakti.ac.id/questions/${formData.id}`, {
       package_question_id: formData.package_question_id,
       name: formData.name,
       image: formData.image,
@@ -347,7 +347,7 @@ const Questions = () => {
 
   const handleDelete = async (id) => {
     if (confirm('Apakah yakin akan menghapus paket soal?')) {
-      await axios.delete(`http://10.50.1.149:3000/questions/${id}`)
+      await axios.delete(`https://be-cbt.trisakti.ac.id/questions/${id}`)
         .then((response) => {
           alert(response.data.message);
           getData();
@@ -425,7 +425,7 @@ const Questions = () => {
                           {
                             question.image ? (
                               <img
-                                src={`http://10.50.1.149:3000/questions/image/${question.id}`}
+                                src={`https://be-cbt.trisakti.ac.id/questions/image/${question.id}`}
                                 alt="Question Image"
                                 className='w-32 rounded-xl'
                               />

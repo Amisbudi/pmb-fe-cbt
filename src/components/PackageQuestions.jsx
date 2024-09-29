@@ -27,7 +27,7 @@ const PackageQuestions = () => {
 
   const getData = async (page = 1) => {
     setLoading(true);
-    await axios.get(`http://10.50.1.149:3000/packagequestions?page=${page}`)
+    await axios.get(`https://be-cbt.trisakti.ac.id/packagequestions?page=${page}`)
       .then((response) => {
         setPackageQuestions(response.data.data);
         setCurrentPage(response.data.currentPage);
@@ -101,7 +101,7 @@ const PackageQuestions = () => {
   }
 
   const getTypes = async () => {
-    await axios.get(`http://10.50.1.149:3000/types`)
+    await axios.get(`https://be-cbt.trisakti.ac.id/types`)
       .then((response) => {
         setTypes(response.data);
       })
@@ -130,7 +130,7 @@ const PackageQuestions = () => {
   const handleSave = async (e) => {
     setLoading(true);
     e.preventDefault();
-    await axios.post(`http://10.50.1.149:3000/packagequestions`, {
+    await axios.post(`https://be-cbt.trisakti.ac.id/packagequestions`, {
       type_id: formData.type_id,
       name: formData.name,
       status: true,
@@ -154,7 +154,7 @@ const PackageQuestions = () => {
   const handleUpdate = async (e) => {
     setLoading(true);
     e.preventDefault();
-    await axios.patch(`http://10.50.1.149:3000/packagequestions/${formData.id}`, {
+    await axios.patch(`https://be-cbt.trisakti.ac.id/packagequestions/${formData.id}`, {
       type_id: formData.type_id,
       name: formData.name,
       status: formData.status,
@@ -177,7 +177,7 @@ const PackageQuestions = () => {
 
   const handleDelete = async (id) => {
     if (confirm('Apakah yakin akan menghapus paket soal?')) {
-      await axios.delete(`http://10.50.1.149:3000/packagequestions/${id}`)
+      await axios.delete(`https://be-cbt.trisakti.ac.id/packagequestions/${id}`)
         .then((response) => {
           alert(response.data.message);
           getData();
