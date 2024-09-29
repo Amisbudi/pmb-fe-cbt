@@ -51,8 +51,8 @@ const Dashboard = () => {
 
   const getPackageQuestionUsers = async (data, identityNumber) => {
     try {
-      const responsePackageQuestionUsers = await axios.get(`https://sbpmb-express.amisbudi.cloud/packagequestionusers/user/${data.userId}`);
-      const responseRecords = await axios.get(`https://sbpmb-express.amisbudi.cloud/records`);
+      const responsePackageQuestionUsers = await axios.get(`http://10.50.1.149:3000/packagequestionusers/user/${data.userId}`);
+      const responseRecords = await axios.get(`http://10.50.1.149:3000/records`);
 
       const packageQuestionUsers = responsePackageQuestionUsers.data;
       const records = responseRecords.data;
@@ -97,9 +97,9 @@ const Dashboard = () => {
                 package_question_id: pkg.package_question_id,
                 user_id: pkg.user_id,
               }
-              const response = await axios.get(`https://sbpmb-express.amisbudi.cloud/questionusers/questions/${data.package_question_id}/${data.user_id}`);
+              const response = await axios.get(`http://10.50.1.149:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`);
               if (!response.data.length > 0) {
-                await axios.post(`https://sbpmb-express.amisbudi.cloud/questionusers`, data);
+                await axios.post(`http://10.50.1.149:3000/questionusers`, data);
               }
               localStorage.setItem('CBT:package', JSON.stringify(data));
               navigate('/assesment');
@@ -122,9 +122,9 @@ const Dashboard = () => {
                 package_question_id: pkg.package_question_id,
                 user_id: pkg.user_id,
               };
-              const response = await axios.get(`https://sbpmb-express.amisbudi.cloud/questionusers/questions/${data.package_question_id}/${data.user_id}`);
+              const response = await axios.get(`http://10.50.1.149:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`);
               if (!response.data.length > 0) {
-                await axios.post(`https://sbpmb-express.amisbudi.cloud/questionusers`, data);
+                await axios.post(`http://10.50.1.149:3000/questionusers`, data);
               }
               localStorage.setItem('CBT:package', JSON.stringify(data));
               navigate('/assesment');
