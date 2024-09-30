@@ -51,8 +51,16 @@ const Dashboard = () => {
 
   const getPackageQuestionUsers = async (data, identityNumber) => {
     try {
-      const responsePackageQuestionUsers = await axios.get(`https://be-cbt.trisakti.ac.id/packagequestionusers/user/${data.userId}`);
-      const responseRecords = await axios.get(`https://be-cbt.trisakti.ac.id/records`);
+      const responsePackageQuestionUsers = await axios.get(`https://be-cbt.trisakti.ac.id/packagequestionusers/user/${data.userId}`,{
+        headers: {
+          'api-key': 'b4621b89b8b68387'
+        }
+      });
+      const responseRecords = await axios.get(`https://be-cbt.trisakti.ac.id/records`,{
+        headers: {
+          'api-key': 'b4621b89b8b68387'
+        }
+      });
 
       const packageQuestionUsers = responsePackageQuestionUsers.data;
       const records = responseRecords.data;

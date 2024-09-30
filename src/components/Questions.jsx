@@ -47,7 +47,11 @@ const Questions = () => {
 
   const getData = async (page = 1) => {
     setLoading(true);
-    await axios.get(`https://be-cbt.trisakti.ac.id/questions?page=${page}`)
+    await axios.get(`https://be-cbt.trisakti.ac.id/questions?page=${page}`,{
+      headers: {
+        'api-key': 'b4621b89b8b68387'
+      }
+    })
       .then((response) => {
         setQuestions(response.data.data);
         setCurrentPage(response.data.currentPage);
@@ -125,7 +129,11 @@ const Questions = () => {
   }
 
   const getPackageQuestions = async () => {
-    await axios.get(`https://be-cbt.trisakti.ac.id/packagequestions`)
+    await axios.get(`https://be-cbt.trisakti.ac.id/packagequestions`,{
+      headers: {
+        'api-key': 'b4621b89b8b68387'
+      }
+    })
       .then((response) => {
         setPackageQuestions(response.data.data);
       })
@@ -204,7 +212,11 @@ const Questions = () => {
   };
 
   const handleEdit = async (content) => {
-    await axios.get(`https://be-cbt.trisakti.ac.id/answers/question/${content.id}`)
+    await axios.get(`https://be-cbt.trisakti.ac.id/answers/question/${content.id}`,{
+      headers: {
+        'api-key': 'b4621b89b8b68387'
+      }
+    })
       .then((response) => {
         setFormData({
           id: content.id,
@@ -238,6 +250,10 @@ const Questions = () => {
     await axios.post(`https://be-cbt.trisakti.ac.id/questions/import`, {
       package_question_id: formData.package_question_id,
       excel: formData.excel,
+    },{
+      headers: {
+        'api-key': 'b4621b89b8b68387'
+      }
     })
       .then((response) => {
         alert(response.data.message);
@@ -279,6 +295,10 @@ const Questions = () => {
       answer_4: formData.answer_4,
       answer_4_image: formData.answer_4_image,
       answer_4_status: formData.answer_4_status,
+    },{
+      headers: {
+        'api-key': 'b4621b89b8b68387'
+      }
     })
       .then((response) => {
         alert(response.data.message);
@@ -324,6 +344,10 @@ const Questions = () => {
       answer_4_id: formData.answer_4_id,
       answer_4_image: formData.answer_4_image,
       answer_4_status: formData.answer_4_status,
+    },{
+      headers: {
+        'api-key': 'b4621b89b8b68387'
+      }
     })
       .then((response) => {
         alert(response.data.message);
@@ -347,7 +371,11 @@ const Questions = () => {
 
   const handleDelete = async (id) => {
     if (confirm('Apakah yakin akan menghapus paket soal?')) {
-      await axios.delete(`https://be-cbt.trisakti.ac.id/questions/${id}`)
+      await axios.delete(`https://be-cbt.trisakti.ac.id/questions/${id}`,{
+        headers: {
+          'api-key': 'b4621b89b8b68387'
+        }
+      })
         .then((response) => {
           alert(response.data.message);
           getData();
