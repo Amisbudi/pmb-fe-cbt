@@ -37,7 +37,11 @@ const Assesment = () => {
       const activePackage = localStorage.getItem('CBT:package');
       if (activePackage) {
         const data = JSON.parse(activePackage)
-        const responseQuestions = await axios.get(`https://be-cbt.trisakti.ac.id/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`);
+        const responseQuestions = await axios.get(`https://be-cbt.trisakti.ac.id/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,{
+          headers: {
+            'api-key': 'b4621b89b8b68387'
+          }
+        });
         setQuestions(responseQuestions.data)
         setQuestionActive(responseQuestions.data[0].question);
         setIndexQuestion(responseQuestions.data[0].number);
@@ -60,7 +64,11 @@ const Assesment = () => {
       const activePackage = localStorage.getItem('CBT:package');
       if (activePackage) {
         const data = JSON.parse(activePackage)
-        const responseQuestions = await axios.get(`https://be-cbt.trisakti.ac.id/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`);
+        const responseQuestions = await axios.get(`https://be-cbt.trisakti.ac.id/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,{
+          headers: {
+            'api-key': 'b4621b89b8b68387'
+          }
+        });
         setQuestions(responseQuestions.data)
       }
     } catch (error) {
@@ -69,7 +77,11 @@ const Assesment = () => {
   }
 
   const getRecord = async (question, pkg) => {
-    await axios.get(`https://be-cbt.trisakti.ac.id/records/question/${question}/${pkg}`)
+    await axios.get(`https://be-cbt.trisakti.ac.id/records/question/${question}/${pkg}`,{
+      headers: {
+        'api-key': 'b4621b89b8b68387'
+      }
+    })
       .then((response) => {
         setAnswered(response.data.answer.name);
         setIsAnswered(true);
@@ -85,7 +97,11 @@ const Assesment = () => {
 
   const getAnswers = async (id) => {
     try {
-      const responseAnwers = await axios.get(`https://be-cbt.trisakti.ac.id/answers/question/${id}`);
+      const responseAnwers = await axios.get(`https://be-cbt.trisakti.ac.id/answers/question/${id}`,{
+        headers: {
+          'api-key': 'b4621b89b8b68387'
+        }
+      });
       setAnswersActive(responseAnwers.data);
     } catch (error) {
       console.log(error.message);
@@ -94,7 +110,11 @@ const Assesment = () => {
 
   const changeQuestion = async (id, packageQuestion) => {
     try {
-      const responseQuestions = await axios.get(`https://be-cbt.trisakti.ac.id/questionusers/${id}/${packageQuestion}`);
+      const responseQuestions = await axios.get(`https://be-cbt.trisakti.ac.id/questionusers/${id}/${packageQuestion}`,{
+        headers: {
+          'api-key': 'b4621b89b8b68387'
+        }
+      });
       setQuestionActive(responseQuestions.data.question);
       getAnswers(responseQuestions.data.question_id);
       getRecord(responseQuestions.data.question_id, responseQuestions.data.package_question_id);
@@ -141,6 +161,10 @@ const Assesment = () => {
             user_id: 1,
             answer_id: record.answer_id,
             photo: imageDataURL,
+          },{
+            headers: {
+              'api-key': 'b4621b89b8b68387'
+            }
           });
           if (response.data) {
             setTimeout(() => {
@@ -155,6 +179,10 @@ const Assesment = () => {
             user_id: identityNumber,
             answer_id: record.answer_id,
             photo: imageDataURL,
+          },{
+            headers: {
+              'api-key': 'b4621b89b8b68387'
+            }
           });
           if (response.data) {
             setTimeout(() => {
