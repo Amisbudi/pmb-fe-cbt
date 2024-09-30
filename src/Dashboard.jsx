@@ -105,9 +105,17 @@ const Dashboard = () => {
                 package_question_id: pkg.package_question_id,
                 user_id: pkg.user_id,
               }
-              const response = await axios.get(`https://be-cbt.trisakti.ac.id/questionusers/questions/${data.package_question_id}/${data.user_id}`);
+              const response = await axios.get(`https://be-cbt.trisakti.ac.id/questionusers/questions/${data.package_question_id}/${data.user_id}`,{
+                headers: {
+                  'api-key': 'b4621b89b8b68387'
+                }
+              });
               if (!response.data.length > 0) {
-                await axios.post(`https://be-cbt.trisakti.ac.id/questionusers`, data);
+                await axios.post(`https://be-cbt.trisakti.ac.id/questionusers`, data,{
+                  headers: {
+                    'api-key': 'b4621b89b8b68387'
+                  }
+                });
               }
               localStorage.setItem('CBT:package', JSON.stringify(data));
               navigate('/assesment');
@@ -130,9 +138,17 @@ const Dashboard = () => {
                 package_question_id: pkg.package_question_id,
                 user_id: pkg.user_id,
               };
-              const response = await axios.get(`https://be-cbt.trisakti.ac.id/questionusers/questions/${data.package_question_id}/${data.user_id}`);
+              const response = await axios.get(`https://be-cbt.trisakti.ac.id/questionusers/questions/${data.package_question_id}/${data.user_id}`,{
+                headers: {
+                  'api-key': 'b4621b89b8b68387'
+                }
+              });
               if (!response.data.length > 0) {
-                await axios.post(`https://be-cbt.trisakti.ac.id/questionusers`, data);
+                await axios.post(`https://be-cbt.trisakti.ac.id/questionusers`, data,{
+                  headers: {
+                    'api-key': 'b4621b89b8b68387'
+                  }
+                });
               }
               localStorage.setItem('CBT:package', JSON.stringify(data));
               navigate('/assesment');
