@@ -279,7 +279,7 @@ const Dashboard = () => {
                 >
                   <div className="block text-gray-800 text-sm bg-white hover:bg-gray-100 font-medium p-5 space-y-2 rounded-2xl">
                     <h2 className="font-medium text-base">
-                      {pkg.package.name}
+                      {pkg.package.name ?? "Package name not found"}
                     </h2>
                     {pkg.classes == "Reguler" && pkg.date_exam && (
                       <p className="text-xs">
