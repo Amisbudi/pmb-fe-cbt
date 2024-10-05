@@ -299,7 +299,11 @@ const PackageQuestions = () => {
                       {limit * (currentPage - 1) + index + 1}
                     </th>
                     <td className="px-6 py-4">{packageQuestion.name}</td>
-                    <td className="px-6 py-4">{packageQuestion.type.name}</td>
+                    <td className="px-6 py-4">
+                      {packageQuestion.type
+                        ? packageQuestion.type.name
+                        : "Type not found"}
+                    </td>
                     <td className="px-6 py-4">
                       {packageQuestion.status ? (
                         <FontAwesomeIcon

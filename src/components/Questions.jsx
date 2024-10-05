@@ -525,7 +525,11 @@ const Questions = () => {
                         <span>Tidak ada gambar</span>
                       )}
                     </td>
-                    <td className="px-6 py-4">{question.package.name}</td>
+                    <td className="px-6 py-4">
+                      {question.package
+                        ? question.package.name
+                        : "Package not found"}
+                    </td>
                     <td className="px-6 py-4">
                       {question.status ? (
                         <FontAwesomeIcon

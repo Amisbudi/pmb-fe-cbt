@@ -1,15 +1,6 @@
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEdit,
-  faEye,
-  faPlusCircle,
-  faSave,
-  faTrashAlt,
-  faXmark,
-  faXmarkCircle,
-} from "@fortawesome/free-solid-svg-icons";
-import { faCheckCircle } from "@fortawesome/free-regular-svg-icons";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import LoadingScreen from "./LoadingScreen";
 
