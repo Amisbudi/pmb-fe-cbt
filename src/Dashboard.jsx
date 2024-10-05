@@ -55,7 +55,7 @@ const Dashboard = () => {
   const getPackageQuestionUsers = async (data, identityNumber) => {
     try {
       const responsePackageQuestionUsers = await axios.get(
-        `http://localhost:3000/packagequestionusers/user/${data.userId}`,
+        `https://be-cbt.trisakti.ac.id/packagequestionusers/user/${data.userId}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -63,7 +63,7 @@ const Dashboard = () => {
         },
       );
       const responseRecords = await axios.get(
-        `http://localhost:3000/records`,
+        `https://be-cbt.trisakti.ac.id/records`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -112,7 +112,7 @@ const Dashboard = () => {
         if (examDate < today && isSameDate(examDate, today)) {
           if (
             window.confirm(
-              `Apakah anda yakin akan memulai tes ${pkg.package.name}?`,
+              `Apakah anda yakin akan memulai tes ${pkg.package ? pkg.package.name : "Package not found"}?`,
             )
           ) {
             const activePackage = localStorage.getItem("CBT:package");
@@ -124,7 +124,7 @@ const Dashboard = () => {
                 user_id: pkg.user_id,
               };
               const response = await axios.get(
-                `http://localhost:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`,
+                `https://be-cbt.trisakti.ac.id/questionusers/questions/${data.package_question_id}/${data.user_id}`,
                 {
                   headers: {
                     "api-key": "b4621b89b8b68387",
@@ -133,7 +133,7 @@ const Dashboard = () => {
               );
               if (!response.data.length > 0) {
                 await axios.post(
-                  `http://localhost:3000/questionusers`,
+                  `https://be-cbt.trisakti.ac.id/questionusers`,
                   data,
                   {
                     headers: {
@@ -156,7 +156,7 @@ const Dashboard = () => {
         if (today >= startDate && today <= endDate) {
           if (
             window.confirm(
-              `Apakah anda yakin akan memulai tes ${pkg.package.name}?`,
+              `Apakah anda yakin akan memulai tes ${pkg.package ? pkg.package.name : "Package not found"}?`,
             )
           ) {
             const activePackage = localStorage.getItem("CBT:package");
@@ -168,7 +168,7 @@ const Dashboard = () => {
                 user_id: pkg.user_id,
               };
               const response = await axios.get(
-                `http://localhost:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`,
+                `https://be-cbt.trisakti.ac.id/questionusers/questions/${data.package_question_id}/${data.user_id}`,
                 {
                   headers: {
                     "api-key": "b4621b89b8b68387",
@@ -177,7 +177,7 @@ const Dashboard = () => {
               );
               if (!response.data.length > 0) {
                 await axios.post(
-                  `http://localhost:3000/questionusers`,
+                  `https://be-cbt.trisakti.ac.id/questionusers`,
                   data,
                   {
                     headers: {

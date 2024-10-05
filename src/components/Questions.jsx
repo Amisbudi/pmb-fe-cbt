@@ -57,7 +57,7 @@ const Questions = () => {
   const getData = async (page = 1) => {
     setLoading(true);
     await axios
-      .get(`http://localhost:3000/questions?page=${page}`, {
+      .get(`https://be-cbt.trisakti.ac.id/questions?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -153,7 +153,7 @@ const Questions = () => {
 
   const getPackageQuestions = async () => {
     await axios
-      .get(`http://localhost:3000/packagequestions`, {
+      .get(`https://be-cbt.trisakti.ac.id/packagequestions`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -249,7 +249,7 @@ const Questions = () => {
 
   const handleEdit = async (content) => {
     await axios
-      .get(`http://localhost:3000/answers/question/${content.id}`, {
+      .get(`https://be-cbt.trisakti.ac.id/answers/question/${content.id}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -286,7 +286,7 @@ const Questions = () => {
     e.preventDefault();
     await axios
       .post(
-        `http://localhost:3000/questions/import`,
+        `https://be-cbt.trisakti.ac.id/questions/import`,
         {
           package_question_id: formData.package_question_id,
           excel: formData.excel,
@@ -322,7 +322,7 @@ const Questions = () => {
     e.preventDefault();
     await axios
       .post(
-        `http://localhost:3000/questions`,
+        `https://be-cbt.trisakti.ac.id/questions`,
         {
           package_question_id: formData.package_question_id,
           name: formData.name,
@@ -372,7 +372,7 @@ const Questions = () => {
     e.preventDefault();
     await axios
       .patch(
-        `http://localhost:3000/questions/${formData.id}`,
+        `https://be-cbt.trisakti.ac.id/questions/${formData.id}`,
         {
           package_question_id: formData.package_question_id,
           name: formData.name,
@@ -424,7 +424,7 @@ const Questions = () => {
   const handleDelete = async (id) => {
     if (confirm("Apakah yakin akan menghapus paket soal?")) {
       await axios
-        .delete(`http://localhost:3000/questions/${id}`, {
+        .delete(`https://be-cbt.trisakti.ac.id/questions/${id}`, {
           headers: {
             "api-key": "b4621b89b8b68387",
           },
@@ -517,7 +517,7 @@ const Questions = () => {
                     <td className="px-6 py-4">
                       {question.image ? (
                         <img
-                          src={`http://localhost:3000/questions/image/${question.id}`}
+                          src={`https://be-cbt.trisakti.ac.id/questions/image/${question.id}`}
                           alt="Question Image"
                           className="w-32 rounded-xl"
                         />
