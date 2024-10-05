@@ -723,8 +723,9 @@ const Questions = () => {
                       <div className="flex items-center me-4">
                         <input
                           id="answer_1_true"
-                          name="answer_1"
+                          name="answer_1_status"
                           type="radio"
+                          onChange={handleChange}
                           defaultValue={true}
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
                         />
@@ -738,8 +739,9 @@ const Questions = () => {
                       <div className="flex items-center me-4">
                         <input
                           id="answer_1_false"
-                          name="answer_1"
+                          name="answer_1_status"
                           type="radio"
+                          onChange={handleChange}
                           defaultValue={false}
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
                         />
@@ -787,8 +789,9 @@ const Questions = () => {
                       <div className="flex items-center me-4">
                         <input
                           id="answer_2_true"
-                          name="answer_2"
+                          name="answer_2_status"
                           type="radio"
+                          onChange={handleChange}
                           defaultValue={true}
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
                         />
@@ -802,7 +805,8 @@ const Questions = () => {
                       <div className="flex items-center me-4">
                         <input
                           id="answer_2_false"
-                          name="answer_2"
+                          name="answer_2_status"
+                          onChange={handleChange}
                           type="radio"
                           defaultValue={false}
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
@@ -851,7 +855,8 @@ const Questions = () => {
                       <div className="flex items-center me-4">
                         <input
                           id="answer_3_true"
-                          name="answer_3"
+                          name="answer_3_status"
+                          onChange={handleChange}
                           type="radio"
                           defaultValue={true}
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
@@ -866,7 +871,8 @@ const Questions = () => {
                       <div className="flex items-center me-4">
                         <input
                           id="answer_3_false"
-                          name="answer_3"
+                          name="answer_3_status"
+                          onChange={handleChange}
                           type="radio"
                           defaultValue={false}
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
@@ -915,7 +921,8 @@ const Questions = () => {
                       <div className="flex items-center me-4">
                         <input
                           id="answer_4_true"
-                          name="answer_4"
+                          name="answer_4_status"
+                          onChange={handleChange}
                           type="radio"
                           defaultValue={true}
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
@@ -930,7 +937,8 @@ const Questions = () => {
                       <div className="flex items-center me-4">
                         <input
                           id="answer_4_false"
-                          name="answer_4"
+                          name="answer_4_status"
+                          onChange={handleChange}
                           type="radio"
                           defaultValue={false}
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
