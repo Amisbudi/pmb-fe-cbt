@@ -83,6 +83,7 @@ const Dashboard = () => {
       });
 
       setPackages(filteredPackageQuestions);
+      console.log(filteredPackageQuestions);
     } catch (error) {
       console.log(error.message);
     }
@@ -279,7 +280,7 @@ const Dashboard = () => {
                 >
                   <div className="block text-gray-800 text-sm bg-white hover:bg-gray-100 font-medium p-5 space-y-2 rounded-2xl">
                     <h2 className="font-medium text-base">
-                      {pkg.package.name ?? "Package name not found"}
+                      {pkg.package ? pkg.package.name : "Package not found"}
                     </h2>
                     {pkg.classes == "Reguler" && pkg.date_exam && (
                       <p className="text-xs">
