@@ -55,7 +55,7 @@ const Dashboard = () => {
   const getPackageQuestionUsers = async (data, identityNumber) => {
     try {
       const responsePackageQuestionUsers = await axios.get(
-        `https://be-cbt.trisakti.ac.id/packagequestionusers/user/${data.userId}`,
+        `http://localhost:3000/packagequestionusers/user/${data.userId}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -63,7 +63,7 @@ const Dashboard = () => {
         },
       );
       const responseRecords = await axios.get(
-        `https://be-cbt.trisakti.ac.id/records`,
+        `http://localhost:3000/records`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -124,7 +124,7 @@ const Dashboard = () => {
                 user_id: pkg.user_id,
               };
               const response = await axios.get(
-                `https://be-cbt.trisakti.ac.id/questionusers/questions/${data.package_question_id}/${data.user_id}`,
+                `http://localhost:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`,
                 {
                   headers: {
                     "api-key": "b4621b89b8b68387",
@@ -133,7 +133,7 @@ const Dashboard = () => {
               );
               if (!response.data.length > 0) {
                 await axios.post(
-                  `https://be-cbt.trisakti.ac.id/questionusers`,
+                  `http://localhost:3000/questionusers`,
                   data,
                   {
                     headers: {
@@ -168,7 +168,7 @@ const Dashboard = () => {
                 user_id: pkg.user_id,
               };
               const response = await axios.get(
-                `https://be-cbt.trisakti.ac.id/questionusers/questions/${data.package_question_id}/${data.user_id}`,
+                `http://localhost:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`,
                 {
                   headers: {
                     "api-key": "b4621b89b8b68387",
@@ -177,7 +177,7 @@ const Dashboard = () => {
               );
               if (!response.data.length > 0) {
                 await axios.post(
-                  `https://be-cbt.trisakti.ac.id/questionusers`,
+                  `http://localhost:3000/questionusers`,
                   data,
                   {
                     headers: {
