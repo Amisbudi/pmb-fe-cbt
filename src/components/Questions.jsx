@@ -57,7 +57,7 @@ const Questions = () => {
   const getData = async (page = 1) => {
     setLoading(true);
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/questions?page=${page}`, {
+      .get(`https://sbpmb-express.amisbudi.cloud/questions?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -153,7 +153,7 @@ const Questions = () => {
 
   const getPackageQuestions = async () => {
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/packagequestions`, {
+      .get(`https://sbpmb-express.amisbudi.cloud/packagequestions`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -249,7 +249,7 @@ const Questions = () => {
 
   const handleEdit = async (content) => {
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/answers/question/${content.id}`, {
+      .get(`https://sbpmb-express.amisbudi.cloud/answers/question/${content.id}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -286,7 +286,7 @@ const Questions = () => {
     e.preventDefault();
     await axios
       .post(
-        `https://be-cbt.trisakti.ac.id/questions/import`,
+        `https://sbpmb-express.amisbudi.cloud/questions/import`,
         {
           package_question_id: formData.package_question_id,
           excel: formData.excel,
@@ -322,7 +322,7 @@ const Questions = () => {
     e.preventDefault();
     await axios
       .post(
-        `https://be-cbt.trisakti.ac.id/questions`,
+        `https://sbpmb-express.amisbudi.cloud/questions`,
         {
           package_question_id: formData.package_question_id,
           name: formData.name,
@@ -372,7 +372,7 @@ const Questions = () => {
     e.preventDefault();
     await axios
       .patch(
-        `https://be-cbt.trisakti.ac.id/questions/${formData.id}`,
+        `https://sbpmb-express.amisbudi.cloud/questions/${formData.id}`,
         {
           package_question_id: formData.package_question_id,
           name: formData.name,
@@ -424,7 +424,7 @@ const Questions = () => {
   const handleDelete = async (id) => {
     if (confirm("Apakah yakin akan menghapus paket soal?")) {
       await axios
-        .delete(`https://be-cbt.trisakti.ac.id/questions/${id}`, {
+        .delete(`https://sbpmb-express.amisbudi.cloud/questions/${id}`, {
           headers: {
             "api-key": "b4621b89b8b68387",
           },
@@ -517,7 +517,7 @@ const Questions = () => {
                     <td className="px-6 py-4">
                       {question.image ? (
                         <img
-                          src={`https://be-cbt.trisakti.ac.id/questions/image/${question.id}`}
+                          src={`https://sbpmb-express.amisbudi.cloud/questions/image/${question.id}`}
                           alt="Question Image"
                           className="w-32 rounded-xl"
                         />

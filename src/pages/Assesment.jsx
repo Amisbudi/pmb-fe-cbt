@@ -38,7 +38,7 @@ const Assesment = () => {
       if (activePackage) {
         const data = JSON.parse(activePackage);
         const responseQuestions = await axios.get(
-          `https://be-cbt.trisakti.ac.id/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
+          `https://sbpmb-express.amisbudi.cloud/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
           {
             headers: {
               "api-key": "b4621b89b8b68387",
@@ -71,7 +71,7 @@ const Assesment = () => {
       if (activePackage) {
         const data = JSON.parse(activePackage);
         const responseQuestions = await axios.get(
-          `https://be-cbt.trisakti.ac.id/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
+          `https://sbpmb-express.amisbudi.cloud/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
           {
             headers: {
               "api-key": "b4621b89b8b68387",
@@ -88,7 +88,7 @@ const Assesment = () => {
   const getRecord = async (question, pkg) => {
     await axios
       .get(
-        `https://be-cbt.trisakti.ac.id/records/question/${question}/${pkg}`,
+        `https://sbpmb-express.amisbudi.cloud/records/question/${question}/${pkg}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -111,7 +111,7 @@ const Assesment = () => {
   const getAnswers = async (id) => {
     try {
       const responseAnwers = await axios.get(
-        `https://be-cbt.trisakti.ac.id/answers/question/${id}`,
+        `https://sbpmb-express.amisbudi.cloud/answers/question/${id}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -127,7 +127,7 @@ const Assesment = () => {
   const changeQuestion = async (id, packageQuestion) => {
     try {
       const responseQuestions = await axios.get(
-        `https://be-cbt.trisakti.ac.id/questionusers/${id}/${packageQuestion}`,
+        `https://sbpmb-express.amisbudi.cloud/questionusers/${id}/${packageQuestion}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -180,7 +180,7 @@ const Assesment = () => {
 
         if (update) {
           const response = await axios.patch(
-            `https://be-cbt.trisakti.ac.id/records/${record.question_id}/${record.package_question_id}`,
+            `https://sbpmb-express.amisbudi.cloud/records/${record.question_id}/${record.package_question_id}`,
             {
               user_id: 1,
               answer_id: record.answer_id,
@@ -199,7 +199,7 @@ const Assesment = () => {
           }
         } else {
           const response = await axios.post(
-            `https://be-cbt.trisakti.ac.id/records`,
+            `https://sbpmb-express.amisbudi.cloud/records`,
             {
               question_user_id: record.question_user_id,
               question_id: record.question_id,
@@ -343,7 +343,7 @@ const Assesment = () => {
             <div className="space-y-3">
               {questionActive.image && (
                 <img
-                  src={`https://be-cbt.trisakti.ac.id/questions/image/${questionActive.id}`}
+                  src={`https://sbpmb-express.amisbudi.cloud/questions/image/${questionActive.id}`}
                   alt="Question Image"
                   className="w-64 rounded-xl"
                 />
@@ -382,7 +382,7 @@ const Assesment = () => {
                     </label>
                     {answer.image && (
                       <img
-                        src={`https://be-cbt.trisakti.ac.id/answers/image/${answer.id}`}
+                        src={`https://sbpmb-express.amisbudi.cloud/answers/image/${answer.id}`}
                         alt="Answer Image"
                         className="w-36 rounded-xl"
                       />

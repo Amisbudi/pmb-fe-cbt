@@ -35,7 +35,7 @@ const PackageQuestions = () => {
   const getData = async (page = 1) => {
     setLoading(true);
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/packagequestions?page=${page}`, {
+      .get(`https://sbpmb-express.amisbudi.cloud/packagequestions?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -127,7 +127,7 @@ const PackageQuestions = () => {
 
   const getTypes = async () => {
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/types`, {
+      .get(`https://sbpmb-express.amisbudi.cloud/types`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -162,7 +162,7 @@ const PackageQuestions = () => {
     e.preventDefault();
     await axios
       .post(
-        `https://be-cbt.trisakti.ac.id/packagequestions`,
+        `https://sbpmb-express.amisbudi.cloud/packagequestions`,
         {
           type_id: formData.type_id,
           name: formData.name,
@@ -195,7 +195,7 @@ const PackageQuestions = () => {
     e.preventDefault();
     await axios
       .patch(
-        `https://be-cbt.trisakti.ac.id/packagequestions/${formData.id}`,
+        `https://sbpmb-express.amisbudi.cloud/packagequestions/${formData.id}`,
         {
           type_id: formData.type_id,
           name: formData.name,
@@ -226,7 +226,7 @@ const PackageQuestions = () => {
   const handleDelete = async (id) => {
     if (confirm("Apakah yakin akan menghapus paket soal?")) {
       await axios
-        .delete(`https://be-cbt.trisakti.ac.id/packagequestions/${id}`, {
+        .delete(`https://sbpmb-express.amisbudi.cloud/packagequestions/${id}`, {
           headers: {
             "api-key": "b4621b89b8b68387",
           },
