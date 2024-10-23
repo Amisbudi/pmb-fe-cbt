@@ -17,7 +17,7 @@ const Results = () => {
   const getData = async (page = 1) => {
     setLoading(true);
     await axios
-      .get(`http://localhost:3000/questionusers/results?page=${page}`, {
+      .get(`https://be-cbt.trisakti.ac.id/questionusers/results?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -112,7 +112,7 @@ const Results = () => {
     if (confirm("Apakah yakin akan menghapus riwayat pengerjaan soal?")) {
       await axios
         .delete(
-          `http://localhost:3000/questionusers/results/${data.package_question_id}/${data.user_id}`,
+          `https://be-cbt.trisakti.ac.id/questionusers/results/${data.package_question_id}/${data.user_id}`,
           {
             headers: {
               "api-key": "b4621b89b8b68387",
