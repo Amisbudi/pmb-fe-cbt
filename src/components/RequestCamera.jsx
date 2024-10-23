@@ -203,7 +203,7 @@ const RequestCamera = () => {
                 ))
               ) : (
                 <tr className="bg-white">
-                  <td colSpan={6} className="px-6 py-4 text-center">
+                  <td colSpan={5} className="px-6 py-4 text-center">
                     Data tidak ditemukan.
                   </td>
                 </tr>
