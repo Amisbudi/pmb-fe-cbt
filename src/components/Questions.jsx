@@ -57,7 +57,7 @@ const Questions = () => {
   const getData = async (page = 1) => {
     setLoading(true);
     await axios
-      .get(`https://sbpmb-express.amisbudi.cloud/questions?page=${page}`, {
+      .get(`http://localhost:3000/questions?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -153,7 +153,7 @@ const Questions = () => {
 
   const getPackageQuestions = async () => {
     await axios
-      .get(`https://sbpmb-express.amisbudi.cloud/packagequestions`, {
+      .get(`http://localhost:3000/packagequestions`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -249,7 +249,7 @@ const Questions = () => {
 
   const handleEdit = async (content) => {
     await axios
-      .get(`https://sbpmb-express.amisbudi.cloud/answers/question/${content.id}`, {
+      .get(`http://localhost:3000/answers/question/${content.id}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -286,7 +286,7 @@ const Questions = () => {
     e.preventDefault();
     await axios
       .post(
-        `https://sbpmb-express.amisbudi.cloud/questions/import`,
+        `http://localhost:3000/questions/import`,
         {
           package_question_id: formData.package_question_id,
           excel: formData.excel,
@@ -322,7 +322,7 @@ const Questions = () => {
     e.preventDefault();
     await axios
       .post(
-        `https://sbpmb-express.amisbudi.cloud/questions`,
+        `http://localhost:3000/questions`,
         {
           package_question_id: formData.package_question_id,
           name: formData.name,
@@ -372,7 +372,7 @@ const Questions = () => {
     e.preventDefault();
     await axios
       .patch(
-        `https://sbpmb-express.amisbudi.cloud/questions/${formData.id}`,
+        `http://localhost:3000/questions/${formData.id}`,
         {
           package_question_id: formData.package_question_id,
           name: formData.name,
@@ -424,7 +424,7 @@ const Questions = () => {
   const handleDelete = async (id) => {
     if (confirm("Apakah yakin akan menghapus paket soal?")) {
       await axios
-        .delete(`https://sbpmb-express.amisbudi.cloud/questions/${id}`, {
+        .delete(`http://localhost:3000/questions/${id}`, {
           headers: {
             "api-key": "b4621b89b8b68387",
           },
@@ -452,9 +452,9 @@ const Questions = () => {
   ) : (
     <main className="w-full md:w-10/12 h-screen bg-gray-100 pt-10 px-4 md:px-8 overflow-auto pb-10">
       <div className="space-y-1">
-        <h2 className="font-bold text-xl text-gray-900">Questions</h2>
+        <h2 className="font-bold text-xl text-gray-900">Pertanyaan</h2>
         <p className="text-sm text-gray-700">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic, cumque!
+          Di bawah ini adalah menu pengelolaan paket soal. Anda dapat menambah, mengubah, dan mengatur paket soal yang tersedia sesuai kebutuhan.
         </p>
       </div>
       <section className="mt-5">
@@ -517,7 +517,7 @@ const Questions = () => {
                     <td className="px-6 py-4">
                       {question.image ? (
                         <img
-                          src={`https://sbpmb-express.amisbudi.cloud/questions/image/${question.id}`}
+                          src={`http://localhost:3000/questions/image/${question.id}`}
                           alt="Question Image"
                           className="w-32 rounded-xl"
                         />

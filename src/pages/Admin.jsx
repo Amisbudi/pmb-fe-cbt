@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TrisaktiLogo from '../assets/img/Logo-Usakti-White.png'
-import { faBars, faQuestionCircle, faRankingStar, faSignOut, faTags, faUserCircle } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faCamera, faQuestionCircle, faRankingStar, faSignOut, faTags, faUserCircle } from '@fortawesome/free-solid-svg-icons'
 import PackageQuestions from '../components/PackageQuestions'
 import Questions from '../components/Questions'
 import Results from '../components/Results'
 import { jwtDecode } from 'jwt-decode'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import RequestCamera from '../components/RequestCamera'
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -55,6 +56,8 @@ const Admin = () => {
         return <PackageQuestions />;
       case 'questions':
         return <Questions />;
+      case 'camera':
+          return <RequestCamera />;
       case 'results':
         return <Results />;
       default:
@@ -101,6 +104,12 @@ const Admin = () => {
                   <p className='space-x-3'>
                     <FontAwesomeIcon icon={faQuestionCircle} />
                     <span>Questions</span>
+                  </p>
+                </a>
+                <a href={`/admin?page=camera`} className='block cursor-pointer text-gray-200 hover:text-gray-300 text-sm bg-gray-700 hover:bg-gray-900 py-4 px-5 rounded-xl transition-all ease-in-out'>
+                  <p className='space-x-3'>
+                    <FontAwesomeIcon icon={faCamera} />
+                    <span>Camera Requests</span>
                   </p>
                 </a>
                 <a href={`/admin?page=results`} className='block cursor-pointer text-gray-200 hover:text-gray-300 text-sm bg-gray-700 hover:bg-gray-900 py-4 px-5 rounded-xl transition-all ease-in-out'>

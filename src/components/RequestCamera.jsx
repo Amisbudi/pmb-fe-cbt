@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import LoadingScreen from "./LoadingScreen";
 
-const Results = () => {
-  const [results, setResults] = useState([]);
+const RequestCamera = () => {
+  const [packageQuestions, setPackageQuestions] = useState([]);
   const [paginations, setPaginations] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [limit, setLimit] = useState(0);
@@ -17,14 +15,14 @@ const Results = () => {
   const getData = async (page = 1) => {
     setLoading(true);
     await axios
-      .get(`http://localhost:3000/questionusers/results?page=${page}`, {
+      .get(`http://localhost:3000/packagequestionusers/requestcamera?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
       })
       .then((response) => {
         console.log(response.data);
-        setResults(response.data.data);
+        setPackageQuestions(response.data.data);
         setCurrentPage(response.data.currentPage);
         setTotal(response.data.totalItems);
         setTotalPages(response.data.totalPages);
@@ -108,25 +106,32 @@ const Results = () => {
       });
   };
 
-  const handleDelete = async (data) => {
-    if (confirm("Apakah yakin akan menghapus riwayat pengerjaan soal?")) {
-      await axios
-        .delete(
-          `http://localhost:3000/questionusers/results/${data.package_question_id}/${data.user_id}`,
-          {
-            headers: {
-              "api-key": "b4621b89b8b68387",
-            },
+  const handleCameraUpdate = async (e) => {
+    setLoading(true);
+    e.preventDefault();
+    const dataId = e.target.getAttribute('data-id');
+    await axios
+      .get(
+        `http://localhost:3000/packagequestionusers/camera/${dataId}`,
+        {
+          headers: {
+            "api-key": "b4621b89b8b68387",
           },
-        )
-        .then((response) => {
-          alert(response.data.message);
-          getData();
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
-    }
+        },
+      )
+      .then((response) => {
+        alert(response.data.message);
+        getData();
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        console.log(error.message);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      });
   };
 
   useEffect(() => {
@@ -137,9 +142,9 @@ const Results = () => {
   ) : (
     <main className="w-full md:w-10/12 h-screen bg-gray-100 pt-10 px-4 md:px-8 overflow-auto pb-10">
       <div className="space-y-1">
-        <h2 className="font-bold text-xl text-gray-900">Hasil Ujian</h2>
+        <h2 className="font-bold text-xl text-gray-900">Request Kamera</h2>
         <p className="text-sm text-gray-700">
-          Di bawah ini adalah hasil ujian Anda. Anda dapat melihat, atau meninjau kembali hasil dari setiap ujian yang telah diikuti.
+          Di bawah ini adalah menu pengelolaan permintaan kamera. Anda dapat memantau status, atau mengelola permintaan kamera yang telah diajukan.
         </p>
       </div>
       <section className="mt-5">
@@ -157,25 +162,16 @@ const Results = () => {
                   Nama Lengkap
                 </th>
                 <th scope="col" className="px-6 py-4">
-                  Nama Paket Soal
-                </th>
-                <th scope="col" className="px-6 py-4">
-                  Betul
-                </th>
-                <th scope="col" className="px-6 py-4">
-                  Salah
-                </th>
-                <th scope="col" className="px-6 py-4">
-                  Nilai
+                  Paket Soal
                 </th>
                 <th scope="col" className="px-6 py-4 rounded-tr-xl">
-                  Aksi
+                  Kamera
                 </th>
               </tr>
             </thead>
             <tbody>
-              {results.length > 0 ? (
-                results.map((result, index) => (
+              {packageQuestions.length > 0 ? (
+                packageQuestions.map((packageQuestion, index) => (
                   <tr
                     key={index}
                     className="odd:bg-white even:bg-gray-50 border-b"
@@ -186,31 +182,28 @@ const Results = () => {
                     >
                       {limit * (currentPage - 1) + index + 1}
                     </th>
-                    <td className="px-6 py-4">{result.user_id}</td>
-                    <td className="px-6 py-4">{result.fullname}</td>
-                    <td className="px-6 py-4">{result.package_name}</td>
-                    <td className="px-6 py-4">{result.correct_answers}</td>
-                    <td className="px-6 py-4">{result.incorrect_answers}</td>
+                    <td className="px-6 py-4">{packageQuestion.user_id}</td>
                     <td className="px-6 py-4">
-                      {(
-                        (result.correct_answers / result.total_questions) *
-                        100
-                      ).toFixed()}
+                      {packageQuestion.participant
+                        ? packageQuestion.participant.fullname
+                        : "Name not found"}</td>
+                    <td className="px-6 py-4">
+                      {packageQuestion.package
+                        ? packageQuestion.package.name
+                        : "Package not found"}
                     </td>
-                    <td className="px-6 py-4 flex flex-col md:flex-row gap-1">
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(result)}
-                        className="text-white bg-red-600 hover:bg-red-700 font-medium rounded-xl text-xs px-3 py-1.5 text-center"
-                      >
-                        <FontAwesomeIcon icon={faTrashAlt} />
-                      </button>
+                    <td className="px-6 py-4 space-x-2">
+                      {packageQuestion.camera_status ? (
+                        <button type="button" data-id={packageQuestion.id} onClick={handleCameraUpdate} className="bg-emerald-500 hover:bg-emerald-600 px-4 py-2 text-xs text-white rounded-lg">Akses Kamera Diizinkan</button>
+                      ) : (
+                        <button type="button" data-id={packageQuestion.id} onClick={handleCameraUpdate} className="bg-red-500 hover:bg-red-600 px-4 py-2 text-xs text-white rounded-lg">Akses Kamera Belum Diizinkan</button>
+                      )}
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr className="bg-white">
-                  <td colSpan={7} className="px-6 py-4 text-center">
+                  <td colSpan={6} className="px-6 py-4 text-center">
                     Data tidak ditemukan.
                   </td>
                 </tr>
@@ -258,4 +251,4 @@ const Results = () => {
   );
 };
 
-export default Results;
+export default RequestCamera;

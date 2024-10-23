@@ -55,37 +55,35 @@ const Dashboard = () => {
   const getPackageQuestionUsers = async (data, identityNumber) => {
     try {
       const responsePackageQuestionUsers = await axios.get(
-        `https://sbpmb-express.amisbudi.cloud/packagequestionusers/user/${data.userId}`,
+        `http://localhost:3000/packagequestionusers/user/${data.userId}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
           },
-        },
+        }
       );
-      const responseRecords = await axios.get(
-        `https://sbpmb-express.amisbudi.cloud/records`,
-        {
-          headers: {
-            "api-key": "b4621b89b8b68387",
-          },
+
+      const responseRecords = await axios.get(`http://localhost:3000/records`, {
+        headers: {
+          "api-key": "b4621b89b8b68387",
         },
-      );
+      });
 
       const packageQuestionUsers = responsePackageQuestionUsers.data;
       const records = responseRecords.data;
 
       const filteredPackageQuestions = packageQuestionUsers.filter((pq) => {
-        return !records.some(
+        const isAlreadyInRecords = records.some(
           (record) =>
-            record.package_question_id == pq.id &&
-            record.user_id == identityNumber,
+            String(record.package_question_id) === String(pq.id) &&
+            String(record.user_id) === String(identityNumber)
         );
+        return !isAlreadyInRecords;
       });
 
       setPackages(filteredPackageQuestions);
-      console.log(filteredPackageQuestions);
     } catch (error) {
-      console.log(error.message);
+      console.error("Error fetching data:", error.message);
     }
   };
 
@@ -103,6 +101,27 @@ const Dashboard = () => {
       date1.getDate() === date2.getDate()
     );
   }
+
+  const handleRequestUpdate = async (e) => {
+    e.preventDefault();
+    const dataId = e.target.getAttribute('data-id');
+    await axios
+      .get(
+        `http://localhost:3000/packagequestionusers/request/${dataId}`,
+        {
+          headers: {
+            "api-key": "b4621b89b8b68387",
+          },
+        },
+      )
+      .then((response) => {
+        getInfo();
+        alert(response.data.message);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  };
 
   const checkoutPackage = async (pkg) => {
     try {
@@ -122,9 +141,10 @@ const Dashboard = () => {
               const data = {
                 package_question_id: pkg.package_question_id,
                 user_id: pkg.user_id,
+                name: name,
               };
               const response = await axios.get(
-                `https://sbpmb-express.amisbudi.cloud/questionusers/questions/${data.package_question_id}/${data.user_id}`,
+                `http://localhost:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`,
                 {
                   headers: {
                     "api-key": "b4621b89b8b68387",
@@ -132,15 +152,11 @@ const Dashboard = () => {
                 },
               );
               if (!response.data.length > 0) {
-                await axios.post(
-                  `https://sbpmb-express.amisbudi.cloud/questionusers`,
-                  data,
-                  {
-                    headers: {
-                      "api-key": "b4621b89b8b68387",
-                    },
+                await axios.post(`http://localhost:3000/questionusers`, data, {
+                  headers: {
+                    "api-key": "b4621b89b8b68387",
                   },
-                );
+                });
               }
               localStorage.setItem("CBT:package", JSON.stringify(data));
               navigate("/assesment");
@@ -168,7 +184,7 @@ const Dashboard = () => {
                 user_id: pkg.user_id,
               };
               const response = await axios.get(
-                `https://sbpmb-express.amisbudi.cloud/questionusers/questions/${data.package_question_id}/${data.user_id}`,
+                `http://localhost:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`,
                 {
                   headers: {
                     "api-key": "b4621b89b8b68387",
@@ -176,15 +192,11 @@ const Dashboard = () => {
                 },
               );
               if (!response.data.length > 0) {
-                await axios.post(
-                  `https://sbpmb-express.amisbudi.cloud/questionusers`,
-                  data,
-                  {
-                    headers: {
-                      "api-key": "b4621b89b8b68387",
-                    },
+                await axios.post(`http://localhost:3000/questionusers`, data, {
+                  headers: {
+                    "api-key": "b4621b89b8b68387",
                   },
-                );
+                });
               }
               localStorage.setItem("CBT:package", JSON.stringify(data));
               navigate("/assesment");
@@ -241,12 +253,7 @@ const Dashboard = () => {
         </div>
         <div data-aos="fade-right" data-aos-offset="300" data-aos-delay="100">
           <p className="text-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis
-            dolor esse accusantium, doloremque rerum non voluptates saepe
-            distinctio reiciendis corrupti explicabo debitis eaque laborum ab
-            rem odio ipsam sed ea. Accusantium ab illum commodi aliquam quos,
-            fugiat cum doloribus, soluta nulla ipsam omnis blanditiis et
-            voluptatem tempora. Dolorem, aut dolores!
+            Ujian ini mewajibkan penggunaan kamera. Silakan ajukan permohonan di sini jika terjadi masalah dengan kamera Anda. Tetap semangat dan fokus pada tujuan! Setiap tantangan adalah kesempatan untuk menunjukkan kemampuan terbaik Anda.
           </p>
         </div>
         <div className="flex items-center gap-5 pt-4">
@@ -268,43 +275,68 @@ const Dashboard = () => {
       <section className="w-full">
         {packages && packages.length > 0 ? (
           <div>
-            <div className="flex items-center justify-center flex-wrap">
+            <div className="flex flex-wrap justify-center items-start gap-3">
               {packages.map((pkg, index) => (
-                <button
-                  type="button"
-                  key={index}
-                  onClick={() => checkoutPackage(pkg)}
-                  className="block w-1/2 md:w-1/6 p-1"
+                <div key={index} className="w-1/8 p-1 space-y-2 flex flex-col justify-center"
                   data-aos="fade-down"
-                  data-aos-delay={index + 1 * 200}
-                >
-                  <div className="block text-gray-800 text-sm bg-white hover:bg-gray-100 font-medium p-5 space-y-2 rounded-2xl">
-                    <h2 className="font-medium text-base">
-                      {pkg.package ? pkg.package.name : "Package not found"}
-                    </h2>
-                    {pkg.classes == "Reguler" && pkg.date_exam && (
-                      <p className="text-xs">
-                        {moment.tz(pkg.date_exam, "Asia/Jakarta").format("lll")}
-                      </p>
-                    )}
-                    {pkg.classes == "Employee" &&
-                      pkg.date_start &&
-                      pkg.date_end && (
-                        <p className="flex flex-col gap-2 text-xs">
-                          <span>
-                            {moment
-                              .tz(pkg.date_start, "Asia/Jakarta")
-                              .format("lll")}
-                          </span>
-                          <span>
-                            {moment
-                              .tz(pkg.date_end, "Asia/Jakarta")
-                              .format("lll")}
-                          </span>
+                  data-aos-delay={index + 1 * 200}>
+                  <button
+                    type="button"
+                    onClick={() => checkoutPackage(pkg)}
+                  >
+                    <div className="w-full block text-gray-800 text-sm bg-white hover:bg-gray-100 font-medium p-5 space-y-2 rounded-2xl">
+                      <h2 className="font-medium text-base">
+                        {pkg.package ? pkg.package.name : "Package not found"}
+                      </h2>
+                      {pkg.classes == "Reguler" && pkg.date_exam && (
+                        <p className="text-xs">
+                          {moment.tz(pkg.date_exam, "Asia/Jakarta").format("lll")}
                         </p>
                       )}
-                  </div>
-                </button>
+                      {pkg.classes == "Employee" &&
+                        pkg.date_start &&
+                        pkg.date_end && (
+                          <p className="flex flex-col gap-2 text-xs">
+                            <span>
+                              {moment
+                                .tz(pkg.date_start, "Asia/Jakarta")
+                                .format("lll")}
+                            </span>
+                            <span>
+                              {moment
+                                .tz(pkg.date_end, "Asia/Jakarta")
+                                .format("lll")}
+                            </span>
+                          </p>
+                        )}
+                    </div>
+                  </button>
+                  {
+                    pkg.request_camera && pkg.camera_status ? (
+                      <span className="bg-sky-500 px-5 py-2 rounded-xl text-xs text-white">
+                        Kamera sudah diajukan dan status aktif
+                      </span>
+                    ) : pkg.request_camera && !pkg.camera_status ? (
+                      <button
+                        type="button"
+                        data-id={pkg.id}
+                        onClick={handleRequestUpdate}
+                        className="bg-orange-500 hover:bg-orange-600 px-5 py-2 rounded-xl text-xs text-white"
+                      >
+                        Kamera diajukan tapi status belum aktif
+                      </button>
+                    ) : !pkg.request_camera ? (
+                      <button
+                        type="button"
+                        data-id={pkg.id}
+                        onClick={handleRequestUpdate}
+                        className="bg-emerald-500 hover:bg-emerald-600 px-5 py-2 rounded-xl text-xs text-white"
+                      >
+                        Ajukan kamera
+                      </button>
+                    ) : null
+                  }
+                </div>
               ))}
             </div>
             <p className="text-center text-sm mt-5">

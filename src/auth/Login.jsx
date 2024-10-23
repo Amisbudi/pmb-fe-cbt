@@ -43,7 +43,7 @@ function Login() {
         password: formData.password,
       })
       .then((response) => {
-        const data = {
+        let data = {
           expired: 86400,
           username: formData.username,
           received: Math.floor(Date.now() / 1000),

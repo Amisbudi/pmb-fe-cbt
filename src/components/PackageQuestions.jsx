@@ -35,7 +35,7 @@ const PackageQuestions = () => {
   const getData = async (page = 1) => {
     setLoading(true);
     await axios
-      .get(`https://sbpmb-express.amisbudi.cloud/packagequestions?page=${page}`, {
+      .get(`http://localhost:3000/packagequestions?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -127,7 +127,7 @@ const PackageQuestions = () => {
 
   const getTypes = async () => {
     await axios
-      .get(`https://sbpmb-express.amisbudi.cloud/types`, {
+      .get(`http://localhost:3000/types`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -162,7 +162,7 @@ const PackageQuestions = () => {
     e.preventDefault();
     await axios
       .post(
-        `https://sbpmb-express.amisbudi.cloud/packagequestions`,
+        `http://localhost:3000/packagequestions`,
         {
           type_id: formData.type_id,
           name: formData.name,
@@ -195,7 +195,7 @@ const PackageQuestions = () => {
     e.preventDefault();
     await axios
       .patch(
-        `https://sbpmb-express.amisbudi.cloud/packagequestions/${formData.id}`,
+        `http://localhost:3000/packagequestions/${formData.id}`,
         {
           type_id: formData.type_id,
           name: formData.name,
@@ -226,7 +226,7 @@ const PackageQuestions = () => {
   const handleDelete = async (id) => {
     if (confirm("Apakah yakin akan menghapus paket soal?")) {
       await axios
-        .delete(`https://sbpmb-express.amisbudi.cloud/packagequestions/${id}`, {
+        .delete(`http://localhost:3000/packagequestions/${id}`, {
           headers: {
             "api-key": "b4621b89b8b68387",
           },
@@ -250,9 +250,9 @@ const PackageQuestions = () => {
   ) : (
     <main className="w-full md:w-10/12 h-screen bg-gray-100 pt-10 px-4 md:px-8 overflow-auto pb-10">
       <div className="space-y-1">
-        <h2 className="font-bold text-xl text-gray-900">Package Questions</h2>
+        <h2 className="font-bold text-xl text-gray-900">Paket Soal</h2>
         <p className="text-sm text-gray-700">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic, cumque!
+          Di bawah ini adalah daftar paket soal. Anda dapat mengelola, menambahkan, atau mengubah paket soal yang tersedia.
         </p>
       </div>
       <section className="mt-5">

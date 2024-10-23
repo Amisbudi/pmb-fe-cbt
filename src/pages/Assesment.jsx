@@ -38,7 +38,7 @@ const Assesment = () => {
       if (activePackage) {
         const data = JSON.parse(activePackage);
         const responseQuestions = await axios.get(
-          `https://sbpmb-express.amisbudi.cloud/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
+          `http://localhost:3000/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
           {
             headers: {
               "api-key": "b4621b89b8b68387",
@@ -49,6 +49,7 @@ const Assesment = () => {
         setQuestionActive(responseQuestions.data[0].question);
         setIndexQuestion(responseQuestions.data[0].number);
         setScheduleTime(new Date(responseQuestions.data[0].date_end));
+        console.log(responseQuestions.data[0])
         getRecord(
           responseQuestions.data[0].question_id,
           responseQuestions.data[0].package_question_id,
@@ -71,7 +72,7 @@ const Assesment = () => {
       if (activePackage) {
         const data = JSON.parse(activePackage);
         const responseQuestions = await axios.get(
-          `https://sbpmb-express.amisbudi.cloud/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
+          `http://localhost:3000/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
           {
             headers: {
               "api-key": "b4621b89b8b68387",
@@ -88,7 +89,7 @@ const Assesment = () => {
   const getRecord = async (question, pkg) => {
     await axios
       .get(
-        `https://sbpmb-express.amisbudi.cloud/records/question/${question}/${pkg}`,
+        `http://localhost:3000/records/question/${question}/${pkg}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -111,7 +112,7 @@ const Assesment = () => {
   const getAnswers = async (id) => {
     try {
       const responseAnwers = await axios.get(
-        `https://sbpmb-express.amisbudi.cloud/answers/question/${id}`,
+        `http://localhost:3000/answers/question/${id}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -127,7 +128,7 @@ const Assesment = () => {
   const changeQuestion = async (id, packageQuestion) => {
     try {
       const responseQuestions = await axios.get(
-        `https://sbpmb-express.amisbudi.cloud/questionusers/${id}/${packageQuestion}`,
+        `http://localhost:3000/questionusers/${id}/${packageQuestion}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -180,7 +181,7 @@ const Assesment = () => {
 
         if (update) {
           const response = await axios.patch(
-            `https://sbpmb-express.amisbudi.cloud/records/${record.question_id}/${record.package_question_id}`,
+            `http://localhost:3000/records/${record.question_id}/${record.package_question_id}`,
             {
               user_id: 1,
               answer_id: record.answer_id,
@@ -199,7 +200,7 @@ const Assesment = () => {
           }
         } else {
           const response = await axios.post(
-            `https://sbpmb-express.amisbudi.cloud/records`,
+            `http://localhost:3000/records`,
             {
               question_user_id: record.question_user_id,
               question_id: record.question_id,
@@ -230,7 +231,57 @@ const Assesment = () => {
         setSelectedAnswer(null);
         updateQuestions();
       } else {
-        alert("Kamera tidak aktif!");
+        // alert("Kamera tidak aktif!");
+        setLoading(true);
+        if (update) {
+          const response = await axios.patch(
+            `http://localhost:3000/records/${record.question_id}/${record.package_question_id}`,
+            {
+              user_id: 1,
+              answer_id: record.answer_id,
+            },
+            {
+              headers: {
+                "api-key": "b4621b89b8b68387",
+              },
+            },
+          );
+          if (response.data) {
+            setTimeout(() => {
+              setLoading(false);
+            }, 500);
+          }
+        } else {
+          const response = await axios.post(
+            `http://localhost:3000/records`,
+            {
+              question_user_id: record.question_user_id,
+              question_id: record.question_id,
+              package_question_id: record.package_question_id,
+              user_id: identityNumber,
+              answer_id: record.answer_id,
+            },
+            {
+              headers: {
+                "api-key": "b4621b89b8b68387",
+              },
+            },
+          );
+          if (response.data) {
+            setTimeout(() => {
+              setLoading(false);
+            }, 500);
+          }
+        }
+        const nextPage = record.number + 1;
+        if (nextPage <= questions.length) {
+          changeQuestion(nextPage, record.package_question_id);
+        } else {
+          changeQuestion(1, record.package_question_id);
+        }
+        setIndexQuestion(null);
+        setSelectedAnswer(null);
+        updateQuestions();
       }
     } catch (error) {
       console.log(error.message);
@@ -294,6 +345,16 @@ const Assesment = () => {
         }
       } catch (error) {
         console.error("Error accessing the camera:", error);
+        const packageStorage = localStorage.getItem('CBT:package');
+        const packageParse = JSON.parse(packageStorage);
+        const response = await axios.get(`http://localhost:3000/packagequestionusers/check/${packageParse.package_question_id}`,{
+          headers: {
+            "api-key": "b4621b89b8b68387",
+          },
+        });
+        if(response.data.camera_status){
+          getQuestions();
+        }
       }
     };
 
@@ -343,7 +404,7 @@ const Assesment = () => {
             <div className="space-y-3">
               {questionActive.image && (
                 <img
-                  src={`https://sbpmb-express.amisbudi.cloud/questions/image/${questionActive.id}`}
+                  src={`http://localhost:3000/questions/image/${questionActive.id}`}
                   alt="Question Image"
                   className="w-64 rounded-xl"
                 />
@@ -382,7 +443,7 @@ const Assesment = () => {
                     </label>
                     {answer.image && (
                       <img
-                        src={`https://sbpmb-express.amisbudi.cloud/answers/image/${answer.id}`}
+                        src={`http://localhost:3000/answers/image/${answer.id}`}
                         alt="Answer Image"
                         className="w-36 rounded-xl"
                       />
