@@ -31,7 +31,7 @@ const Dashboard = () => {
       }
 
       const response = await axios.get(
-        `https://dev-gateway.trisakti.ac.id/d3b1b0f38e11d357db8a6ae20b09ff23?username=${authData.username}`,
+        `https://api.trisakti.ac.id/d3b1b0f38e11d357db8a6ae20b09ff23?username=${authData.username}`,
         {
           headers: {
             Authorization: `Bearer ${authData.token}`,

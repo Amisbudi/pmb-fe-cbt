@@ -38,7 +38,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     await axios
-      .post(`https://dev-gateway.trisakti.ac.id/issueauth`, {
+      .post(`https://api.trisakti.ac.id/issueauth`, {
         username: formData.username,
         password: formData.password,
       })
