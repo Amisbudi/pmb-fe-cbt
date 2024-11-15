@@ -564,8 +564,6 @@ const Questions = () => {
           Di bawah ini adalah menu pengelolaan paket soal. Anda dapat menambah, mengubah, dan mengatur paket soal yang tersedia sesuai kebutuhan.
         </p>
       </div>
-
-      <div ref={editorRef} style={{ height: '300px' }}></div>
       <section className="mt-5">
         <div className="flex items-center justify-between">
           <button
