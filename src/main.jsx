@@ -5,7 +5,6 @@ import {
   RouterProvider,
 } from 'react-router-dom'
 import './index.css'
-import "quill/dist/quill.core.css";
 import App from './App.jsx'
 import Login from './auth/Login.jsx'
 import Assesment from './pages/Assesment.jsx'

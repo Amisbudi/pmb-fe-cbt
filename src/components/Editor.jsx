@@ -1,55 +1,53 @@
-import React, { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
-// Editor is an uncontrolled React component
-const Editor = forwardRef(
-  ({ readOnly, defaultValue, onTextChange, onSelectionChange }, ref) => {
-    const containerRef = useRef(null);
-    const defaultValueRef = useRef(defaultValue);
-    const onTextChangeRef = useRef(onTextChange);
-    const onSelectionChangeRef = useRef(onSelectionChange);
+const TextEditor = ({handleChangeEditor, name, value, createModal}) => {
+  // State to handle changes in the text editor content
+  const [content, setContent] = useState(value);
 
-    useLayoutEffect(() => {
-      onTextChangeRef.current = onTextChange;
-      onSelectionChangeRef.current = onSelectionChange;
-    });
+  // Quill modules configuration
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ list: "ordered" }, { list: "bullet" }],
+    ],
+    clipboard: {
+      // toggle to add extra line breaks when pasting HTML:
+      matchVisual: false,
+    },
+  };
 
-    useEffect(() => {
-      ref.current?.enable(!readOnly);
-    }, [ref, readOnly]);
+  // Handle changes in the quill text editor
+  const handleChange = (content, delta, source, editor) => {
+    setContent(editor.getContents());
 
-    useEffect(() => {
-      const container = containerRef.current;
-      const editorContainer = container.appendChild(
-        container.ownerDocument.createElement('div'),
-      );
-      const quill = new Quill(editorContainer, {
-        theme: 'snow',
-      });
+    handleChangeEditor(name, content);
+  };
 
-      ref.current = quill;
+  return createModal && (
+    <>
+      {/* <div className="w-full p-3 mb-5"> */}
+            <ReactQuill
+              className="h-[10rem]"
+              theme="snow"
+              formats={[
+                "header",
+                "bold",
+                "italic",
+                "underline",
+                "list",
+                "bullet",
+              ]}
+              placeholder={`Write something ${name === 'name' ? 'question' : name}...`}
+              modules={modules}
+              value={content}
+              onChange={handleChange}
+            />
+      {/* </div> */}
+    </>
+  );
+};
 
-      if (defaultValueRef.current) {
-        quill.setContents(defaultValueRef.current);
-      }
-
-      quill.on(Quill.events.TEXT_CHANGE, (...args) => {
-        onTextChangeRef.current?.(...args);
-      });
-
-      quill.on(Quill.events.SELECTION_CHANGE, (...args) => {
-        onSelectionChangeRef.current?.(...args);
-      });
-
-      return () => {
-        ref.current = null;
-        container.innerHTML = '';
-      };
-    }, [ref]);
-
-    return <div ref={containerRef}></div>;
-  },
-);
-
-Editor.displayName = 'Editor';
-
-export default Editor;
+export default TextEditor;

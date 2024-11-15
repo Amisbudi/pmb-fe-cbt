@@ -1,7 +1,5 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import Quill from 'quill';
 
 import {
   faEdit,
@@ -17,6 +15,8 @@ import { faCheckCircle } from "@fortawesome/free-regular-svg-icons";
 import axios from "axios";
 import LoadingScreen from "./LoadingScreen";
 import ExampleImportQuestion from "../assets/example-import-questions.xlsx";
+import TextEditor from "./Editor";
+import htmlparse from 'html-react-parser';
 
 const Questions = () => {
   const [createModal, setCreateModal] = useState(false);
@@ -32,8 +32,7 @@ const Questions = () => {
   const [totalPages, setTotalPages] = useState(0);
 
   const [loading, setLoading] = useState(true);
-
-  const editorRef = useRef(null);
+  
 
   const [formData, setFormData] = useState({
     id: "",
@@ -342,6 +341,14 @@ const Questions = () => {
     }
   };
 
+  function handleChangeEditor (name, value){
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+
   const handleEdit = async (content) => {
     await axios
       .get(`https://be-cbt.trisakti.ac.id/answers/question/${content.id}`, {
@@ -416,8 +423,8 @@ const Questions = () => {
     e.preventDefault();
     let data = {
       package_question_id: formData.package_question_id,
-      naration: formData.naration,
-      name: formData.name,
+      naration: JSON.stringify(formData.naration),
+      name: JSON.stringify(formData.name),
       image: formData.image,
       status: true,
       count_answer: countAnswer,
@@ -530,27 +537,6 @@ const Questions = () => {
   };
 
   useEffect(() => {
-    if (editorRef.current) {
-      const quill = new Quill(editorRef.current, {
-        modules: {
-          toolbar: [
-            [{ header: [1, 2, false] }],
-            ['bold', 'italic', 'underline'],
-            ['image', 'code-block'],
-          ],
-        },
-        placeholder: 'Compose an epic...',
-        theme: 'snow', // You can also use 'bubble' theme
-      });
-
-      // Clean up Quill instance on component unmount
-      return () => {
-        quill.destroy();
-      };
-    }
-  }, []);
-
-  useEffect(() => {
     getPackageQuestions();
     getData();
   }, []);
@@ -620,7 +606,7 @@ const Questions = () => {
                     >
                       {limit * (currentPage - 1) + index + 1}
                     </th>
-                    <td className="px-6 py-4">{question.name}</td>
+                    <td className="px-6 py-4">{htmlparse(question.name)}</td>
                     <td className="px-6 py-4">
                       {question.image ? (
                         <img
@@ -778,37 +764,39 @@ const Questions = () => {
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                     />
                   </div>
-                  <div className="col-span-2">
+                  <div className="col-span-2 mb-5 mt-3">
                     <label
                       htmlFor="naration"
                       className="block mb-2 text-xs font-medium text-gray-900"
                     >
                       Narasi
                     </label>
-                    <textarea
+                    {/* <textarea
                       name="naration"
-                      id="naration"
+                      id="editor"
                       onChange={handleChange}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                       placeholder="Naration of Question"
                       required={false}
-                    ></textarea>
+                    ></textarea> */}
+                    <TextEditor handleChangeEditor={handleChangeEditor} value={formData.naration} name="naration" createModal={createModal}/>
                   </div>
-                  <div className="col-span-2">
+                  <div className="col-span-2 mb-5 mt-3">
                     <label
                       htmlFor="name"
                       className="block mb-2 text-xs font-medium text-gray-900"
                     >
                       Soal
                     </label>
-                    <textarea
+                    <TextEditor handleChangeEditor={handleChangeEditor} value={formData.name} name="name" createModal={createModal}/>
+                    {/* <textarea
                       name="name"
                       id="name"
                       onChange={handleChange}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                       placeholder="Questions"
                       required
-                    ></textarea>
+                    ></textarea> */}
                   </div>
                 </div>
                 <hr className="my-3" />
@@ -962,7 +950,7 @@ const Questions = () => {
                     >
                       Soal
                     </label>
-                    <textarea
+                    {/* <textarea
                       name="naration"
                       id="naration"
                       value={formData.naration}
@@ -970,7 +958,9 @@ const Questions = () => {
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                       placeholder="Naration of Question"
                       required={false}
-                    ></textarea>
+                    ></textarea> */}
+                    <TextEditor handleChangeEditor={handleChangeEditor} value={formData.naration} name="naration" createModal={editModal}/>
+
                   </div>
                   <div className="col-span-3">
                     <label
@@ -979,7 +969,9 @@ const Questions = () => {
                     >
                       Soal
                     </label>
-                    <textarea
+                    <TextEditor handleChangeEditor={handleChangeEditor} value={formData.name} name="name" createModal={editModal}/>
+
+                    {/* <textarea
                       name="name"
                       id="name"
                       value={formData.name}
@@ -987,7 +979,7 @@ const Questions = () => {
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                       placeholder="Questions"
                       required
-                    ></textarea>
+                    ></textarea> */}
                   </div>
                 </div>
                 <hr className="my-3" />
