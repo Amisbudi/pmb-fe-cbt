@@ -888,7 +888,7 @@ const Questions = () => {
       {editModal && (
         <div
           tabIndex={-1}
-          className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50"
+          className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50 overflow-auto"
         >
           <div className="relative p-4 w-full max-w-4xl max-h-full">
             <div className="relative bg-white rounded-2xl shadow">
