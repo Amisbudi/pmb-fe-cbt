@@ -1,5 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import Quill from 'quill';
+
 import {
   faEdit,
   faKey,
@@ -23,15 +26,19 @@ const Questions = () => {
   const [packageQuestions, setPackageQuestions] = useState([]);
   const [paginations, setPaginations] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [countAnswer, setCountAnswer] = useState(0);
   const [limit, setLimit] = useState(0);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
   const [loading, setLoading] = useState(true);
 
+  const editorRef = useRef(null);
+
   const [formData, setFormData] = useState({
     id: "",
     package_question_id: "",
+    naration: "",
     name: "",
     image: "",
     status: false,
@@ -51,13 +58,17 @@ const Questions = () => {
     answer_4_id: null,
     answer_4_image: "",
     answer_4_status: false,
+    answer_5: "",
+    answer_5_id: null,
+    answer_5_image: "",
+    answer_5_status: false,
     excel: "",
   });
 
   const getData = async (page = 1) => {
     setLoading(true);
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/questions?page=${page}`, {
+      .get(`http://localhost:3000/questions?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -153,7 +164,7 @@ const Questions = () => {
 
   const getPackageQuestions = async () => {
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/packagequestions`, {
+      .get(`http://localhost:3000/packagequestions`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -177,6 +188,12 @@ const Questions = () => {
         });
       };
       reader.readAsDataURL(file);
+    } else if (e.target.name === 'package_question_id') {
+      setCountAnswer(parseInt(e.target.selectedOptions[0].getAttribute('data-count-answer')));
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.value,
+      });
     } else if (e.target.name === "image" && e.target.files.length > 0) {
       const file = e.target.files[0];
       const reader = new FileReader();
@@ -239,6 +256,84 @@ const Questions = () => {
         });
       };
       reader.readAsDataURL(file);
+    } else if (
+      e.target.name === "answer_5_image" &&
+      e.target.files.length > 0
+    ) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          answer_5_image: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    } else if (
+      e.target.name === "answer_6_image" &&
+      e.target.files.length > 0
+    ) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          answer_5_image: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    } else if (
+      e.target.name === "answer_7_image" &&
+      e.target.files.length > 0
+    ) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          answer_5_image: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    } else if (
+      e.target.name === "answer_8_image" &&
+      e.target.files.length > 0
+    ) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          answer_5_image: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    } else if (
+      e.target.name === "answer_9_image" &&
+      e.target.files.length > 0
+    ) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          answer_5_image: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    } else if (
+      e.target.name === "answer_10_image" &&
+      e.target.files.length > 0
+    ) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          answer_5_image: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
     } else {
       setFormData({
         ...formData,
@@ -249,31 +344,29 @@ const Questions = () => {
 
   const handleEdit = async (content) => {
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/answers/question/${content.id}`, {
+      .get(`http://localhost:3000/answers/question/${content.id}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
       })
       .then((response) => {
-        setFormData({
+        setCountAnswer(0)
+        setCountAnswer(response.data.length);
+        let data = {
           id: content.id,
           package_question_id: content.package_question_id,
+          naration: content.naration,
           name: content.name,
           image: content.image,
           status: content.status,
-          answer_1: response.data[0].name,
-          answer_1_id: response.data[0].id,
-          answer_1_status: response.data[0].is_right.toString(),
-          answer_2: response.data[1].name,
-          answer_2_id: response.data[1].id,
-          answer_2_status: response.data[1].is_right.toString(),
-          answer_3: response.data[2].name,
-          answer_3_id: response.data[2].id,
-          answer_3_status: response.data[2].is_right.toString(),
-          answer_4: response.data[3].name,
-          answer_4_id: response.data[3].id,
-          answer_4_status: response.data[3].is_right.toString(),
-        });
+        }
+        for (let i = 0; i < response.data.length; i++) {
+          data[`answer_${i + 1}`] = response.data[i].name;
+          data[`answer_${i + 1}_id`] = response.data[i].id;
+          data[`answer_${i + 1}_status`] = response.data[i].is_right.toString();
+        }
+
+        setFormData(data);
         setEditModal(true);
       })
       .catch((error) => {
@@ -286,7 +379,7 @@ const Questions = () => {
     e.preventDefault();
     await axios
       .post(
-        `https://be-cbt.trisakti.ac.id/questions/import`,
+        `http://localhost:3000/questions/import`,
         {
           package_question_id: formData.package_question_id,
           excel: formData.excel,
@@ -300,6 +393,7 @@ const Questions = () => {
       .then((response) => {
         alert(response.data.message);
         setImportModal(false);
+        setCountAnswer(0)
         getData();
         setTimeout(() => {
           setLoading(false);
@@ -320,27 +414,23 @@ const Questions = () => {
   const handleSave = async (e) => {
     setLoading(true);
     e.preventDefault();
+    let data = {
+      package_question_id: formData.package_question_id,
+      naration: formData.naration,
+      name: formData.name,
+      image: formData.image,
+      status: true,
+      count_answer: countAnswer,
+    };
+    for (let i = 0; i < parseInt(countAnswer); i++) {
+      data[`answer_${i + 1}`] = formData[`answer_${i + 1}`];
+      data[`answer_${i + 1}_image`] = formData[`answer_${i + 1}_image`];
+      data[`answer_${i + 1}_status`] = formData[`answer_${i + 1}_status`];
+    }
+
     await axios
       .post(
-        `https://be-cbt.trisakti.ac.id/questions`,
-        {
-          package_question_id: formData.package_question_id,
-          name: formData.name,
-          image: formData.image,
-          status: true,
-          answer_1: formData.answer_1,
-          answer_1_image: formData.answer_1_image,
-          answer_1_status: formData.answer_1_status,
-          answer_2: formData.answer_2,
-          answer_2_image: formData.answer_2_image,
-          answer_2_status: formData.answer_2_status,
-          answer_3: formData.answer_3,
-          answer_3_image: formData.answer_3_image,
-          answer_3_status: formData.answer_3_status,
-          answer_4: formData.answer_4,
-          answer_4_image: formData.answer_4_image,
-          answer_4_status: formData.answer_4_status,
-        },
+        `http://localhost:3000/questions`, data,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -350,6 +440,7 @@ const Questions = () => {
       .then((response) => {
         alert(response.data.message);
         setCreateModal(false);
+        setCountAnswer(0)
         getData();
         setTimeout(() => {
           setLoading(false);
@@ -370,31 +461,25 @@ const Questions = () => {
   const handleUpdate = async (e) => {
     setLoading(true);
     e.preventDefault();
+    let data = {
+      package_question_id: formData.package_question_id,
+      naration: formData.naration,
+      name: formData.name,
+      image: formData.image,
+      status: formData.status,
+      count_answer: countAnswer,
+    }
+
+    for (let i = 0; i < parseInt(countAnswer); i++) {
+      data[`answer_${i + 1}`] = formData[`answer_${i + 1}`];
+      data[`answer_${i + 1}_id`] = formData[`answer_${i + 1}_id`];
+      data[`answer_${i + 1}_image`] = formData[`answer_${i + 1}_image`];
+      data[`answer_${i + 1}_status`] = formData[`answer_${i + 1}_status`];
+    }
+
     await axios
       .patch(
-        `https://be-cbt.trisakti.ac.id/questions/${formData.id}`,
-        {
-          package_question_id: formData.package_question_id,
-          name: formData.name,
-          image: formData.image,
-          status: formData.status,
-          answer_1: formData.answer_1,
-          answer_1_id: formData.answer_1_id,
-          answer_1_image: formData.answer_1_image,
-          answer_1_status: formData.answer_1_status,
-          answer_2: formData.answer_2,
-          answer_2_id: formData.answer_2_id,
-          answer_2_image: formData.answer_2_image,
-          answer_2_status: formData.answer_2_status,
-          answer_3: formData.answer_3,
-          answer_3_id: formData.answer_3_id,
-          answer_3_image: formData.answer_3_image,
-          answer_3_status: formData.answer_3_status,
-          answer_4: formData.answer_4,
-          answer_4_id: formData.answer_4_id,
-          answer_4_image: formData.answer_4_image,
-          answer_4_status: formData.answer_4_status,
-        },
+        `http://localhost:3000/questions/${formData.id}`, data,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -404,6 +489,7 @@ const Questions = () => {
       .then((response) => {
         alert(response.data.message);
         setEditModal(false);
+        setCountAnswer(0)
         getData();
         setTimeout(() => {
           setLoading(false);
@@ -424,7 +510,7 @@ const Questions = () => {
   const handleDelete = async (id) => {
     if (confirm("Apakah yakin akan menghapus paket soal?")) {
       await axios
-        .delete(`https://be-cbt.trisakti.ac.id/questions/${id}`, {
+        .delete(`http://localhost:3000/questions/${id}`, {
           headers: {
             "api-key": "b4621b89b8b68387",
           },
@@ -444,6 +530,27 @@ const Questions = () => {
   };
 
   useEffect(() => {
+    if (editorRef.current) {
+      const quill = new Quill(editorRef.current, {
+        modules: {
+          toolbar: [
+            [{ header: [1, 2, false] }],
+            ['bold', 'italic', 'underline'],
+            ['image', 'code-block'],
+          ],
+        },
+        placeholder: 'Compose an epic...',
+        theme: 'snow', // You can also use 'bubble' theme
+      });
+
+      // Clean up Quill instance on component unmount
+      return () => {
+        quill.destroy();
+      };
+    }
+  }, []);
+
+  useEffect(() => {
     getPackageQuestions();
     getData();
   }, []);
@@ -457,11 +564,13 @@ const Questions = () => {
           Di bawah ini adalah menu pengelolaan paket soal. Anda dapat menambah, mengubah, dan mengatur paket soal yang tersedia sesuai kebutuhan.
         </p>
       </div>
+
+      <div ref={editorRef} style={{ height: '300px' }}></div>
       <section className="mt-5">
         <div className="flex items-center justify-between">
           <button
             type="button"
-            onClick={() => setCreateModal(!createModal)}
+            onClick={() => {setCreateModal(!createModal);setCountAnswer(0)}}
             className="text-white bg-sky-700 hover:bg-sky-800 font-medium rounded-xl text-sm px-5 py-2.5 space-x-2 mb-5 text-center"
           >
             <FontAwesomeIcon icon={faPlusCircle} />
@@ -469,7 +578,7 @@ const Questions = () => {
           </button>
           <button
             type="button"
-            onClick={() => setImportModal(!importModal)}
+            onClick={() => {setImportModal(!importModal);setCountAnswer(0)}}
             className="text-white bg-sky-700 hover:bg-sky-800 font-medium rounded-xl text-sm px-5 py-2.5 space-x-2 mb-5 text-center"
           >
             <FontAwesomeIcon icon={faUpload} />
@@ -484,7 +593,7 @@ const Questions = () => {
                   No.
                 </th>
                 <th scope="col" className="px-6 py-4">
-                  Nama Paket Soal
+                  Soal
                 </th>
                 <th scope="col" className="px-6 py-4">
                   Gambar
@@ -517,7 +626,7 @@ const Questions = () => {
                     <td className="px-6 py-4">
                       {question.image ? (
                         <img
-                          src={`https://be-cbt.trisakti.ac.id/questions/image/${question.id}`}
+                          src={`http://localhost:3000/questions/image/${question.id}`}
                           alt="Question Image"
                           className="w-32 rounded-xl"
                         />
@@ -606,13 +715,14 @@ const Questions = () => {
             </nav>
           )}
         </div>
+
       </section>
       {createModal && (
         <div
           tabIndex={-1}
           className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50"
         >
-          <div className="relative p-4 w-full max-w-lg max-h-full">
+          <div className="relative p-4 w-full max-w-4xl max-h-full">
             <div className="relative bg-white rounded-2xl shadow">
               <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
                 <h3 className="text-lg font-semibold text-gray-900">
@@ -620,12 +730,13 @@ const Questions = () => {
                 </h3>
                 <button
                   type="button"
-                  onClick={() => setCreateModal(!createModal)}
+                  onClick={() => {setCreateModal(!createModal);setCountAnswer(0)}}
                   className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-xl text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
                 >
                   <FontAwesomeIcon icon={faXmark} />
                 </button>
               </div>
+
               <form
                 onSubmit={handleSave}
                 encType="multipart/form-data"
@@ -648,7 +759,7 @@ const Questions = () => {
                       <option value="">Pilih</option>
                       {packageQuestions.length > 0 &&
                         packageQuestions.map((packageQuestion, index) => (
-                          <option value={packageQuestion.id} key={index}>
+                          <option value={packageQuestion.id} data-count-answer={packageQuestion.count_answer} key={index}>
                             {packageQuestion.name}
                           </option>
                         ))}
@@ -671,6 +782,22 @@ const Questions = () => {
                   </div>
                   <div className="col-span-2">
                     <label
+                      htmlFor="naration"
+                      className="block mb-2 text-xs font-medium text-gray-900"
+                    >
+                      Narasi
+                    </label>
+                    <textarea
+                      name="naration"
+                      id="naration"
+                      onChange={handleChange}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                      placeholder="Naration of Question"
+                      required={false}
+                    ></textarea>
+                  </div>
+                  <div className="col-span-2">
+                    <label
                       htmlFor="name"
                       className="block mb-2 text-xs font-medium text-gray-900"
                     >
@@ -687,279 +814,85 @@ const Questions = () => {
                   </div>
                 </div>
                 <hr className="my-3" />
-                <div className="grid gap-4 mb-5 grid-cols-2">
-                  <div>
-                    <label
-                      htmlFor="answer_1"
-                      className="block mb-2 text-xs font-medium text-gray-900"
-                    >
-                      Jawaban A
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                        <FontAwesomeIcon
-                          icon={faKey}
-                          className="text-gray-300 text-sm"
+                <div className="grid gap-4 mb-5 grid-cols-3">
+                  {Array.from({ length: countAnswer }).map((_, index) => (
+                    <div key={index}>
+                      <label
+                        htmlFor={`answer_${index + 1}`}
+                        className="block mb-2 text-xs font-medium text-gray-900"
+                      >
+                        Jawaban {index + 1}
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                          <FontAwesomeIcon
+                            icon={faKey}
+                            className="text-gray-300 text-sm"
+                          />
+                        </div>
+                        <input
+                          type="text"
+                          name={`answer_${index + 1}`}
+                          id={`answer_${index + 1}`}
+                          onChange={handleChange}
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+                          placeholder={`Jawaban ${index + 1}`}
+                          required
                         />
                       </div>
                       <input
-                        type="text"
-                        name="answer_1"
-                        id="answer_1"
+                        type="file"
+                        name={`answer_${index + 1}_image`}
+                        id={`answer_${index + 1}_image`}
                         onChange={handleChange}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
-                        placeholder="Jawaban A"
-                        required
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2"
                       />
-                    </div>
-                    <input
-                      type="file"
-                      name="answer_1_image"
-                      id="answer_1_image"
-                      onChange={handleChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2"
-                    />
-                    <div className="flex mt-2 ml-2">
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_1_true"
-                          name="answer_1_status"
-                          type="radio"
-                          onChange={handleChange}
-                          defaultValue={true}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                        />
-                        <label
-                          htmlFor="answer_1_true"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Benar
-                        </label>
-                      </div>
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_1_false"
-                          name="answer_1_status"
-                          type="radio"
-                          onChange={handleChange}
-                          defaultValue={false}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                        />
-                        <label
-                          htmlFor="answer_1_false"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Salah
-                        </label>
+                      <div className="flex mt-2 ml-2">
+                        <div className="flex items-center me-4">
+                          <input
+                            id={`answer_${index + 1}_true`}
+                            name={`answer_${index + 1}_status`}
+                            type="radio"
+                            onChange={handleChange}
+                            defaultValue={true}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                          />
+                          <label
+                            htmlFor={`answer_${index + 1}_true`}
+                            className="ms-2 text-xs font-medium text-gray-700"
+                          >
+                            Benar
+                          </label>
+                        </div>
+                        <div className="flex items-center me-4">
+                          <input
+                            id={`answer_${index + 1}_false`}
+                            name={`answer_${index + 1}_status`}
+                            type="radio"
+                            onChange={handleChange}
+                            defaultValue={false}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                          />
+                          <label
+                            htmlFor={`answer_${index + 1}_false`}
+                            className="ms-2 text-xs font-medium text-gray-700"
+                          >
+                            Salah
+                          </label>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="answer_2"
-                      className="block mb-2 text-xs font-medium text-gray-900"
-                    >
-                      Jawaban B
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                        <FontAwesomeIcon
-                          icon={faKey}
-                          className="text-gray-300 text-sm"
-                        />
-                      </div>
-                      <input
-                        type="text"
-                        name="answer_2"
-                        id="answer_2"
-                        onChange={handleChange}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
-                        placeholder="Jawaban B"
-                        required
-                      />
-                    </div>
-                    <input
-                      type="file"
-                      name="answer_2_image"
-                      id="answer_2_image"
-                      onChange={handleChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2"
-                    />
-                    <div className="flex mt-2 ml-2">
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_2_true"
-                          name="answer_2_status"
-                          type="radio"
-                          onChange={handleChange}
-                          defaultValue={true}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                        />
-                        <label
-                          htmlFor="answer_2_true"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Benar
-                        </label>
-                      </div>
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_2_false"
-                          name="answer_2_status"
-                          onChange={handleChange}
-                          type="radio"
-                          defaultValue={false}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                        />
-                        <label
-                          htmlFor="answer_2_false"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Salah
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="answer_3"
-                      className="block mb-2 text-xs font-medium text-gray-900"
-                    >
-                      Jawaban C
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                        <FontAwesomeIcon
-                          icon={faKey}
-                          className="text-gray-300 text-sm"
-                        />
-                      </div>
-                      <input
-                        type="text"
-                        name="answer_3"
-                        id="answer_3"
-                        onChange={handleChange}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
-                        placeholder="Jawaban C"
-                        required
-                      />
-                    </div>
-                    <input
-                      type="file"
-                      name="answer_3_image"
-                      id="answer_3_image"
-                      onChange={handleChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2"
-                    />
-                    <div className="flex mt-2 ml-2">
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_3_true"
-                          name="answer_3_status"
-                          onChange={handleChange}
-                          type="radio"
-                          defaultValue={true}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                        />
-                        <label
-                          htmlFor="answer_3_true"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Benar
-                        </label>
-                      </div>
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_3_false"
-                          name="answer_3_status"
-                          onChange={handleChange}
-                          type="radio"
-                          defaultValue={false}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                        />
-                        <label
-                          htmlFor="answer_3_false"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Salah
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="answer_4"
-                      className="block mb-2 text-xs font-medium text-gray-900"
-                    >
-                      Jawaban D
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                        <FontAwesomeIcon
-                          icon={faKey}
-                          className="text-gray-300 text-sm"
-                        />
-                      </div>
-                      <input
-                        type="text"
-                        name="answer_4"
-                        id="answer_4"
-                        onChange={handleChange}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
-                        placeholder="Jawaban D"
-                        required
-                      />
-                    </div>
-                    <input
-                      type="file"
-                      name="answer_4_image"
-                      id="answer_4_image"
-                      onChange={handleChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2"
-                    />
-                    <div className="flex mt-2 ml-2">
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_4_true"
-                          name="answer_4_status"
-                          onChange={handleChange}
-                          type="radio"
-                          defaultValue={true}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                        />
-                        <label
-                          htmlFor="answer_4_true"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Benar
-                        </label>
-                      </div>
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_4_false"
-                          name="answer_4_status"
-                          onChange={handleChange}
-                          type="radio"
-                          defaultValue={false}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                        />
-                        <label
-                          htmlFor="answer_4_false"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Salah
-                        </label>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-                <button
-                  type="submit"
-                  className="text-white inline-flex items-center bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-xl space-x-2 text-xs px-5 py-2.5 text-center"
-                >
-                  <FontAwesomeIcon icon={faSave} />
-                  <span>Simpan</span>
-                </button>
+                {countAnswer > 0 &&
+                  <button
+                    type="submit"
+                    className="text-white inline-flex items-center bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-xl space-x-2 text-xs px-5 py-2.5 text-center"
+                  >
+                    <FontAwesomeIcon icon={faSave} />
+                    <span>Simpan</span>
+                  </button>
+                }
               </form>
             </div>
           </div>
@@ -971,7 +904,7 @@ const Questions = () => {
           tabIndex={-1}
           className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50"
         >
-          <div className="relative p-4 w-full max-w-lg max-h-full">
+          <div className="relative p-4 w-full max-w-4xl max-h-full">
             <div className="relative bg-white rounded-2xl shadow">
               <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
                 <h3 className="text-lg font-semibold text-gray-900">
@@ -979,7 +912,7 @@ const Questions = () => {
                 </h3>
                 <button
                   type="button"
-                  onClick={() => setEditModal(!editModal)}
+                  onClick={() => {setEditModal(!editModal); setCountAnswer(0)}}
                   className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-xl text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
                 >
                   <FontAwesomeIcon icon={faXmark} />
@@ -990,29 +923,7 @@ const Questions = () => {
                 encType="multipart/form-data"
                 className="p-4 md:p-5"
               >
-                <div className="grid gap-4 mb-5 grid-cols-3">
-                  <div className="col-span-1">
-                    <label
-                      htmlFor="package_question_id"
-                      className="block mb-2 text-xs font-medium text-gray-900"
-                    >
-                      Paket Soal
-                    </label>
-                    <select
-                      name="package_question_id"
-                      value={formData.package_question_id}
-                      onChange={handleChange}
-                      id="package_question_id"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                    >
-                      {packageQuestions.length > 0 &&
-                        packageQuestions.map((packageQuestion, index) => (
-                          <option value={packageQuestion.id} key={index}>
-                            {packageQuestion.name}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
+                <div className="grid gap-4 mb-5 grid-cols-2">
                   <div className="col-span-1">
                     <label
                       htmlFor="image"
@@ -1048,6 +959,23 @@ const Questions = () => {
                   </div>
                   <div className="col-span-3">
                     <label
+                      htmlFor="naration"
+                      className="block mb-2 text-xs font-medium text-gray-900"
+                    >
+                      Soal
+                    </label>
+                    <textarea
+                      name="naration"
+                      id="naration"
+                      value={formData.naration}
+                      onChange={handleChange}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                      placeholder="Naration of Question"
+                      required={false}
+                    ></textarea>
+                  </div>
+                  <div className="col-span-3">
+                    <label
                       htmlFor="name"
                       className="block mb-2 text-xs font-medium text-gray-900"
                     >
@@ -1065,283 +993,79 @@ const Questions = () => {
                   </div>
                 </div>
                 <hr className="my-3" />
-                <div className="grid gap-4 mb-5 grid-cols-2">
-                  <div>
-                    <label
-                      htmlFor="answer_1"
-                      className="block mb-2 text-xs font-medium text-gray-900"
-                    >
-                      Jawaban A
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                        <FontAwesomeIcon
-                          icon={faKey}
-                          className="text-gray-300 text-sm"
+                <div className="grid gap-4 mb-5 grid-cols-3">
+                  {Array.from({ length: countAnswer }).map((_, index) => (
+                    <div key={index}>
+                      <label
+                        htmlFor={`answer_${index + 1}`}
+                        className="block mb-2 text-xs font-medium text-gray-900"
+                      >
+                        Jawaban {index + 1}
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                          <FontAwesomeIcon
+                            icon={faKey}
+                            className="text-gray-300 text-sm"
+                          />
+                        </div>
+                        <input
+                          type="text"
+                          name={`answer_${index + 1}`}
+                          id={`answer_${index + 1}`}
+                          value={formData[`answer_${index + 1}`]}
+                          onChange={handleChange}
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+                          placeholder={`Jawaban ${index + 1}`}
+                          required
                         />
                       </div>
                       <input
-                        type="text"
-                        name="answer_1"
-                        id="answer_1"
-                        value={formData.answer_1}
+                        type="file"
+                        name={`answer_${index + 1}_image`}
+                        id={`answer_${index + 1}_image`}
                         onChange={handleChange}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
-                        placeholder="Jawaban A"
-                        required
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2"
                       />
-                    </div>
-                    <input
-                      type="file"
-                      name="answer_1_image"
-                      id="answer_1_image"
-                      onChange={handleChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2"
-                    />
-                    <div className="flex mt-2 ml-2">
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_1_true"
-                          name="answer_1_status"
-                          type="radio"
-                          value="true"
-                          onChange={handleChange}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                          checked={formData.answer_1_status == "true"}
-                        />
-                        <label
-                          htmlFor="answer_1_true"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Benar
-                        </label>
-                      </div>
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_1_false"
-                          name="answer_1_status"
-                          type="radio"
-                          value="false"
-                          onChange={handleChange}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                          checked={formData.answer_1_status == "false"}
-                        />
-                        <label
-                          htmlFor="answer_1_false"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Salah
-                        </label>
+                      <div className="flex mt-2 ml-2">
+                        <div className="flex items-center me-4">
+                          <input
+                            id={`answer_${index + 1}_true`}
+                            name={`answer_${index + 1}_status`}
+                            type="radio"
+                            value="true"
+                            onChange={handleChange}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                            checked={formData[`answer_${index + 1}_status`] == "true"}
+                          />
+                          <label
+                            htmlFor={`answer_${index + 1}_true`}
+                            className="ms-2 text-xs font-medium text-gray-700"
+                          >
+                            Benar
+                          </label>
+                        </div>
+                        <div className="flex items-center me-4">
+                          <input
+                            id={`answer_${index + 1}_false`}
+                            name={`answer_${index + 1}_status`}
+                            type="radio"
+                            value="false"
+                            onChange={handleChange}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                            checked={formData[`answer_${index + 1}_status`] == "false"}
+                          />
+                          <label
+                            htmlFor={`answer_${index + 1}_false`}
+                            className="ms-2 text-xs font-medium text-gray-700"
+                          >
+                            Salah
+                          </label>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="answer_2"
-                      className="block mb-2 text-xs font-medium text-gray-900"
-                    >
-                      Jawaban B
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                        <FontAwesomeIcon
-                          icon={faKey}
-                          className="text-gray-300 text-sm"
-                        />
-                      </div>
-                      <input
-                        type="text"
-                        name="answer_2"
-                        id="answer_2"
-                        value={formData.answer_2}
-                        onChange={handleChange}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
-                        placeholder="Jawaban B"
-                        required
-                      />
-                    </div>
-                    <input
-                      type="file"
-                      name="answer_2_image"
-                      id="answer_2_image"
-                      onChange={handleChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2"
-                    />
-                    <div className="flex mt-2 ml-2">
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_2_true"
-                          name="answer_2_status"
-                          type="radio"
-                          value="true"
-                          onChange={handleChange}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                          checked={formData.answer_2_status == "true"}
-                        />
-                        <label
-                          htmlFor="answer_2_true"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Benar
-                        </label>
-                      </div>
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_2_false"
-                          name="answer_2_status"
-                          type="radio"
-                          value="false"
-                          onChange={handleChange}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                          checked={formData.answer_2_status == "false"}
-                        />
-                        <label
-                          htmlFor="answer_2_false"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Salah
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="answer_3"
-                      className="block mb-2 text-xs font-medium text-gray-900"
-                    >
-                      Jawaban C
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                        <FontAwesomeIcon
-                          icon={faKey}
-                          className="text-gray-300 text-sm"
-                        />
-                      </div>
-                      <input
-                        type="text"
-                        name="answer_3"
-                        id="answer_3"
-                        value={formData.answer_3}
-                        onChange={handleChange}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
-                        placeholder="Jawaban C"
-                        required
-                      />
-                    </div>
-                    <input
-                      type="file"
-                      name="answer_3_image"
-                      id="answer_3_image"
-                      onChange={handleChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2"
-                    />
-                    <div className="flex mt-2 ml-2">
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_3_true"
-                          name="answer_3_status"
-                          type="radio"
-                          value="true"
-                          onChange={handleChange}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                          checked={formData.answer_3_status == "true"}
-                        />
-                        <label
-                          htmlFor="answer_3_true"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Benar
-                        </label>
-                      </div>
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_3_false"
-                          name="answer_3_status"
-                          type="radio"
-                          value="false"
-                          onChange={handleChange}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                          checked={formData.answer_3_status == "false"}
-                        />
-                        <label
-                          htmlFor="answer_3_false"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Salah
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="answer_4"
-                      className="block mb-2 text-xs font-medium text-gray-900"
-                    >
-                      Jawaban D
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                        <FontAwesomeIcon
-                          icon={faKey}
-                          className="text-gray-300 text-sm"
-                        />
-                      </div>
-                      <input
-                        type="text"
-                        name="answer_4"
-                        id="answer_4"
-                        value={formData.answer_4}
-                        onChange={handleChange}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
-                        placeholder="Jawaban D"
-                        required
-                      />
-                    </div>
-                    <input
-                      type="file"
-                      name="answer_4_image"
-                      id="answer_4_image"
-                      onChange={handleChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2"
-                    />
-                    <div className="flex mt-2 ml-2">
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_4_true"
-                          name="answer_4_status"
-                          type="radio"
-                          value="true"
-                          onChange={handleChange}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                          checked={formData.answer_4_status == "true"}
-                        />
-                        <label
-                          htmlFor="answer_4_true"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Benar
-                        </label>
-                      </div>
-                      <div className="flex items-center me-4">
-                        <input
-                          id="answer_4_false"
-                          name="answer_4_status"
-                          type="radio"
-                          value="false"
-                          onChange={handleChange}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                          checked={formData.answer_4_status == "false"}
-                        />
-                        <label
-                          htmlFor="answer_4_false"
-                          className="ms-2 text-xs font-medium text-gray-700"
-                        >
-                          Salah
-                        </label>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
+
                 </div>
                 <button
                   type="submit"
@@ -1368,7 +1092,7 @@ const Questions = () => {
                 </h3>
                 <button
                   type="button"
-                  onClick={() => setImportModal(!importModal)}
+                  onClick={() => {setImportModal(!importModal);setCountAnswer(0)}}
                   className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-xl text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
                 >
                   <FontAwesomeIcon icon={faXmark} />

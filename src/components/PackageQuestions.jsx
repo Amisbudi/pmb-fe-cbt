@@ -29,13 +29,14 @@ const PackageQuestions = () => {
     id: "",
     type_id: "",
     name: "",
+    count_answer: 4,
     status: false,
   });
 
   const getData = async (page = 1) => {
     setLoading(true);
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/packagequestions?page=${page}`, {
+      .get(`http://localhost:3000/packagequestions?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -127,7 +128,7 @@ const PackageQuestions = () => {
 
   const getTypes = async () => {
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/types`, {
+      .get(`http://localhost:3000/types`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -152,6 +153,7 @@ const PackageQuestions = () => {
       id: content.id,
       type_id: content.type_id,
       name: content.name,
+      count_answer: content.count_answer,
       status: content.status,
     });
     setEditModal(true);
@@ -162,10 +164,11 @@ const PackageQuestions = () => {
     e.preventDefault();
     await axios
       .post(
-        `https://be-cbt.trisakti.ac.id/packagequestions`,
+        `http://localhost:3000/packagequestions`,
         {
           type_id: formData.type_id,
           name: formData.name,
+          count_answer: formData.count_answer,
           status: true,
         },
         {
@@ -195,10 +198,11 @@ const PackageQuestions = () => {
     e.preventDefault();
     await axios
       .patch(
-        `https://be-cbt.trisakti.ac.id/packagequestions/${formData.id}`,
+        `http://localhost:3000/packagequestions/${formData.id}`,
         {
           type_id: formData.type_id,
           name: formData.name,
+          count_answer: formData.count_answer,
           status: formData.status,
         },
         {
@@ -226,7 +230,7 @@ const PackageQuestions = () => {
   const handleDelete = async (id) => {
     if (confirm("Apakah yakin akan menghapus paket soal?")) {
       await axios
-        .delete(`https://be-cbt.trisakti.ac.id/packagequestions/${id}`, {
+        .delete(`http://localhost:3000/packagequestions/${id}`, {
           headers: {
             "api-key": "b4621b89b8b68387",
           },
@@ -441,6 +445,23 @@ const PackageQuestions = () => {
                       required
                     />
                   </div>
+                  <div className="col-span-2">
+                    <label
+                      htmlFor="count_answer"
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                    >
+                      Jumlah Jawaban
+                    </label>
+                    <input
+                      type="number"
+                      name="count_answer"
+                      id="count_answer"
+                      onChange={handleChange}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                      placeholder="Count of answer"
+                      required
+                    />
+                  </div>
                 </div>
                 <button
                   type="submit"
@@ -513,6 +534,24 @@ const PackageQuestions = () => {
                       onChange={handleChange}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                       placeholder="Type of package name"
+                      required
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <label
+                      htmlFor="count_answer"
+                      className="block mb-2 text-sm font-medium text-gray-900"
+                    >
+                      Jumlah Jawaban
+                    </label>
+                    <input
+                      type="number"
+                      name="count_answer"
+                      id="count_answer"
+                      value={formData.count_answer}
+                      onChange={handleChange}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                      placeholder="Count of answer"
                       required
                     />
                   </div>

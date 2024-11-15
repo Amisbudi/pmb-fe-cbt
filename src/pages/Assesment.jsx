@@ -31,6 +31,7 @@ const Assesment = () => {
 
   const [update, setUpdate] = useState(false);
 
+
   const getQuestions = async () => {
     setLoading(true);
     try {
@@ -38,7 +39,7 @@ const Assesment = () => {
       if (activePackage) {
         const data = JSON.parse(activePackage);
         const responseQuestions = await axios.get(
-          `https://be-cbt.trisakti.ac.id/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
+          `http://localhost:3000/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
           {
             headers: {
               "api-key": "b4621b89b8b68387",
@@ -72,7 +73,7 @@ const Assesment = () => {
       if (activePackage) {
         const data = JSON.parse(activePackage);
         const responseQuestions = await axios.get(
-          `https://be-cbt.trisakti.ac.id/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
+          `http://localhost:3000/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
           {
             headers: {
               "api-key": "b4621b89b8b68387",
@@ -89,7 +90,7 @@ const Assesment = () => {
   const getRecord = async (question, pkg) => {
     await axios
       .get(
-        `https://be-cbt.trisakti.ac.id/records/question/${question}/${pkg}`,
+        `http://localhost:3000/records/question/${question}/${pkg}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -112,7 +113,7 @@ const Assesment = () => {
   const getAnswers = async (id) => {
     try {
       const responseAnwers = await axios.get(
-        `https://be-cbt.trisakti.ac.id/answers/question/${id}`,
+        `http://localhost:3000/answers/question/${id}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -128,7 +129,7 @@ const Assesment = () => {
   const changeQuestion = async (id, packageQuestion) => {
     try {
       const responseQuestions = await axios.get(
-        `https://be-cbt.trisakti.ac.id/questionusers/${id}/${packageQuestion}`,
+        `http://localhost:3000/questionusers/${id}/${packageQuestion}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -181,7 +182,7 @@ const Assesment = () => {
 
         if (update) {
           const response = await axios.patch(
-            `https://be-cbt.trisakti.ac.id/records/${record.question_id}/${record.package_question_id}`,
+            `http://localhost:3000/records/${record.question_id}/${record.package_question_id}`,
             {
               user_id: 1,
               answer_id: record.answer_id,
@@ -200,7 +201,7 @@ const Assesment = () => {
           }
         } else {
           const response = await axios.post(
-            `https://be-cbt.trisakti.ac.id/records`,
+            `http://localhost:3000/records`,
             {
               question_user_id: record.question_user_id,
               question_id: record.question_id,
@@ -235,7 +236,7 @@ const Assesment = () => {
         setLoading(true);
         if (update) {
           const response = await axios.patch(
-            `https://be-cbt.trisakti.ac.id/records/${record.question_id}/${record.package_question_id}`,
+            `http://localhost:3000/records/${record.question_id}/${record.package_question_id}`,
             {
               user_id: 1,
               answer_id: record.answer_id,
@@ -253,7 +254,7 @@ const Assesment = () => {
           }
         } else {
           const response = await axios.post(
-            `https://be-cbt.trisakti.ac.id/records`,
+            `http://localhost:3000/records`,
             {
               question_user_id: record.question_user_id,
               question_id: record.question_id,
@@ -315,7 +316,7 @@ const Assesment = () => {
           throw new Error("Token sudah kedaluwarsa");
         }
         const response = await axios.get(
-          "https://api.trisakti.ac.id/d3b1b0f38e11d357db8a6ae20b09ff23?username=haisyammaulana22@gmail.com",
+          "https://dev-gateway.trisakti.ac.id/d3b1b0f38e11d357db8a6ae20b09ff23?username=haisyammaulana22@gmail.com",
           {
             headers: {
               Authorization: `Bearer ${authData.token}`,
@@ -347,7 +348,7 @@ const Assesment = () => {
         console.error("Error accessing the camera:", error);
         const packageStorage = localStorage.getItem('CBT:package');
         const packageParse = JSON.parse(packageStorage);
-        const response = await axios.get(`https://be-cbt.trisakti.ac.id/packagequestionusers/check/${packageParse.package_question_id}`,{
+        const response = await axios.get(`http://localhost:3000/packagequestionusers/check/${packageParse.package_question_id}`,{
           headers: {
             "api-key": "b4621b89b8b68387",
           },
@@ -404,11 +405,14 @@ const Assesment = () => {
             <div className="space-y-3">
               {questionActive.image && (
                 <img
-                  src={`https://be-cbt.trisakti.ac.id/questions/image/${questionActive.id}`}
+                  src={`http://localhost:3000/questions/image/${questionActive.id}`}
                   alt="Question Image"
                   className="w-64 rounded-xl"
                 />
               )}
+              {questionActive.naration && 
+                <p className="text-gray-900">{questionActive.naration}</p>
+              }
               <p className="text-gray-900">{questionActive.name}</p>
               {isAnswered && (
                 <div className="inline-block bg-emerald-100 text-emerald-900 px-4 py-2.5 text-sm rounded-xl">
@@ -443,7 +447,7 @@ const Assesment = () => {
                     </label>
                     {answer.image && (
                       <img
-                        src={`https://be-cbt.trisakti.ac.id/answers/image/${answer.id}`}
+                        src={`http://localhost:3000/answers/image/${answer.id}`}
                         alt="Answer Image"
                         className="w-36 rounded-xl"
                       />
