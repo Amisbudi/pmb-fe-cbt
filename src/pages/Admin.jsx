@@ -35,7 +35,7 @@ const Admin = () => {
         throw new Error('Token sudah kedaluwarsa');
       }
 
-      const response = await axios.get('https://dev-gateway.trisakti.ac.id/issueprofile', {
+      const response = await axios.get('https://api-gateway.trisakti.ac.id/issueprofile', {
         headers: {
           Authorization: `Bearer ${authData.token}`
         }

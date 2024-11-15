@@ -31,7 +31,7 @@ const Dashboard = () => {
       }
 
       const response = await axios.get(
-        `https://dev-gateway.trisakti.ac.id/d3b1b0f38e11d357db8a6ae20b09ff23?username=${authData.username}`,
+        `https://api-gateway.trisakti.ac.id/d3b1b0f38e11d357db8a6ae20b09ff23?username=${authData.username}`,
         {
           headers: {
             Authorization: `Bearer ${authData.token}`,
@@ -55,7 +55,7 @@ const Dashboard = () => {
   const getPackageQuestionUsers = async (data, identityNumber) => {
     try {
       const responsePackageQuestionUsers = await axios.get(
-        `http://localhost:3000/packagequestionusers/user/${data.userId}`,
+        `https://be-cbt.trisakti.ac.id/packagequestionusers/user/${data.userId}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -63,7 +63,7 @@ const Dashboard = () => {
         }
       );
 
-      const responseRecords = await axios.get(`http://localhost:3000/records`, {
+      const responseRecords = await axios.get(`https://be-cbt.trisakti.ac.id/records`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -107,7 +107,7 @@ const Dashboard = () => {
     const dataId = e.target.getAttribute('data-id');
     await axios
       .get(
-        `http://localhost:3000/packagequestionusers/request/${dataId}`,
+        `https://be-cbt.trisakti.ac.id/packagequestionusers/request/${dataId}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -144,7 +144,7 @@ const Dashboard = () => {
                 name: name,
               };
               const response = await axios.get(
-                `http://localhost:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`,
+                `https://be-cbt.trisakti.ac.id/questionusers/questions/${data.package_question_id}/${data.user_id}`,
                 {
                   headers: {
                     "api-key": "b4621b89b8b68387",
@@ -152,7 +152,7 @@ const Dashboard = () => {
                 },
               );
               if (!response.data.length > 0) {
-                await axios.post(`http://localhost:3000/questionusers`, data, {
+                await axios.post(`https://be-cbt.trisakti.ac.id/questionusers`, data, {
                   headers: {
                     "api-key": "b4621b89b8b68387",
                   },
@@ -184,7 +184,7 @@ const Dashboard = () => {
                 user_id: pkg.user_id,
               };
               const response = await axios.get(
-                `http://localhost:3000/questionusers/questions/${data.package_question_id}/${data.user_id}`,
+                `https://be-cbt.trisakti.ac.id/questionusers/questions/${data.package_question_id}/${data.user_id}`,
                 {
                   headers: {
                     "api-key": "b4621b89b8b68387",
@@ -192,7 +192,7 @@ const Dashboard = () => {
                 },
               );
               if (!response.data.length > 0) {
-                await axios.post(`http://localhost:3000/questionusers`, data, {
+                await axios.post(`https://be-cbt.trisakti.ac.id/questionusers`, data, {
                   headers: {
                     "api-key": "b4621b89b8b68387",
                   },

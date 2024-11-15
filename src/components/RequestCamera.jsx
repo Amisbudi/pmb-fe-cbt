@@ -15,7 +15,7 @@ const RequestCamera = () => {
   const getData = async (page = 1) => {
     setLoading(true);
     await axios
-      .get(`http://localhost:3000/packagequestionusers/requestcamera?page=${page}`, {
+      .get(`https://be-cbt.trisakti.ac.id/packagequestionusers/requestcamera?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -112,7 +112,7 @@ const RequestCamera = () => {
     const dataId = e.target.getAttribute('data-id');
     await axios
       .get(
-        `http://localhost:3000/packagequestionusers/camera/${dataId}`,
+        `https://be-cbt.trisakti.ac.id/packagequestionusers/camera/${dataId}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
