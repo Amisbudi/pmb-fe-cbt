@@ -943,12 +943,12 @@ const Questions = () => {
                       <option value="false">Tidak aktif</option>
                     </select>
                   </div>
-                  <div className="col-span-3">
+                  <div className="col-span-3 mb-5 mt-3">
                     <label
                       htmlFor="naration"
                       className="block mb-2 text-xs font-medium text-gray-900"
                     >
-                      Soal
+                      Narasi
                     </label>
                     {/* <textarea
                       name="naration"
@@ -962,7 +962,7 @@ const Questions = () => {
                     <TextEditor handleChangeEditor={handleChangeEditor} value={formData.naration} name="naration" createModal={editModal}/>
 
                   </div>
-                  <div className="col-span-3">
+                  <div className="col-span-3 mb-5 mt-3">
                     <label
                       htmlFor="name"
                       className="block mb-2 text-xs font-medium text-gray-900"
