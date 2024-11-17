@@ -412,9 +412,11 @@ const Assesment = () => {
                 />
               )}
               {questionActive.naration && 
-                <p className="text-gray-900">{htmlparse(questionActive.naration)}</p>
+                <p className="text-gray-900">{document.createElement("div").innerHTML = htmlparse(questionActive.naration)}</p>
               }
-              <p className="text-gray-900">{htmlparse(questionActive.name)}</p>
+              {questionActive.name && 
+              <p className="text-gray-900">{document.createElement("div").innerHTML = htmlparse(questionActive.name)}</p>
+              }
               {isAnswered && (
                 <div className="inline-block bg-emerald-100 text-emerald-900 px-4 py-2.5 text-sm rounded-xl">
                   Anda sudah menjawab:{" "}

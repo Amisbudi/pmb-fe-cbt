@@ -288,12 +288,12 @@ const Dashboard = () => {
                       <h2 className="font-medium text-base">
                         {pkg.package ? pkg.package.name : "Package not found"}
                       </h2>
-                      {pkg.classes == "Reguler" && pkg.date_exam && (
+                      {pkg.classes == "Employee" && pkg.date_exam && (
                         <p className="text-xs">
                           {moment.tz(pkg.date_exam, "Asia/Jakarta").format("lll")}
                         </p>
                       )}
-                      {pkg.classes == "Employee" &&
+                      {pkg.classes == "Reguler" &&
                         pkg.date_start &&
                         pkg.date_end && (
                           <p className="flex flex-col gap-2 text-xs">
