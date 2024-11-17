@@ -5,6 +5,7 @@ import TrisaktiLogo from "../assets/img/Logo-Usakti-White.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import htmlparse from 'html-react-parser';
 
 const Assesment = () => {
   const navigate = useNavigate();
@@ -411,9 +412,9 @@ const Assesment = () => {
                 />
               )}
               {questionActive.naration && 
-                <p className="text-gray-900">{questionActive.naration}</p>
+                <p className="text-gray-900">{htmlparse(questionActive.naration)}</p>
               }
-              <p className="text-gray-900">{questionActive.name}</p>
+              <p className="text-gray-900">{htmlparse(questionActive.name)}</p>
               {isAnswered && (
                 <div className="inline-block bg-emerald-100 text-emerald-900 px-4 py-2.5 text-sm rounded-xl">
                   Anda sudah menjawab:{" "}
