@@ -57,6 +57,9 @@ function Login() {
         if (decoded.scopes[0] == "admission-participant") {
           return navigate("/dashboard");
         }
+        if (decoded.scopes[0] == "admission-new-participant") {
+          return navigate("/dashboard");
+        }
       })
       .catch((error) => {
         if (error.response && error.response.status === 400) {

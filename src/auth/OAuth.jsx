@@ -28,6 +28,15 @@ const OAuth = () => {
         }
         localStorage.setItem('CBTtrisakti:token', JSON.stringify(data));
         navigate('/dashboard')
+      }else if(decoded.scopes[0] == 'admission-new-participant'){
+        const data = {
+          expired: 86400,
+          username: username,
+          received: Math.floor(Date.now() / 1000),
+          token: token,
+        }
+        localStorage.setItem('CBTtrisakti:token', JSON.stringify(data));
+        navigate('/dashboard')
       } else {
         navigate('/');
       }
