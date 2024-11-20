@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import TrisaktiLogo from '../assets/img/Logo-Usakti-White.png'
-import { faBars, faCamera, faQuestionCircle, faRankingStar, faSignOut, faTags, faUserCircle } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faCamera, faQuestionCircle, faRankingStar, faSignOut, faTags, faUserCircle, faLayerGroup } from '@fortawesome/free-solid-svg-icons'
 import PackageQuestions from '../components/PackageQuestions'
+import QuestionssGroup from '../components/QuestionsGroup'
 import Questions from '../components/Questions'
 import Results from '../components/Results'
 import { jwtDecode } from 'jwt-decode'
@@ -57,7 +58,9 @@ const Admin = () => {
       case 'questions':
         return <Questions />;
       case 'camera':
-          return <RequestCamera />;
+        return <RequestCamera />;
+      case 'group-questions':
+        return <QuestionssGroup />
       case 'results':
         return <Results />;
       default:
@@ -98,6 +101,12 @@ const Admin = () => {
                   <p className='space-x-3'>
                     <FontAwesomeIcon icon={faTags} />
                     <span>Package Questions</span>
+                  </p>
+                </a>
+                <a href={`/admin?page=group-questions`} className='block cursor-pointer text-gray-200 hover:text-gray-300 text-sm bg-gray-700 hover:bg-gray-900 py-4 px-5 rounded-xl transition-all ease-in-out'>
+                  <p className='space-x-3'>
+                    <FontAwesomeIcon icon={faLayerGroup} />
+                    <span>Group Questions</span>
                   </p>
                 </a>
                 <a href={`/admin?page=questions`} className='block cursor-pointer text-gray-200 hover:text-gray-300 text-sm bg-gray-700 hover:bg-gray-900 py-4 px-5 rounded-xl transition-all ease-in-out'>

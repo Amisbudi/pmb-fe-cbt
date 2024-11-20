@@ -404,7 +404,7 @@ const Assesment = () => {
         <section className="order-2 md:order-1 w-full md:w-9/12 bg-white shadow-md p-10 h-screen md:h-full md:rounded-3xl md:overflow-y-auto">
           <div className="space-y-8">
             <div className="space-y-3">
-              {questionActive.image && (
+              {questionActive?.image && (
                 <img
                   src={`https://be-cbt.trisakti.ac.id/questions/image/${questionActive.id}`}
                   alt="Question Image"
