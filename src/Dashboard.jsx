@@ -128,7 +128,7 @@ const Dashboard = () => {
       const today = new Date();
       if (pkg.classes == "Reguler") {
         const examDate = new Date(pkg.date_exam);
-        if (examDate < today && isSameDate(examDate, today)) {
+        if (isSameDate(examDate, today)) {
           if (
             window.confirm(
               `Apakah anda yakin akan memulai tes ${pkg.package ? pkg.package.name : "Package not found"}?`,
@@ -288,12 +288,12 @@ const Dashboard = () => {
                       <h2 className="font-medium text-base">
                         {pkg.package ? pkg.package.name : "Package not found"}
                       </h2>
-                      {pkg.classes == "Employee" && pkg.date_exam && (
+                      {pkg.classes == "Reguler" && pkg.date_exam && (
                         <p className="text-xs">
                           {moment.tz(pkg.date_exam, "Asia/Jakarta").format("lll")}
                         </p>
                       )}
-                      {pkg.classes == "Reguler" &&
+                      {pkg.classes == "Employee" &&
                         pkg.date_start &&
                         pkg.date_end && (
                           <p className="flex flex-col gap-2 text-xs">

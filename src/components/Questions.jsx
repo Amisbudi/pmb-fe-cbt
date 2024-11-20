@@ -10,6 +10,7 @@ import {
   faUpload,
   faXmark,
   faXmarkCircle,
+  faLayerGroup
 } from "@fortawesome/free-solid-svg-icons";
 import { faCheckCircle } from "@fortawesome/free-regular-svg-icons";
 import axios from "axios";
@@ -17,6 +18,7 @@ import LoadingScreen from "./LoadingScreen";
 import ExampleImportQuestion from "../assets/example-import-questions.xlsx";
 import TextEditor from "./Editor";
 import htmlparse from 'html-react-parser';
+import ModalGrouping from "./Modal/ModalGrouping";
 
 const Questions = () => {
   const [createModal, setCreateModal] = useState(false);
@@ -30,6 +32,9 @@ const Questions = () => {
   const [limit, setLimit] = useState(0);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [openModalGrouping, setOpenModalGrouping] = useState(false);
+  const [groupingDataQuestion, setGroupingDataQuestion] = useState([]);
+  const [idGroupQuestion, setIdGroupQuestion] = useState('')
 
   const [loading, setLoading] = useState(true);
   
@@ -37,6 +42,7 @@ const Questions = () => {
   const [formData, setFormData] = useState({
     id: "",
     package_question_id: "",
+    id_group_questions: "",
     naration: "",
     name: "",
     image: "",
@@ -158,6 +164,21 @@ const Questions = () => {
         } else {
           console.log(error);
         }
+      });
+  };
+
+  const getGruopingQuestions = async () => {
+    await axios
+      .get(`https://be-cbt.trisakti.ac.id/groupquestions`, {
+        headers: {
+          "api-key": "b4621b89b8b68387",
+        },
+      })
+      .then((response) => {
+        setGroupingDataQuestion(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error.message);
       });
   };
 
@@ -423,6 +444,7 @@ const Questions = () => {
     e.preventDefault();
     let data = {
       package_question_id: formData.package_question_id,
+      id_group_questions: parseFloat(idGroupQuestion),
       naration: JSON.stringify(formData.naration),
       name: JSON.stringify(formData.name),
       image: formData.image,
@@ -537,9 +559,11 @@ const Questions = () => {
   };
 
   useEffect(() => {
+    getGruopingQuestions()
     getPackageQuestions();
     getData();
   }, []);
+
   return loading ? (
     <LoadingScreen />
   ) : (
@@ -552,7 +576,8 @@ const Questions = () => {
       </div>
       <section className="mt-5">
         <div className="flex items-center justify-between">
-          <button
+          <div className="flex items-center gap-2">
+            <button
             type="button"
             onClick={() => {setCreateModal(!createModal);setCountAnswer(0)}}
             className="text-white bg-sky-700 hover:bg-sky-800 font-medium rounded-xl text-sm px-5 py-2.5 space-x-2 mb-5 text-center"
@@ -560,6 +585,20 @@ const Questions = () => {
             <FontAwesomeIcon icon={faPlusCircle} />
             <span>Tambah</span>
           </button>
+              
+          <button
+              type="button"
+              onClick={() => {
+                setOpenModalGrouping(true)
+                setCountAnswer(0)
+              }}
+              className="text-white bg-slate-700 hover:bg-black font-medium rounded-xl text-sm px-5 py-2.5 space-x-2 mb-5 text-center"
+            >
+            <FontAwesomeIcon icon={faLayerGroup} />
+            <span>Group Questions</span>
+          </button>
+         </div>
+          
           <button
             type="button"
             onClick={() => {setImportModal(!importModal);setCountAnswer(0)}}
@@ -700,7 +739,8 @@ const Questions = () => {
           )}
         </div>
 
-      </section>
+    </section>
+        
       {createModal && (
         <div
           tabIndex={-1}
@@ -740,7 +780,7 @@ const Questions = () => {
                       id="package_question_id"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                     >
-                      <option value="">Pilih</option>
+                      <option value="">Pilih Soal</option>
                       {packageQuestions.length > 0 &&
                         packageQuestions.map((packageQuestion, index) => (
                           <option value={packageQuestion.id} data-count-answer={packageQuestion.count_answer} key={index}>
@@ -748,7 +788,31 @@ const Questions = () => {
                           </option>
                         ))}
                     </select>
-                  </div>
+                    </div>
+                    
+                    <div className="col-span-1">
+                      <label
+                        htmlFor="package_question_id"
+                        className="block mb-2 text-xs font-medium text-gray-900"
+                      >
+                        Kelompok Soal
+                      </label>
+                    <select
+                      name="package_question_id"
+                      onChange={(e) => setIdGroupQuestion(e.target.value)}
+                      id="package_question_id"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    >
+                      <option value="">Pilih Kelompok Soal</option>
+                      {groupingDataQuestion.length > 0 &&
+                        groupingDataQuestion.map((data, index) => (
+                          <option value={data.id} key={index}>
+                            {data.name}
+                          </option>
+                        ))}
+                    </select>
+                    </div>
+                    
                   <div className="col-span-1">
                     <label
                       htmlFor="image"
@@ -1069,6 +1133,7 @@ const Questions = () => {
           </div>
         </div>
       )}
+          
       {importModal && (
         <div
           tabIndex={-1}
@@ -1153,8 +1218,12 @@ const Questions = () => {
             </div>
           </div>
         </div>
-      )}
-    </main>
+          )}
+          
+          {openModalGrouping && (
+            <ModalGrouping isOpen={openModalGrouping} setIsOpen={setOpenModalGrouping} />
+          )}
+      </main>
   );
 };
 
