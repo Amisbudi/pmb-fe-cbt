@@ -17,8 +17,8 @@ import axios from "axios";
 import LoadingScreen from "./LoadingScreen";
 import ExampleImportQuestion from "../assets/example-import-questions.xlsx";
 import TextEditor from "./Editor";
-import htmlparse from 'html-react-parser';
 import ModalGrouping from "./Modal/ModalGrouping";
+// import htmlparse from 'html-react-parser';
 
 const Questions = () => {
   const [createModal, setCreateModal] = useState(false);
@@ -645,7 +645,7 @@ const Questions = () => {
                     >
                       {limit * (currentPage - 1) + index + 1}
                     </th>
-                    <td className="px-6 py-4">{htmlparse(question.name)}</td>
+                    <td className="px-6 py-4">{question.name?.replace(/<[^>]*>/g, '')?.replace(/&nbsp;/g, ' ')?.replace(/"/g, '')?.trim()}</td>
                     <td className="px-6 py-4">
                       {question.image ? (
                         <img
@@ -843,7 +843,7 @@ const Questions = () => {
                       placeholder="Naration of Question"
                       required={false}
                     ></textarea> */}
-                    <TextEditor handleChangeEditor={handleChangeEditor} value={formData.naration} name="naration" createModal={createModal}/>
+                    <TextEditor handleChangeEditor={handleChangeEditor} value={formData.naration?.replace(/<[^>]*>/g, '')?.replace(/["']/g, '')} name="naration" createModal={createModal}/>
                   </div>
                   <div className="col-span-2 mb-5 mt-3">
                     <label

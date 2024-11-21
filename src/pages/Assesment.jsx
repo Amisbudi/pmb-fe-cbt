@@ -5,7 +5,6 @@ import TrisaktiLogo from "../assets/img/Logo-Usakti-White.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import htmlparse from 'html-react-parser';
 
 const Assesment = () => {
   const navigate = useNavigate();
@@ -40,7 +39,7 @@ const Assesment = () => {
       if (activePackage) {
         const data = JSON.parse(activePackage);
         const responseQuestions = await axios.get(
-          `https://be-cbt.trisakti.ac.id/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
+          `https://be-cbt.trisakti.ac.id/questionusers/packagequestion/${data?.package_question_id}/${data.user_id}`,
           {
             headers: {
               "api-key": "b4621b89b8b68387",
@@ -51,10 +50,10 @@ const Assesment = () => {
         setQuestionActive(responseQuestions.data[0].question);
         setIndexQuestion(responseQuestions.data[0].number);
         setScheduleTime(new Date(responseQuestions.data[0].date_end));
-        console.log(responseQuestions.data[0])
+      
         getRecord(
-          responseQuestions.data[0].question_id,
-          responseQuestions.data[0].package_question_id,
+          responseQuestions.data[0]?.question_id,
+          responseQuestions.data[0]?.package_question_id,
         );
         getAnswers(responseQuestions.data[0].question_id);
         setTimeout(() => {
@@ -183,7 +182,7 @@ const Assesment = () => {
 
         if (update) {
           const response = await axios.patch(
-            `https://be-cbt.trisakti.ac.id/records/${record.question_id}/${record.package_question_id}`,
+            `https://be-cbt.trisakti.ac.id/records/${record?.question_id}/${record?.package_question_id}`,
             {
               user_id: 1,
               answer_id: record.answer_id,
@@ -205,8 +204,8 @@ const Assesment = () => {
             `https://be-cbt.trisakti.ac.id/records`,
             {
               question_user_id: record.question_user_id,
-              question_id: record.question_id,
-              package_question_id: record.package_question_id,
+              question_id: record?.question_id,
+              package_question_id: record?.package_question_id,
               user_id: identityNumber,
               answer_id: record.answer_id,
               photo: imageDataURL,
@@ -225,9 +224,9 @@ const Assesment = () => {
         }
         const nextPage = record.number + 1;
         if (nextPage <= questions.length) {
-          changeQuestion(nextPage, record.package_question_id);
+          changeQuestion(nextPage, record?.package_question_id);
         } else {
-          changeQuestion(1, record.package_question_id);
+          changeQuestion(1, record?.package_question_id);
         }
         setIndexQuestion(null);
         setSelectedAnswer(null);
@@ -237,7 +236,7 @@ const Assesment = () => {
         setLoading(true);
         if (update) {
           const response = await axios.patch(
-            `https://be-cbt.trisakti.ac.id/records/${record.question_id}/${record.package_question_id}`,
+            `https://be-cbt.trisakti.ac.id/records/${record?.question_id}/${record?.package_question_id}`,
             {
               user_id: 1,
               answer_id: record.answer_id,
@@ -259,7 +258,7 @@ const Assesment = () => {
             {
               question_user_id: record.question_user_id,
               question_id: record.question_id,
-              package_question_id: record.package_question_id,
+              package_question_id: record?.package_question_id,
               user_id: identityNumber,
               answer_id: record.answer_id,
             },
@@ -277,9 +276,9 @@ const Assesment = () => {
         }
         const nextPage = record.number + 1;
         if (nextPage <= questions.length) {
-          changeQuestion(nextPage, record.package_question_id);
+          changeQuestion(nextPage, record?.package_question_id);
         } else {
-          changeQuestion(1, record.package_question_id);
+          changeQuestion(1, record?.package_question_id);
         }
         setIndexQuestion(null);
         setSelectedAnswer(null);
@@ -349,7 +348,7 @@ const Assesment = () => {
         console.error("Error accessing the camera:", error);
         const packageStorage = localStorage.getItem('CBT:package');
         const packageParse = JSON.parse(packageStorage);
-        const response = await axios.get(`https://be-cbt.trisakti.ac.id/packagequestionusers/check/${packageParse.package_question_id}`,{
+        const response = await axios.get(`https://be-cbt.trisakti.ac.id/packagequestionusers/check/${packageParse?.package_question_id}`,{
           headers: {
             "api-key": "b4621b89b8b68387",
           },
@@ -402,6 +401,15 @@ const Assesment = () => {
     <main className="h-screen bg-gray-100 flex md:py-10">
       <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center md:gap-5">
         <section className="order-2 md:order-1 w-full md:w-9/12 bg-white shadow-md p-10 h-screen md:h-full md:rounded-3xl md:overflow-y-auto">
+          {questionActive?.group_questions !== null && (
+            <div className="mb-2 space-y-2">
+              <h1 className="text-xl font-bold">
+                {questionActive?.group_questions?.name || ''}
+                <b className="mx-2">waktu {questionActive?.group_questions?.duration} Menit</b>
+              </h1>
+              <p className="text-sm tracking-wide">{questionActive?.group_questions?.naration?.replace(/<[^>]*>/g, '')?.replace(/&nbsp;/g, ' ')?.replace(/"/g, '')?.trim()}</p>
+            </div>
+          )}
           <div className="space-y-8">
             <div className="space-y-3">
               {questionActive?.image && (
@@ -411,11 +419,11 @@ const Assesment = () => {
                   className="w-64 rounded-xl"
                 />
               )}
-              {questionActive.naration && 
-                <p className="text-gray-900">{document.createElement("div").innerHTML = htmlparse(questionActive.naration)}</p>
+              {questionActive?.naration && 
+                <p className="text-gray-900">{document.createElement("div").innerHTML = questionActive?.naration?.replace(/<[^>]*>/g, '')?.replace(/&nbsp;/g, ' ')?.replace(/"/g, '')?.trim()}</p>
               }
-              {questionActive.name && 
-              <p className="text-gray-900">{document.createElement("div").innerHTML = htmlparse(questionActive.name)}</p>
+              {questionActive?.name && 
+              <p className="text-gray-900">{document.createElement("div").innerHTML = questionActive?.name?.replace(/<[^>]*>/g, '')?.replace(/&nbsp;/g, ' ')?.replace(/"/g, '')?.trim()}</p>
               }
               {isAnswered && (
                 <div className="inline-block bg-emerald-100 text-emerald-900 px-4 py-2.5 text-sm rounded-xl">
@@ -424,6 +432,7 @@ const Assesment = () => {
                 </div>
               )}
             </div>
+
             <div className="space-y-2">
               {answersActive.length > 0 ? (
                 answersActive.map((answer, index) => (
@@ -434,8 +443,8 @@ const Assesment = () => {
                     <input
                       id={`answer-${answer.id}`}
                       name="answer"
-                      data-question={answer.question_id}
-                      data-package={answer.question.package_question_id}
+                      data-question={answer?.question_id}
+                      data-package={answer?.question?.package_question_id}
                       value={answer.id}
                       onChange={handleChange}
                       type="radio"
@@ -494,16 +503,16 @@ const Assesment = () => {
                 {timeLeft}
               </h5>
             </div>
-            {questions.length > 0 && (
+            {questions?.length > 0 && (
               <div className="h-full grid grid-cols-10 md:grid-cols-5 gap-2 overflow-y-auto">
-                {questions.map((question, index) => (
+                {questions?.map((question, index) => (
                   <button
                     key={index}
                     type="button"
                     onClick={() =>
                       changeQuestion(
-                        question.number,
-                        question.package_question_id,
+                        question?.number,
+                        question?.package_question_id,
                       )
                     }
                     className={`flex items-center justify-center w-10 h-10 rounded-xl border-2 font-bold transition-all ease-in-out ${question.answered ? "bg-emerald-500 text-white border-emerald-400" : "bg-gray-100 text-sky-800 hover:text-white hover:bg-sky-700 border-sky-600"}`}

@@ -6,8 +6,8 @@ import {
     faTrashAlt,
   } from "@fortawesome/free-solid-svg-icons";
 import ModalGrouping from "./Modal/ModalGrouping";
-import htmlparse from 'html-react-parser';
 import axios from "axios";
+// import htmlparse from 'html-react-parser';
 
 function QuestionsGrup() {
     const [isOpen, setIsOpen] = useState(false);
@@ -143,7 +143,7 @@ function QuestionsGrup() {
                                     <span>Tidak ada gambar</span>
                                 )}
                                     </td>
-                                    <td className="px-6 py-4">{htmlparse(data.naration)}</td>
+                                    <td className="px-6 py-4">{data.naration?.replace(/<[^>]*>/g, '')?.replace(/["']/g, '')}</td>
                                     <td className="px-6 py-4">{data.duration} menit</td>
                                 <td className="px-6 py-4 flex flex-col md:flex-row gap-1">
                                 <button
