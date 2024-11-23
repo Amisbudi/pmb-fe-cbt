@@ -22,13 +22,15 @@ const PackageQuestions = () => {
   const [limit, setLimit] = useState(0);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [essayQuestion, setEssayQuestion] = useState('')
 
   const [loading, setLoading] = useState(true);
-
+  console.log('essayQuestion :', essayQuestion)
   const [formData, setFormData] = useState({
     id: "",
     type_id: "",
     name: "",
+    type_of_question: '',
     count_answer: 4,
     status: false,
   });
@@ -146,6 +148,8 @@ const PackageQuestions = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    const selectedQuestionType = e.target.dataset.question;
+    setEssayQuestion(selectedQuestionType)
   };
 
   const handleEdit = (content) => {
@@ -154,6 +158,7 @@ const PackageQuestions = () => {
       type_id: content.type_id,
       name: content.name,
       count_answer: content.count_answer,
+      type_of_question: content.type_of_question,
       status: content.status,
     });
     setEditModal(true);
@@ -169,6 +174,7 @@ const PackageQuestions = () => {
           type_id: formData.type_id,
           name: formData.name,
           count_answer: formData.count_answer,
+          type_of_question: formData.type_of_question,
           status: true,
         },
         {
@@ -203,6 +209,7 @@ const PackageQuestions = () => {
           type_id: formData.type_id,
           name: formData.name,
           count_answer: formData.count_answer,
+          type_of_question: formData.type_of_question,
           status: formData.status,
         },
         {
@@ -279,6 +286,9 @@ const PackageQuestions = () => {
                   Nama Paket Soal
                 </th>
                 <th scope="col" className="px-6 py-4">
+                  Tipe Soal
+                </th>
+                <th scope="col" className="px-6 py-4">
                   Tipe
                 </th>
                 <th scope="col" className="px-6 py-4">
@@ -302,7 +312,8 @@ const PackageQuestions = () => {
                     >
                       {limit * (currentPage - 1) + index + 1}
                     </th>
-                    <td className="px-6 py-4">{packageQuestion.name}</td>
+                    <td className="px-6 py-4">{packageQuestion.name || '-'}</td>
+                    <td className="px-6 py-4">{packageQuestion.type_of_question || '-'}</td>
                     <td className="px-6 py-4">
                       {packageQuestion.type
                         ? packageQuestion.type.name
@@ -398,7 +409,10 @@ const PackageQuestions = () => {
                 </h3>
                 <button
                   type="button"
-                  onClick={() => setCreateModal(!createModal)}
+                  onClick={() => {
+                    setCreateModal(!createModal)
+                    setEssayQuestion('')
+                  }}
                   className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-xl text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
                 >
                   <FontAwesomeIcon icon={faXmark} />
@@ -444,24 +458,56 @@ const PackageQuestions = () => {
                       placeholder="Type of package name"
                       required
                     />
+                    </div>
+                    
+                  <div className="col-span-2 my-1">
+                    <div className="flex items-center space-x-4">
+                      {/* Radio button untuk Essaye */}
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="type_of_question"
+                          value="Essay"
+                          data-question='essay'
+                          onChange={handleChange}
+                          className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">Essay</span>
+                      </label>
+                      {/* Radio button untuk Multiple Choice */}
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="type_of_question"
+                          value="Multiple choice"
+                          data-question='multiple_choice'
+                          onChange={handleChange}
+                          className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">Multiple Choice</span>
+                      </label>
+                    </div>
                   </div>
-                  <div className="col-span-2">
-                    <label
-                      htmlFor="count_answer"
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                    >
-                      Jumlah Jawaban
-                    </label>
-                    <input
-                      type="number"
-                      name="count_answer"
-                      id="count_answer"
-                      onChange={handleChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                      placeholder="Count of answer"
-                      required
-                    />
-                  </div>
+
+                  {essayQuestion !== 'essay' && (
+                    <div className="col-span-2">
+                      <label
+                        htmlFor="count_answer"
+                        className="block mb-2 text-sm font-medium text-gray-900"
+                      >
+                        Jumlah Jawaban
+                      </label>
+                      <input
+                        type="number"
+                        name="count_answer"
+                        id="count_answer"
+                        onChange={handleChange}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                        placeholder="Count of answer"
+                        required
+                      />
+                    </div>
+                  )}
                 </div>
                 <button
                   type="submit"
@@ -489,7 +535,10 @@ const PackageQuestions = () => {
                 </h3>
                 <button
                   type="button"
-                  onClick={() => setEditModal(!editModal)}
+                    onClick={() => {
+                      setEditModal(!editModal)
+                      setEssayQuestion('')
+                    }}
                   className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-xl text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
                 >
                   <FontAwesomeIcon icon={faXmark} />
@@ -536,25 +585,61 @@ const PackageQuestions = () => {
                       placeholder="Type of package name"
                       required
                     />
-                  </div>
-                  <div className="col-span-2">
-                    <label
-                      htmlFor="count_answer"
-                      className="block mb-2 text-sm font-medium text-gray-900"
-                    >
-                      Jumlah Jawaban
-                    </label>
-                    <input
-                      type="number"
-                      name="count_answer"
-                      id="count_answer"
-                      value={formData.count_answer}
-                      onChange={handleChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                      placeholder="Count of answer"
-                      required
-                    />
-                  </div>
+                    </div>
+                    
+                    <div className="col-span-2 my-1">
+                      <div className="flex items-center space-x-4">
+   
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            name="type_of_question"
+                            value={'Essay'}
+                            checked={formData.type_of_question === 'Essay'}
+                            data-question='essay'
+                            onChange={handleChange}
+                            className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-gray-700">Essay</span>
+                        </label>
+                   
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            name="type_of_question"
+                            value={'Multiple choice'}
+                            checked={formData.type_of_question === 'Multiple choice'} 
+                            data-question='multiple_choice'
+                            onChange={handleChange}
+                            className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-gray-700">Multiple choice</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {essayQuestion !== 'essay' &&
+                      formData.type_of_question !== 'Essay' && (
+                      <div className="col-span-2">
+                        <label
+                          htmlFor="count_answer"
+                          className="block mb-2 text-sm font-medium text-gray-900"
+                        >
+                          Jumlah Jawaban
+                        </label>
+                        <input
+                          type="number"
+                          name="count_answer"
+                          id="count_answer"
+                          value={formData.count_answer}
+                          onChange={handleChange}
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                          placeholder="Count of answer"
+                          required
+                        />
+                      </div>
+                    )}
+
                   <div className="col-span-2">
                     <label
                       htmlFor="status"

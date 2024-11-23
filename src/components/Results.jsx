@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faTrashAlt, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import LoadingScreen from "./LoadingScreen";
+import { ModalActionValue } from "./Modal/ModalActionValue";
 
 const Results = () => {
   const [results, setResults] = useState([]);
@@ -11,6 +12,8 @@ const Results = () => {
   const [limit, setLimit] = useState(0);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [openModalEssay, setOpenModalEssay] = useState(false)
+  const [reloadData, setReloadData] = useState(0)
 
   const [loading, setLoading] = useState(true);
 
@@ -23,7 +26,7 @@ const Results = () => {
         },
       })
       .then((response) => {
-        console.log(response.data);
+
         setResults(response.data.data);
         setCurrentPage(response.data.currentPage);
         setTotal(response.data.totalItems);
@@ -131,7 +134,8 @@ const Results = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [reloadData]);
+
   return loading ? (
     <LoadingScreen />
   ) : (
@@ -159,6 +163,7 @@ const Results = () => {
                 <th scope="col" className="px-6 py-4">
                   Nama Paket Soal
                 </th>
+                   
                 <th scope="col" className="px-6 py-4">
                   Betul
                 </th>
@@ -168,7 +173,8 @@ const Results = () => {
                 <th scope="col" className="px-6 py-4">
                   Nilai
                 </th>
-                <th scope="col" className="px-6 py-4 rounded-tr-xl">
+                 
+                  <th scope="col" className="px-6 py-4 rounded-tr-xl">
                   Aksi
                 </th>
               </tr>
@@ -189,14 +195,17 @@ const Results = () => {
                     <td className="px-6 py-4">{result.user_id}</td>
                     <td className="px-6 py-4">{result.fullname}</td>
                     <td className="px-6 py-4">{result.package_name}</td>
-                    <td className="px-6 py-4">{result.correct_answers}</td>
-                    <td className="px-6 py-4">{result.incorrect_answers}</td>
+                    
+                    <td className="px-6 py-4">{ result.type_of_question === 'Multiple choice' && result.correct_answers}</td>
+                    <td className="px-6 py-4">{ result.type_of_question === 'Multiple choice' &&  result.incorrect_answers}</td>
                     <td className="px-6 py-4">
-                      {(
-                        (result.correct_answers / result.total_questions) *
-                        100
-                      ).toFixed()}
+                      {result.type_of_question === 'Multiple choice' ?
+                        ((result.correct_answers / result.total_questions) * 100).toFixed() : 
+                        result.essay_image_result
+                      }
                     </td>
+                    
+                    
                     <td className="px-6 py-4 flex flex-col md:flex-row gap-1">
                       <button
                         type="button"
@@ -205,6 +214,18 @@ const Results = () => {
                       >
                         <FontAwesomeIcon icon={faTrashAlt} />
                       </button>
+
+                      {result?.type_of_question === 'Essay' && (
+                        <button
+                          type="button"
+                          className="text-white bg-blue-700 hover:bg-blue-900 font-medium rounded-xl text-xs px-3 py-1.5 text-center"
+                          onClick={() => {
+                            setOpenModalEssay(true)
+                          }}
+                        >
+                        <FontAwesomeIcon icon={faPencilAlt} />
+                      </button>
+                      )}
                     </td>
                   </tr>
                 ))
@@ -253,7 +274,17 @@ const Results = () => {
             </nav>
           )}
         </div>
-      </section>
+        </section>
+        
+        {openModalEssay && (
+          <ModalActionValue
+            isOpen={openModalEssay}
+            setIsOpen={setOpenModalEssay}
+            data={results}
+            reloadData={reloadData}
+            setReloadData={setReloadData}
+          />
+        )}
     </main>
   );
 };
