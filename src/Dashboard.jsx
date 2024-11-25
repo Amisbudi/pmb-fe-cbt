@@ -231,6 +231,7 @@ const Dashboard = () => {
     getInfo();
     checkAssesment();
   }, []);
+
   return (
     <div className="bg-gradient-to-b from-[#005D99] to-[#005083] h-screen flex flex-col justify-center items-center gap-10 p-12 text-white">
       <div className="w-full max-w-xl text-center space-y-2">

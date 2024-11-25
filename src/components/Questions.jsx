@@ -35,9 +35,9 @@ const Questions = () => {
   const [openModalGrouping, setOpenModalGrouping] = useState(false);
   const [groupingDataQuestion, setGroupingDataQuestion] = useState([]);
   const [idGroupQuestion, setIdGroupQuestion] = useState('')
+  const [questionType, setQuestionType] = useState('')
 
   const [loading, setLoading] = useState(true);
-  
 
   const [formData, setFormData] = useState({
     id: "",
@@ -210,6 +210,7 @@ const Questions = () => {
       reader.readAsDataURL(file);
     } else if (e.target.name === 'package_question_id') {
       setCountAnswer(parseInt(e.target.selectedOptions[0].getAttribute('data-count-answer')));
+      setQuestionType(e.target.options[e.target.selectedIndex].dataset.typeOfQuestion);
       setFormData({
         ...formData,
         [e.target.name]: e.target.value,
@@ -783,7 +784,12 @@ const Questions = () => {
                       <option value="">Pilih Soal</option>
                       {packageQuestions.length > 0 &&
                         packageQuestions.map((packageQuestion, index) => (
-                          <option value={packageQuestion.id} data-count-answer={packageQuestion.count_answer} key={index}>
+                          <option
+                            value={packageQuestion.id}
+                            data-count-answer={packageQuestion.count_answer}
+                            data-type-of-question={packageQuestion.type_of_question} 
+                            key={index}
+                          >
                             {packageQuestion.name}
                           </option>
                         ))}
@@ -863,78 +869,80 @@ const Questions = () => {
                     ></textarea> */}
                   </div>
                 </div>
-                <hr className="my-3" />
-                <div className="grid gap-4 mb-5 grid-cols-3">
-                  {Array.from({ length: countAnswer }).map((_, index) => (
-                    <div key={index}>
-                      <label
-                        htmlFor={`answer_${index + 1}`}
-                        className="block mb-2 text-xs font-medium text-gray-900"
-                      >
-                        Jawaban {index + 1}
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                          <FontAwesomeIcon
-                            icon={faKey}
-                            className="text-gray-300 text-sm"
+                  <hr className="my-3" />
+                {questionType === 'Multiple choice' && (
+                  <div className="grid gap-4 mb-5 grid-cols-3">
+                    {Array.from({ length: countAnswer }).map((_, index) => (
+                      <div key={index}>
+                        <label
+                          htmlFor={`answer_${index + 1}`}
+                          className="block mb-2 text-xs font-medium text-gray-900"
+                        >
+                          Jawaban {index + 1}
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                            <FontAwesomeIcon
+                              icon={faKey}
+                              className="text-gray-300 text-sm"
+                            />
+                          </div>
+                          <input
+                            type="text"
+                            name={`answer_${index + 1}`}
+                            id={`answer_${index + 1}`}
+                            onChange={handleChange}
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+                            placeholder={`Jawaban ${index + 1}`}
+                            required
                           />
                         </div>
                         <input
-                          type="text"
-                          name={`answer_${index + 1}`}
-                          id={`answer_${index + 1}`}
+                          type="file"
+                          name={`answer_${index + 1}_image`}
+                          id={`answer_${index + 1}_image`}
                           onChange={handleChange}
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
-                          placeholder={`Jawaban ${index + 1}`}
-                          required
+                          className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2"
                         />
-                      </div>
-                      <input
-                        type="file"
-                        name={`answer_${index + 1}_image`}
-                        id={`answer_${index + 1}_image`}
-                        onChange={handleChange}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 mt-2"
-                      />
-                      <div className="flex mt-2 ml-2">
-                        <div className="flex items-center me-4">
-                          <input
-                            id={`answer_${index + 1}_true`}
-                            name={`answer_${index + 1}_status`}
-                            type="radio"
-                            onChange={handleChange}
-                            defaultValue={true}
-                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                          />
-                          <label
-                            htmlFor={`answer_${index + 1}_true`}
-                            className="ms-2 text-xs font-medium text-gray-700"
-                          >
-                            Benar
-                          </label>
-                        </div>
-                        <div className="flex items-center me-4">
-                          <input
-                            id={`answer_${index + 1}_false`}
-                            name={`answer_${index + 1}_status`}
-                            type="radio"
-                            onChange={handleChange}
-                            defaultValue={false}
-                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                          />
-                          <label
-                            htmlFor={`answer_${index + 1}_false`}
-                            className="ms-2 text-xs font-medium text-gray-700"
-                          >
-                            Salah
-                          </label>
+                        <div className="flex mt-2 ml-2">
+                          <div className="flex items-center me-4">
+                            <input
+                              id={`answer_${index + 1}_true`}
+                              name={`answer_${index + 1}_status`}
+                              type="radio"
+                              onChange={handleChange}
+                              defaultValue={true}
+                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                            />
+                            <label
+                              htmlFor={`answer_${index + 1}_true`}
+                              className="ms-2 text-xs font-medium text-gray-700"
+                            >
+                              Benar
+                            </label>
+                          </div>
+                          <div className="flex items-center me-4">
+                            <input
+                              id={`answer_${index + 1}_false`}
+                              name={`answer_${index + 1}_status`}
+                              type="radio"
+                              onChange={handleChange}
+                              defaultValue={false}
+                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                            />
+                            <label
+                              htmlFor={`answer_${index + 1}_false`}
+                              className="ms-2 text-xs font-medium text-gray-700"
+                            >
+                              Salah
+                            </label>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-                {countAnswer > 0 &&
+                    ))}
+                  </div>
+                  )}
+                
                   <button
                     type="submit"
                     className="text-white inline-flex items-center bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-xl space-x-2 text-xs px-5 py-2.5 text-center"
@@ -942,7 +950,7 @@ const Questions = () => {
                     <FontAwesomeIcon icon={faSave} />
                     <span>Simpan</span>
                   </button>
-                }
+                
               </form>
             </div>
           </div>

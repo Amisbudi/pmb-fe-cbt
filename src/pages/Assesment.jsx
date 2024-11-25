@@ -1,10 +1,11 @@
 import { useRef, useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSave } from "@fortawesome/free-solid-svg-icons";
+import { faSave, faFileArrowUp, faImages } from "@fortawesome/free-solid-svg-icons";
 import TrisaktiLogo from "../assets/img/Logo-Usakti-White.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import {useDropzone} from 'react-dropzone'
 
 const Assesment = () => {
   const navigate = useNavigate();
@@ -12,26 +13,31 @@ const Assesment = () => {
 
   const [timeLeft, setTimeLeft] = useState("00:00:00");
   const [scheduleTime, setScheduleTime] = useState(null);
-
   const [identityNumber, setIdentityNumber] = useState("");
-
   const [loading, setLoading] = useState(false);
-
   const [questions, setQuestions] = useState([]);
 
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [questionActive, setQuestionActive] = useState("");
   const [answersActive, setAnswersActive] = useState([]);
   const [record, setRecord] = useState(null);
-
   const [answered, setAnswered] = useState("");
+
   const [isAnswered, setIsAnswered] = useState("");
-
   const [indexQuestion, setIndexQuestion] = useState("");
-
   const [update, setUpdate] = useState(false);
+  const [file, setFile] = useState(null)
 
-
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: (acceptedFiles) => {
+        setFile(acceptedFiles[0])
+    },
+    accept: {
+      'image/jpeg': ['.jpeg', '.jpg'],
+      'image/png': ['.png'],
+    },
+  })
+  
   const getQuestions = async () => {
     setLoading(true);
     try {
@@ -121,6 +127,7 @@ const Assesment = () => {
         },
       );
       setAnswersActive(responseAnwers.data);
+      console.log('responseAnwers.data :', responseAnwers.data)
     } catch (error) {
       console.log(error.message);
     }
@@ -161,11 +168,20 @@ const Assesment = () => {
       answer_id: answerId,
       user_id: identityNumber,
     };
-    setSelectedAnswer(event.target.value);
+    setSelectedAnswer(e.target.value);
     setRecord(data);
   };
 
-  const saveRecord = async () => {
+  const convertFileToBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file); 
+    });
+
+  const saveRecord = async (e) => {
+    e.preventDefault()
     try {
       if (videoRef.current && videoRef.current.srcObject) {
         setLoading(true);
@@ -187,6 +203,7 @@ const Assesment = () => {
               user_id: 1,
               answer_id: record.answer_id,
               photo: imageDataURL,
+              essay_image: file
             },
             {
               headers: {
@@ -200,21 +217,37 @@ const Assesment = () => {
             }, 500);
           }
         } else {
+          const base64File = file ? await convertFileToBase64(file) : null;
+          let payload = {};
+
+          if (questionActive.package?.type_of_question === 'Multiple choice') {
+            payload = {
+              question_user_id: record.question_user_id || null,
+              question_id: record.question_id || null,
+              answer_id: record.answer_id || null,
+              package_question_id: record?.package_question_id || questionActive?.package_question_id,
+              user_id: identityNumber || '',
+              essay_image: base64File,
+            };
+          }
+          
+          if (questionActive.package?.type_of_question === 'Essay') {
+            payload = {
+              question_id: questionActive.id,
+              package_question_id: questionActive?.package_question_id,
+              user_id: identityNumber || '',
+              essay_image: base64File,
+            };
+          }
+
           const response = await axios.post(
-            `https://be-cbt.trisakti.ac.id/records`,
-            {
-              question_user_id: record.question_user_id,
-              question_id: record?.question_id,
-              package_question_id: record?.package_question_id,
-              user_id: identityNumber,
-              answer_id: record.answer_id,
-              photo: imageDataURL,
-            },
+            'https://be-cbt.trisakti.ac.id/records',
+            payload,
             {
               headers: {
-                "api-key": "b4621b89b8b68387",
+                'api-key': 'b4621b89b8b68387',
               },
-            },
+            }
           );
           if (response.data) {
             setTimeout(() => {
@@ -222,12 +255,30 @@ const Assesment = () => {
             }, 500);
           }
         }
-        const nextPage = record.number + 1;
-        if (nextPage <= questions.length) {
-          changeQuestion(nextPage, record?.package_question_id);
-        } else {
-          changeQuestion(1, record?.package_question_id);
+
+        let nextPage = null
+        let packageQuestId = null
+
+        if (questionActive.package?.type_of_question === 'Essay') {
+          nextPage = indexQuestion + 1;
+          packageQuestId = questionActive?.package_question_id
         }
+        
+        if (questionActive.package?.type_of_question === 'Multiple choice') {
+            nextPage = record.number + 1
+            packageQuestId = record?.package_question_id
+        }
+
+        if (nextPage > questions.length) {
+          nextPage = 1; // Start from first question if end is reached
+        }
+
+        if (nextPage <= questions.length) {
+          changeQuestion(nextPage, packageQuestId);
+        } else {
+          changeQuestion(1, packageQuestId);
+        }
+        
         setIndexQuestion(null);
         setSelectedAnswer(null);
         updateQuestions();
@@ -253,20 +304,34 @@ const Assesment = () => {
             }, 500);
           }
         } else {
+          const base64File = file ? await convertFileToBase64(file) : null;
+          let payload = {};
+
+          if (questionActive.package?.type_of_question === 'Multiple choice') {
+            payload = {
+              question_user_id: record.question_user_id || null,
+              question_id: record.question_id || null,
+              answer_id: record.answer_id || null,
+              package_question_id: record?.package_question_id || questionActive?.package_question_id,
+              user_id: identityNumber || '',
+              essay_image: file,
+            };
+          } else if (questionActive.package?.type_of_question === 'Essay') {
+            payload = {
+              package_question_id: questionActive?.package_question_id,
+              user_id: identityNumber || '',
+              essay_image: base64File,
+            };
+          }
+
           const response = await axios.post(
-            `https://be-cbt.trisakti.ac.id/records`,
-            {
-              question_user_id: record.question_user_id,
-              question_id: record.question_id,
-              package_question_id: record?.package_question_id,
-              user_id: identityNumber,
-              answer_id: record.answer_id,
-            },
+            'https://be-cbt.trisakti.ac.id/records',
+            payload,
             {
               headers: {
-                "api-key": "b4621b89b8b68387",
+                'api-key': 'b4621b89b8b68387',
               },
-            },
+            }
           );
           if (response.data) {
             setTimeout(() => {
@@ -274,11 +339,27 @@ const Assesment = () => {
             }, 500);
           }
         }
-        const nextPage = record.number + 1;
+        let nextPage = null
+        let packageQuestId = null
+        
+        if (questionActive.package?.type_of_question === 'Essay') {
+          nextPage = indexQuestion + 1;
+          packageQuestId = questionActive?.package_question_id
+        }
+        
+        if (questionActive.package?.type_of_question === 'Multiple choice') {
+          nextPage = record.number + 1
+          packageQuestId = record?.package_question_id
+        }
+
+        if (nextPage > questions.length) {
+           nextPage = 1; // Start from first question if end is reached
+        }
+
         if (nextPage <= questions.length) {
-          changeQuestion(nextPage, record?.package_question_id);
+          changeQuestion(nextPage, packageQuestId);
         } else {
-          changeQuestion(1, record?.package_question_id);
+          changeQuestion(1, packageQuestId);
         }
         setIndexQuestion(null);
         setSelectedAnswer(null);
@@ -397,15 +478,18 @@ const Assesment = () => {
     return () => clearInterval(countdown);
   }, [scheduleTime]);
 
+  console.log('questions', questions)
+
   return (
     <main className="h-screen bg-gray-100 flex md:py-10">
       <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center md:gap-5">
         <section className="order-2 md:order-1 w-full md:w-9/12 bg-white shadow-md p-10 h-screen md:h-full md:rounded-3xl md:overflow-y-auto">
-          {questionActive?.group_questions !== null && (
+          {questionActive?.group_questions !== null &&
+            answersActive.length !== 0 && (
             <div className="mb-2 space-y-2">
               <h1 className="text-xl font-bold">
-                {questionActive?.group_questions?.name || ''}
-                <b className="mx-2">waktu {questionActive?.group_questions?.duration} Menit</b>
+                {questionActive?.group_questions?.name}
+                <b className="mx-2">waktu {questionActive?.group_questions?.duration} menit</b>
               </h1>
               <p className="text-sm tracking-wide">{questionActive?.group_questions?.naration?.replace(/<[^>]*>/g, '')?.replace(/&nbsp;/g, ' ')?.replace(/"/g, '')?.trim()}</p>
             </div>
@@ -434,7 +518,8 @@ const Assesment = () => {
             </div>
 
             <div className="space-y-2">
-              {answersActive.length > 0 ? (
+              {questionActive?.package?.type_of_question !== 'Essay' &&
+                answersActive.length > 0 &&
                 answersActive.map((answer, index) => (
                   <div
                     key={index}
@@ -465,8 +550,42 @@ const Assesment = () => {
                       />
                     )}
                   </div>
-                ))
-              ) : (
+                ))}
+              
+              {questionActive?.package?.type_of_question === 'Essay' && (
+                  <div
+                    {...getRootProps({
+                      className:
+                        'dropzone flex items-center justify-center bg-gray-200 p-20 rounded-md',
+                    })}
+                  >
+                    {!file && (
+                      <div className="flex flex-col gap items-center">
+                        <input {...getInputProps()} />
+                        <FontAwesomeIcon icon={faFileArrowUp} size="2x" />
+                        
+                        <p className="font-bold">
+                          Select a file to upload
+                        </p>
+                        <p className="text-sm text-slate-400">
+                          or drag and drop it here
+                        </p>
+                      </div>
+                    )}
+
+                    {file && (
+                      <div className="flex flex-col gap-2 items-center">
+                        <FontAwesomeIcon icon={faImages} size="2x" />
+                
+                        <p className="font-bold">
+                          File Uploaded
+                        </p>
+                      </div>
+                    )}
+                    </div>
+                )}
+              
+              {answersActive.length === 0 && !questionActive && (
                 <div>
                   <h4 className="text-lg text-red-500 font-bold">
                     Peringatan!
@@ -478,6 +597,7 @@ const Assesment = () => {
                   </p>
                 </div>
               )}
+             
             </div>
             {!loading && (
               <div className="flex justify-center md:justify-start items-center gap-3">
