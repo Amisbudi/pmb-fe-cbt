@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashAlt, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
+import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import LoadingScreen from "./LoadingScreen";
 import { ModalActionValue } from "./Modal/ModalActionValue";
@@ -111,26 +111,26 @@ const Results = () => {
       });
   };
 
-  const handleDelete = async (data) => {
-    if (confirm("Apakah yakin akan menghapus riwayat pengerjaan soal?")) {
-      await axios
-        .delete(
-          `https://be-cbt.trisakti.ac.id/questionusers/results/${data.package_question_id}/${data.user_id}`,
-          {
-            headers: {
-              "api-key": "b4621b89b8b68387",
-            },
-          },
-        )
-        .then((response) => {
-          alert(response.data.message);
-          getData();
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
-    }
-  };
+  // const handleDelete = async (data) => {
+  //   if (confirm("Apakah yakin akan menghapus riwayat pengerjaan soal?")) {
+  //     await axios
+  //       .delete(
+  //         `https://be-cbt.trisakti.ac.id/questionusers/results/${data.package_question_id}/${data.user_id}`,
+  //         {
+  //           headers: {
+  //             "api-key": "b4621b89b8b68387",
+  //           },
+  //         },
+  //       )
+  //       .then((response) => {
+  //         alert(response.data.message);
+  //         getData();
+  //       })
+  //       .catch((error) => {
+  //         console.log(error.message);
+  //       });
+  //   }
+  // };
 
   useEffect(() => {
     getData();
@@ -207,13 +207,13 @@ const Results = () => {
                     
                     
                     <td className="px-6 py-4 flex flex-col md:flex-row gap-1">
-                      <button
+                      {/* <button
                         type="button"
                         onClick={() => handleDelete(result)}
                         className="text-white bg-red-600 hover:bg-red-700 font-medium rounded-xl text-xs px-3 py-1.5 text-center"
                       >
                         <FontAwesomeIcon icon={faTrashAlt} />
-                      </button>
+                      </button> */}
 
                       {result?.type_of_question === 'Essay' && (
                         <button
