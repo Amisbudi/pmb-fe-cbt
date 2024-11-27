@@ -128,7 +128,7 @@ const Dashboard = () => {
       const today = new Date();
       if (pkg.classes == "Reguler") {
         const examDate = new Date(pkg.date_exam);
-        if (isSameDate(examDate, today)) {
+        if (examDate < today && isSameDate(examDate, today)) {
           if (
             window.confirm(
               `Apakah anda yakin akan memulai tes ${pkg.package ? pkg.package.name : "Package not found"}?`,
@@ -277,43 +277,53 @@ const Dashboard = () => {
         {packages && packages.length > 0 ? (
           <div>
             <div className="flex flex-wrap justify-center items-start gap-3">
-              {packages.map((pkg, index) => (
-                <div key={index} className="w-1/8 p-1 space-y-2 flex flex-col justify-center"
-                  data-aos="fade-down"
-                  data-aos-delay={index + 1 * 200}>
-                  <button
-                    type="button"
-                    onClick={() => checkoutPackage(pkg)}
+              {packages.map((pkg, index) => {
+                const today = new Date();
+                const isToday =
+                  (pkg.classes === "Reguler" &&
+                    pkg.date_exam &&
+                    isSameDate(today, new Date(pkg.date_exam))) ||
+                  (pkg.classes === "Employee" &&
+                    pkg.date_start &&
+                    pkg.date_end &&
+                    today >= new Date(pkg.date_start) &&
+                    today <= new Date(pkg.date_end));
+
+                    // Jangan tampilkan jika bukan hari ini
+                    if (!isToday) return null;
+
+                return (
+                  <div
+                    key={index}
+                    className="w-1/8 p-1 space-y-2 flex flex-col justify-center"
+                    data-aos="fade-down"
+                    data-aos-delay={index + 1 * 200}
                   >
-                    <div className="w-full block text-gray-800 text-sm bg-white hover:bg-gray-100 font-medium p-5 space-y-2 rounded-2xl">
-                      <h2 className="font-medium text-base">
-                        {pkg.package ? pkg.package.name : "Package not found"}
-                      </h2>
-                      {pkg.classes == "Reguler" && pkg.date_exam && (
-                        <p className="text-xs">
-                          {moment.tz(pkg.date_exam, "Asia/Jakarta").format("lll")}
-                        </p>
-                      )}
-                      {pkg.classes == "Employee" &&
-                        pkg.date_start &&
-                        pkg.date_end && (
-                          <p className="flex flex-col gap-2 text-xs">
-                            <span>
-                              {moment
-                                .tz(pkg.date_start, "Asia/Jakarta")
-                                .format("lll")}
-                            </span>
-                            <span>
-                              {moment
-                                .tz(pkg.date_end, "Asia/Jakarta")
-                                .format("lll")}
-                            </span>
+                    <button type="button" onClick={() => checkoutPackage(pkg)}>
+                      <div className="w-full block text-gray-800 text-sm bg-white hover:bg-gray-100 font-medium p-5 space-y-2 rounded-2xl">
+                        <h2 className="font-medium text-base">
+                          {pkg.package ? pkg.package.name : "Package not found"}
+                        </h2>
+                        {pkg.classes === "Reguler" && pkg.date_exam && (
+                          <p className="text-xs">
+                            {moment.tz(pkg.date_exam, "Asia/Jakarta").format("lll")}
                           </p>
                         )}
-                    </div>
-                  </button>
-                  {
-                    pkg.request_camera && pkg.camera_status ? (
+                        {pkg.classes === "Employee" &&
+                          pkg.date_start &&
+                          pkg.date_end && (
+                            <p className="flex flex-col gap-2 text-xs">
+                              <span>
+                                {moment.tz(pkg.date_start, "Asia/Jakarta").format("lll")}
+                              </span>
+                              <span>
+                                {moment.tz(pkg.date_end, "Asia/Jakarta").format("lll")}
+                              </span>
+                            </p>
+                          )}
+                      </div>
+                    </button>
+                    {pkg.request_camera && pkg.camera_status ? (
                       <span className="bg-sky-500 px-5 py-2 rounded-xl text-xs text-white">
                         Kamera sudah diajukan dan status aktif
                       </span>
@@ -335,10 +345,10 @@ const Dashboard = () => {
                       >
                         Ajukan kamera
                       </button>
-                    ) : null
-                  }
-                </div>
-              ))}
+                    ) : null}
+                  </div>
+                );
+              })}
             </div>
             <p className="text-center text-sm mt-5">
               Kerjakan soal sesuai dengan jadwal yang ditetapkan.
