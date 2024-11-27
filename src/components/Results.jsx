@@ -33,74 +33,48 @@ const Results = () => {
         setTotalPages(response.data.totalPages);
         setLimit(response.data.limit);
         const paginate = [];
-        const maxButtons = 4;
+        const maxButtons = 3;
 
-        for (let i = 0; i < response.data.totalItems; i++) {
-          if (i < 2) {
+        for (let i = 0; i < response.data.totalPages; i++) {
+          const isActive = i + 1 === response.data.currentPage;
+  
+          if (
+            i < 2 ||
+            (i >= response.data.currentPage - 1 && i <= response.data.currentPage + 1) ||
+            i === response.data.totalPages - 1
+          ) {
             paginate.push(
               <li key={i} className="hidden md:inline-block">
                 <button
                   type="button"
                   onClick={() => getData(i + 1)}
-                  className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
+                  className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 transition-all ease-in-out ${
+                    isActive
+                      ? "bg-blue-500 text-white hover:bg-blue-600"
+                      : "bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                  }`}
                 >
                   {i + 1}
                 </button>
-              </li>,
+              </li>
             );
           }
-
+  
           if (
             i === 2 &&
-            response.data.totalItems > maxButtons &&
+            response.data.totalPages > maxButtons &&
             response.data.totalPages > maxButtons
           ) {
             paginate.push(
               <li key="dots" className="hidden md:inline-block">
-                <span className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300">
+                <button className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300">
                   ...
-                </span>
-              </li>,
-            );
-          }
-
-          if (response.data.totalItems > 10) {
-            if (
-              i === response.data.totalItems - 1 &&
-              response.data.totalItems > maxButtons
-            ) {
-              paginate.push(
-                <li key={i} className="hidden md:inline-block">
-                  <button
-                    type="button"
-                    onClick={() => getData(response.data.totalPages)}
-                    className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
-                  >
-                    {response.data.totalPages}
-                  </button>
-                </li>,
-              );
-            }
-          }
-
-          if (
-            response.data.totalItems <= maxButtons &&
-            i >= 2 &&
-            i < response.data.totalItems - 1
-          ) {
-            paginate.push(
-              <li key={i} className="hidden md:inline-block">
-                <button
-                  type="button"
-                  onClick={() => getData(i + 1)}
-                  className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
-                >
-                  {i + 1}
                 </button>
-              </li>,
+              </li>
             );
           }
         }
+
         setPaginations(paginate);
         setTimeout(() => {
           setLoading(false);

@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSave, faFileArrowUp, faImages } from "@fortawesome/free-solid-svg-icons";
+import { faSave, faFileArrowUp, faImages, faPencilAlt, faTrash } from "@fortawesome/free-solid-svg-icons";
 import TrisaktiLogo from "../assets/img/Logo-Usakti-White.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -27,16 +27,31 @@ const Assesment = () => {
   const [indexQuestion, setIndexQuestion] = useState("");
   const [update, setUpdate] = useState(false);
   const [file, setFile] = useState(null)
+  const [preview, setPreview] = useState(null);
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles) => {
-        setFile(acceptedFiles[0])
+        const selectedFile = acceptedFiles[0];
+        if (selectedFile) {
+          setFile(selectedFile);
+          setPreview(URL.createObjectURL(selectedFile));
+        }
     },
     accept: {
       'image/jpeg': ['.jpeg', '.jpg'],
       'image/png': ['.png'],
     },
+    maxFiles: 1,
   })
+
+  // Code untuk bersihkan URL sementara untuk mencegah kebocoran memori
+  useEffect(() => {
+    return () => {
+      if (preview) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
   
   const getQuestions = async () => {
     setLoading(true);
@@ -217,6 +232,8 @@ const Assesment = () => {
             }, 500);
           }
         } else {
+          setFile(null)
+          setPreview(null)
           const base64File = file ? await convertFileToBase64(file) : null;
           let payload = {};
 
@@ -270,7 +287,7 @@ const Assesment = () => {
         }
 
         if (nextPage > questions.length) {
-          nextPage = 1; // Start from first question if end is reached
+          nextPage = 1; 
         }
 
         if (nextPage <= questions.length) {
@@ -353,7 +370,7 @@ const Assesment = () => {
         }
 
         if (nextPage > questions.length) {
-           nextPage = 1; // Start from first question if end is reached
+           nextPage = 1;
         }
 
         if (nextPage <= questions.length) {
@@ -361,6 +378,7 @@ const Assesment = () => {
         } else {
           changeQuestion(1, packageQuestId);
         }
+
         setIndexQuestion(null);
         setSelectedAnswer(null);
         updateQuestions();
@@ -472,13 +490,16 @@ const Assesment = () => {
           .toString()
           .padStart(2, "0");
         setTimeLeft(`${hours}:${minutes}:${seconds}`);
-      }
+     }
     }, 1000);
 
     return () => clearInterval(countdown);
   }, [scheduleTime]);
 
-  console.log('questions', questions)
+  const handleDeleteImage = () => {
+    setFile(null);
+    setPreview(null);
+  };
 
   return (
     <main className="h-screen bg-gray-100 flex md:py-10">
@@ -500,7 +521,7 @@ const Assesment = () => {
                 <img
                   src={`https://be-cbt.trisakti.ac.id/questions/image/${questionActive.id}`}
                   alt="Question Image"
-                  className="w-64 rounded-xl"
+                  className="w-[500px] rounded-xl"
                 />
               )}
               {questionActive?.naration && 
@@ -553,10 +574,11 @@ const Assesment = () => {
                 ))}
               
               {questionActive?.package?.type_of_question === 'Essay' && (
-                  <div
+                <>
+                 <div
                     {...getRootProps({
                       className:
-                        'dropzone flex items-center justify-center bg-gray-200 p-20 rounded-md',
+                        'dropzone flex items-center justify-center bg-gray-200 p-10 rounded-md',
                     })}
                   >
                     {!file && (
@@ -564,7 +586,7 @@ const Assesment = () => {
                         <input {...getInputProps()} />
                         <FontAwesomeIcon icon={faFileArrowUp} size="2x" />
                         
-                        <p className="font-bold">
+                        <p className="font-bold text-sm">
                           Select a file to upload
                         </p>
                         <p className="text-sm text-slate-400">
@@ -582,8 +604,42 @@ const Assesment = () => {
                         </p>
                       </div>
                     )}
+                 </div>
+                
+                  {preview && (
+                    <>
+                    <div style={{ marginTop: "20px" }} className='flex items-end flex-col'>
+                      <img
+                        src={preview}
+                        alt="Preview"
+                        style={{
+                          maxWidth: "50%",
+                          maxHeight: "170px",
+                          borderRadius: "10px",
+                          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                        }}
+                      />
+                      <p style={{ marginTop: "10px" }} className='text-sm opacity-60'>{file?.name}</p>
                     </div>
-                )}
+
+                    <div className="mt-4 flex justify-end space-x-3">
+                      <button
+                        onClick={() => setFile(null)} // Reset untuk unggah ulang
+                        className="px-3 py-1 bg-orange-300 text-white font-semibold rounded-lg hover:bg-orange-500 transition"
+                      >
+                        <FontAwesomeIcon icon={faPencilAlt} />
+                      </button>
+                      <button
+                        onClick={handleDeleteImage}
+                        className="px-3 py-1 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition"
+                      >
+                       <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                      </div>
+                    </>
+                  )}
+                  </>
+              )}
               
               {answersActive.length === 0 && !questionActive && (
                 <div>
