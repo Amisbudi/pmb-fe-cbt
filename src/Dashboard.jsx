@@ -306,7 +306,7 @@ const Dashboard = () => {
                         </h2>
                         {pkg.classes === "Reguler" && pkg.date_exam && (
                           <p className="text-xs">
-                            {moment.tz(pkg.date_exam, "Asia/Jakarta").format("lll")}
+                            {moment.tz(pkg.date_exam, "Asia/Jakarta").format("DD-MM-YYYY")}{" "}{moment.tz(pkg.date_start, "Asia/Jakarta").format("HH:mm")}-{moment.tz(pkg.date_end, "Asia/Jakarta").format("HH:mm")}
                           </p>
                         )}
                         {pkg.classes === "Employee" &&
