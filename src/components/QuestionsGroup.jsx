@@ -7,18 +7,19 @@ import {
   } from "@fortawesome/free-solid-svg-icons";
 import ModalGrouping from "./Modal/ModalGrouping";
 import axios from "axios";
-// import htmlparse from 'html-react-parser';
+import LoadingScreen from './LoadingScreen';
 
 function QuestionsGrup() {
     const [isOpen, setIsOpen] = useState(false);
-    const [, setCountAnswer] = useState(0);
-    const [, setTotal] = useState(0);
-    const [, setTotalPages] = useState(0);
+    const [total, setTotal] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
     const [limit, setLimit] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
     const [groupingDataQuestion, setGroupingDataQuestion] = useState([]);
     const [reloadData, setReloadData] = useState(0)
     const [detail, setDataDetail] = useState('')
+    const [paginations, setPaginations] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const getGruopingQuestions = async () => {
         await axios
@@ -33,6 +34,54 @@ function QuestionsGrup() {
               setTotal(response.data.totalItems);
               setTotalPages(response.data.totalPages);
               setLimit(response.data.limit);
+
+              const paginate = [];
+              const maxButtons = 3;
+
+            for (let i = 0; i < response.data.totalPages; i++) {
+                const isActive = i + 1 === response.data.currentPage;
+        
+                if (
+                    i < 2 ||
+                    (i >= response.data.currentPage - 1 && i <= response.data.currentPage + 1) ||
+                    i === response.data.totalPages - 1
+                ) {
+                    paginate.push(
+                    <li key={i} className="hidden md:inline-block">
+                        <button
+                        type="button"
+                        onClick={() => getGruopingQuestions(i + 1)}
+                        className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 transition-all ease-in-out ${
+                            isActive
+                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                            : "bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                        }`}
+                        >
+                        {i + 1}
+                        </button>
+                    </li>
+                    );
+                }
+        
+                if (
+                    i === 2 &&
+                    response.data.totalPages > maxButtons &&
+                    response.data.totalPages > maxButtons
+                ) {
+                    paginate.push(
+                    <li key="dots" className="hidden md:inline-block">
+                        <button className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300">
+                        ...
+                        </button>
+                    </li>
+                    );
+                }
+            }
+
+            setPaginations(paginate);
+            setTimeout(() => {
+            setLoading(false);
+            }, 1000);
           })
           .catch((error) => {
             console.log(error.message);
@@ -70,7 +119,9 @@ function QuestionsGrup() {
         getGruopingQuestions()
     } ,[reloadData])
 
-    return (
+    return loading ? (
+        <LoadingScreen />
+      ) : (
         <main className="w-full md:w-10/12 h-screen bg-gray-100 pt-10 px-4 md:px-8 overflow-auto pb-10">
             <div className="space-y-1">
                 <h2 className="font-bold text-xl text-gray-900">Kelompok Soal</h2>
@@ -84,7 +135,6 @@ function QuestionsGrup() {
                         type="button"
                         onClick={() => {
                             setIsOpen(true);
-                            setCountAnswer(0);
                             setDataDetail([])
                         }}
                         className="text-white bg-sky-700 hover:bg-sky-800 font-medium rounded-xl text-sm px-5 py-2.5 space-x-2 mb-5 text-center"
@@ -172,6 +222,43 @@ function QuestionsGrup() {
                         )}
                       </tbody>
                     </table>
+
+                  {total > limit && (
+                    <nav className="flex items-center flex-column flex-wrap md:flex-row justify-between p-5 bg-white">
+                    <span className="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">
+                        Saat ini terdapat{" "}
+                        <span className="font-bold text-gray-700">{total}</span> data.
+                    </span>
+                    <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+                        <li>
+                        <button
+                            type="button"
+                            onClick={() => getGruopingQuestions(currentPage - 1)}
+                            className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
+                        >
+                            Previous
+                        </button>
+                        </li>
+                        {paginations}
+                        <li>
+                        <button
+                            type="button"
+                            onClick={() =>
+                            getGruopingQuestions(
+                                totalPages == currentPage
+                                ? currentPage
+                                : currentPage + 1,
+                            )
+                            }
+                            className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
+                        >
+                            Next
+                        </button>
+                        </li>
+                    </ul>
+                    </nav>
+                    )}
+                    
                 </div>
             </section>
 
@@ -186,6 +273,6 @@ function QuestionsGrup() {
             />
         </main>
     );
-}
+};
 
 export default QuestionsGrup;

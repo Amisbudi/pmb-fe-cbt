@@ -14,16 +14,26 @@ const Results = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [openModalEssay, setOpenModalEssay] = useState(false)
   const [reloadData, setReloadData] = useState(0)
+  const [toggleClearFilter, setToggleClearFilter] = useState(false)
 
   const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    // user_id: "",
+    // package_name: "",
+    // type_of_question: "",
+    start_date: "",
+    end_date: "",
+  });
 
-  const getData = async (page = 1) => {
+  const getData = async (page = 1, filters = {}) => {
     setLoading(true);
+
     await axios
       .get(`https://be-cbt.trisakti.ac.id/questionusers/results?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
+        params: { ...filters },
       })
       .then((response) => {
 
@@ -106,6 +116,27 @@ const Results = () => {
   //   }
   // };
 
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+  };
+
+  const applyFilters = () => {
+    const formattedFilters = {
+      ...filters,
+      start_date: filters.start_date ? new Date(filters.start_date).toISOString() : null,
+      end_date: filters.end_date ? new Date(filters.end_date).toISOString() : null,
+    };
+    getData(1, formattedFilters);
+    setToggleClearFilter(true)
+  };
+
+  const resetFilters = () => {
+    setFilters({ start_date: "", end_date: "" })
+    getData(1)
+    setToggleClearFilter(false)
+  };
+
   useEffect(() => {
     getData();
   }, [reloadData]);
@@ -120,7 +151,56 @@ const Results = () => {
           Di bawah ini adalah hasil ujian Anda. Anda dapat melihat, atau meninjau kembali hasil dari setiap ujian yang telah diikuti.
         </p>
       </div>
-      <section className="mt-5">
+        <section className="mt-5">
+        
+          <div className="mb-2">
+            <div className="flex items-center gap-4">
+              <span>Filter : </span>
+              
+              <div className="flex flex-col w-1/6">
+              <label className="text-xs">Start Date</label>
+                <input
+                  type="date"
+                  name="start_date"
+                  value={filters.start_date}
+                  onChange={handleFilterChange}
+                  className="border rounded-lg p-1"
+                />
+              </div>
+                
+              <div className="flex flex-col w-1/6">
+                <label className="text-xs">End Date</label>
+                <input
+                  type="date"
+                  name="end_date"
+                  placeholder="End date"
+                  value={filters.end_date}
+                  onChange={handleFilterChange}
+                  className="border rounded-lg p-1"
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={applyFilters}
+                className="bg-blue-500 text-white px-4 py-1 rounded-lg"
+              >
+                Apply
+              </button>
+              
+              {toggleClearFilter && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="bg-gray-500 text-white px-4 py-1 rounded-lg"
+                >
+                Reset
+              </button>
+              )}
+          </div>
+            
+        </div>
+
         <div className="overflow-x-auto border rounded-2xl">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
