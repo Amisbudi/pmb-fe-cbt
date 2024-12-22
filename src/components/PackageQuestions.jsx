@@ -38,7 +38,7 @@ const PackageQuestions = () => {
   const getData = async (page = 1) => {
     setLoading(true);
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/packagequestions?page=${page}`, {
+      .get(`${import.meta.env.REACT_APP_API_BASE_URL}/packagequestions?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -130,7 +130,7 @@ const PackageQuestions = () => {
 
   const getTypes = async () => {
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/types`, {
+      .get(`${import.meta.env.REACT_APP_API_BASE_URL}/types`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -169,7 +169,7 @@ const PackageQuestions = () => {
     e.preventDefault();
     await axios
       .post(
-        `https://be-cbt.trisakti.ac.id/packagequestions`,
+        `${import.meta.env.REACT_APP_API_BASE_URL}/packagequestions`,
         {
           type_id: formData.type_id,
           name: formData.name,
@@ -204,7 +204,7 @@ const PackageQuestions = () => {
     e.preventDefault();
     await axios
       .patch(
-        `https://be-cbt.trisakti.ac.id/packagequestions/${formData.id}`,
+        `${import.meta.env.REACT_APP_API_BASE_URL}/packagequestions/${formData.id}`,
         {
           type_id: formData.type_id,
           name: formData.name,
@@ -237,7 +237,7 @@ const PackageQuestions = () => {
   const handleDelete = async (id) => {
     if (confirm("Apakah yakin akan menghapus paket soal?")) {
       await axios
-        .delete(`https://be-cbt.trisakti.ac.id/packagequestions/${id}`, {
+        .delete(`${import.meta.env.REACT_APP_API_BASE_URL}/packagequestions/${id}`, {
           headers: {
             "api-key": "b4621b89b8b68387",
           },

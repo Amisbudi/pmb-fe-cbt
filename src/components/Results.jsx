@@ -29,7 +29,7 @@ const Results = () => {
     setLoading(true);
 
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/questionusers/results?page=${page}`, {
+      .get(`${import.meta.env.REACT_APP_API_BASE_URL}/questionusers/results?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -99,7 +99,7 @@ const Results = () => {
   //   if (confirm("Apakah yakin akan menghapus riwayat pengerjaan soal?")) {
   //     await axios
   //       .delete(
-  //         `https://be-cbt.trisakti.ac.id/questionusers/results/${data.package_question_id}/${data.user_id}`,
+  //         `${import.meta.env.REACT_APP_API_BASE_URL}/questionusers/results/${data.package_question_id}/${data.user_id}`,
   //         {
   //           headers: {
   //             "api-key": "b4621b89b8b68387",

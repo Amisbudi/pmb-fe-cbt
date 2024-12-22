@@ -73,7 +73,7 @@ const Questions = () => {
   const getData = async (page = 1) => {
     setLoading(true);
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/questions?page=${page}`, {
+      .get(`${import.meta.env.REACT_APP_API_BASE_URL}/questions?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -143,7 +143,7 @@ const Questions = () => {
 
   const getGruopingQuestions = async () => {
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/groupquestions`, {
+      .get(`${import.meta.env.REACT_APP_API_BASE_URL}/groupquestions`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -158,7 +158,10 @@ const Questions = () => {
 
   const getPackageQuestions = async () => {
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/packagequestions`, {
+      .get(`${import.meta.env.REACT_APP_API_BASE_URL}/packagequestions`, {
+        params: { 
+          limit: 10
+        },
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -347,7 +350,7 @@ const Questions = () => {
 
   const handleEdit = async (content) => {
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/answers/question/${content.id}`, {
+      .get(`${import.meta.env.REACT_APP_API_BASE_URL}/answers/question/${content.id}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -382,7 +385,7 @@ const Questions = () => {
     e.preventDefault();
     await axios
       .post(
-        `https://be-cbt.trisakti.ac.id/questions/import`,
+        `${import.meta.env.REACT_APP_API_BASE_URL}/questions/import`,
         {
           package_question_id: formData.package_question_id,
           excel: formData.excel,
@@ -434,7 +437,7 @@ const Questions = () => {
 
     await axios
       .post(
-        `https://be-cbt.trisakti.ac.id/questions`, data,
+        `${import.meta.env.REACT_APP_API_BASE_URL}/questions`, data,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -483,7 +486,7 @@ const Questions = () => {
 
     await axios
       .patch(
-        `https://be-cbt.trisakti.ac.id/questions/${formData.id}`, data,
+        `${import.meta.env.REACT_APP_API_BASE_URL}/questions/${formData.id}`, data,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -514,7 +517,7 @@ const Questions = () => {
   const handleDelete = async (id) => {
     if (confirm("Apakah yakin akan menghapus paket soal?")) {
       await axios
-        .delete(`https://be-cbt.trisakti.ac.id/questions/${id}`, {
+        .delete(`${import.meta.env.REACT_APP_API_BASE_URL}/questions/${id}`, {
           headers: {
             "api-key": "b4621b89b8b68387",
           },
@@ -626,7 +629,7 @@ const Questions = () => {
                     <td className="px-6 py-4">
                       {question.image ? (
                         <img
-                          src={`https://be-cbt.trisakti.ac.id/questions/image/${question.id}`}
+                          src={`${import.meta.env.REACT_APP_API_BASE_URL}/questions/image/${question.id}`}
                           alt="Question Image"
                           className="w-32 rounded-xl"
                         />
