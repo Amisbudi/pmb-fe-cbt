@@ -234,7 +234,7 @@ const Results = () => {
               </tr>
             </thead>
             <tbody>
-              {results.length > 0 ? (
+              {results?.length > 0 ? (
                 results.map((result, index) => (
                   <tr
                     key={index}

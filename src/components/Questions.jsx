@@ -175,7 +175,7 @@ const Questions = () => {
   };
 
   const handleChange = (e) => {
-    if (e.target.name === "excel" && e.target.files.length > 0) {
+    if (e.target.name === "excel" && e.target.files?.length > 0) {
       const file = e.target.files[0];
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -192,7 +192,7 @@ const Questions = () => {
         ...formData,
         [e.target.name]: e.target.value,
       });
-    } else if (e.target.name === "image" && e.target.files.length > 0) {
+    } else if (e.target.name === "image" && e.target.files?.length > 0) {
       const file = e.target.files[0];
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -613,7 +613,7 @@ const Questions = () => {
               </tr>
             </thead>
             <tbody>
-              {questions.length > 0 ? (
+              {questions?.length > 0 ? (
                 questions.map((question, index) => (
                   <tr
                     key={index}
@@ -761,7 +761,7 @@ const Questions = () => {
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                     >
                       <option value="">Pilih Soal</option>
-                      {packageQuestions.length > 0 &&
+                      {packageQuestions?.length > 0 &&
                         packageQuestions.map((packageQuestion, index) => (
                           <option
                             value={packageQuestion.id}

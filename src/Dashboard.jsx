@@ -151,7 +151,7 @@ const Dashboard = () => {
                   },
                 },
               );
-              if (!response.data.length > 0) {
+              if (!response.data?.length > 0) {
                 await axios.post(`${import.meta.env.REACT_APP_API_BASE_URL}/questionusers`, data, {
                   headers: {
                     "api-key": "b4621b89b8b68387",
@@ -191,7 +191,7 @@ const Dashboard = () => {
                   },
                 },
               );
-              if (!response.data.length > 0) {
+              if (!response.data?.length > 0) {
                 await axios.post(`${import.meta.env.REACT_APP_API_BASE_URL}/questionusers`, data, {
                   headers: {
                     "api-key": "b4621b89b8b68387",
@@ -230,6 +230,7 @@ const Dashboard = () => {
     });
     getInfo();
     checkAssesment();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -274,7 +275,7 @@ const Dashboard = () => {
         </div>
       </div>
       <section className="w-full">
-        {packages && packages.length > 0 ? (
+        {packages && packages?.length > 0 ? (
           <div>
             <div className="flex flex-wrap justify-center items-start gap-3">
               {packages.map((pkg, index) => {

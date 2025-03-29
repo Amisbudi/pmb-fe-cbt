@@ -25,7 +25,7 @@ const PackageQuestions = () => {
   const [essayQuestion, setEssayQuestion] = useState('')
 
   const [loading, setLoading] = useState(true);
-  console.log('essayQuestion :', essayQuestion)
+
   const [formData, setFormData] = useState({
     id: "",
     type_id: "",
@@ -255,7 +255,9 @@ const PackageQuestions = () => {
   useEffect(() => {
     getTypes();
     getData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return loading ? (
     <LoadingScreen />
   ) : (
@@ -300,7 +302,7 @@ const PackageQuestions = () => {
               </tr>
             </thead>
             <tbody>
-              {packageQuestions.length > 0 ? (
+              {packageQuestions?.length > 0 ? (
                 packageQuestions.map((packageQuestion, index) => (
                   <tr
                     key={index}
@@ -434,7 +436,7 @@ const PackageQuestions = () => {
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                     >
                       <option value="">Pilih</option>
-                      {types.length > 0 &&
+                      {types?.length > 0 &&
                         types.map((type, index) => (
                           <option value={type.id} key={index}>
                             {type.name}
@@ -560,7 +562,7 @@ const PackageQuestions = () => {
                       id="type_id"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                     >
-                      {types.length > 0 &&
+                      {types?.length > 0 &&
                         types.map((type, index) => (
                           <option value={type.id} key={index}>
                             {type.name}

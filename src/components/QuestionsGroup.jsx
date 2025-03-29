@@ -171,7 +171,7 @@ function QuestionsGrup() {
                             </tr>
                         </thead>
                          <tbody>
-                          {groupingDataQuestion.length > 0 ? (
+                          {groupingDataQuestion?.length > 0 ? (
                             groupingDataQuestion.map((data, index) => (
                             <tr key={index} className="odd:bg-white even:bg-gray-50 border-b" >
                                 <th

@@ -170,7 +170,7 @@ const RequestCamera = () => {
               </tr>
             </thead>
             <tbody>
-              {packageQuestions.length > 0 ? (
+              {packageQuestions?.length > 0 ? (
                 packageQuestions.map((packageQuestion, index) => (
                   <tr
                     key={index}
