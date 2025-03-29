@@ -23,7 +23,7 @@ function QuestionsGrup() {
 
     const getGruopingQuestions = async () => {
         await axios
-          .get(`${import.meta.env.REACT_APP_API_BASE_URL}/groupquestions`, {
+          .get(`${import.meta.env.VITE_APP_API_BASE_URL}/groupquestions`, {
             headers: {
               "api-key": "b4621b89b8b68387",
             },
@@ -91,7 +91,7 @@ function QuestionsGrup() {
     const handleDelete = async (id) => {
         if (confirm("Apakah yakin akan menghapus data soal ini?")) {
           await axios
-            .delete(`${import.meta.env.REACT_APP_API_BASE_URL}/groupquestions/${id}`, {
+            .delete(`${import.meta.env.VITE_APP_API_BASE_URL}/groupquestions/${id}`, {
               headers: {
                 "api-key": "b4621b89b8b68387",
               },
@@ -185,7 +185,7 @@ function QuestionsGrup() {
                                 <td className="px-6 py-4">
                                 {data.image ? (
                                     <img
-                                    src={`${import.meta.env.REACT_APP_API_BASE_URL}/questions/image/${data.id}`}
+                                    src={`${import.meta.env.VITE_APP_API_BASE_URL}/questions/image/${data.id}`}
                                     alt="Question Image"
                                     className="w-32 rounded-xl"
                                     />

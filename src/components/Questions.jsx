@@ -73,7 +73,7 @@ const Questions = () => {
   const getData = async (page = 1) => {
     setLoading(true);
     await axios
-      .get(`${import.meta.env.REACT_APP_API_BASE_URL}/questions?page=${page}`, {
+      .get(`${import.meta.env.VITE_APP_API_BASE_URL}/questions?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -143,7 +143,7 @@ const Questions = () => {
 
   const getGruopingQuestions = async () => {
     await axios
-      .get(`${import.meta.env.REACT_APP_API_BASE_URL}/groupquestions`, {
+      .get(`${import.meta.env.VITE_APP_API_BASE_URL}/groupquestions`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -158,7 +158,7 @@ const Questions = () => {
 
   const getPackageQuestions = async () => {
     await axios
-      .get(`${import.meta.env.REACT_APP_API_BASE_URL}/packagequestions`, {
+      .get(`${import.meta.env.VITE_APP_API_BASE_URL}/packagequestions`, {
         params: { 
           limit: 10
         },
@@ -350,7 +350,7 @@ const Questions = () => {
 
   const handleEdit = async (content) => {
     await axios
-      .get(`${import.meta.env.REACT_APP_API_BASE_URL}/answers/question/${content.id}`, {
+      .get(`${import.meta.env.VITE_APP_API_BASE_URL}/answers/question/${content.id}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -385,7 +385,7 @@ const Questions = () => {
     e.preventDefault();
     await axios
       .post(
-        `${import.meta.env.REACT_APP_API_BASE_URL}/questions/import`,
+        `${import.meta.env.VITE_APP_API_BASE_URL}/questions/import`,
         {
           package_question_id: formData.package_question_id,
           excel: formData.excel,
@@ -437,7 +437,7 @@ const Questions = () => {
 
     await axios
       .post(
-        `${import.meta.env.REACT_APP_API_BASE_URL}/questions`, data,
+        `${import.meta.env.VITE_APP_API_BASE_URL}/questions`, data,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -486,7 +486,7 @@ const Questions = () => {
 
     await axios
       .patch(
-        `${import.meta.env.REACT_APP_API_BASE_URL}/questions/${formData.id}`, data,
+        `${import.meta.env.VITE_APP_API_BASE_URL}/questions/${formData.id}`, data,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -517,7 +517,7 @@ const Questions = () => {
   const handleDelete = async (id) => {
     if (confirm("Apakah yakin akan menghapus paket soal?")) {
       await axios
-        .delete(`${import.meta.env.REACT_APP_API_BASE_URL}/questions/${id}`, {
+        .delete(`${import.meta.env.VITE_APP_API_BASE_URL}/questions/${id}`, {
           headers: {
             "api-key": "b4621b89b8b68387",
           },
@@ -629,7 +629,7 @@ const Questions = () => {
                     <td className="px-6 py-4">
                       {question.image ? (
                         <img
-                          src={`${import.meta.env.REACT_APP_API_BASE_URL}/questions/image/${question.id}`}
+                          src={`${import.meta.env.VITE_APP_API_BASE_URL}/questions/image/${question.id}`}
                           alt="Question Image"
                           className="w-32 rounded-xl"
                         />

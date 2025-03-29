@@ -36,7 +36,7 @@ function ModalActionValue({ isOpen, setIsOpen, data, reloadData, setReloadData }
     const requests = uniqueEssayData.map((d) => {
       const userId = d.user_id;
       const score = scores[userId] || 0;
-      return axios.patch(`${import.meta.env.REACT_APP_API_BASE_URL}/records/essay-image/${d.record_id}/result`, {
+      return axios.patch(`${import.meta.env.VITE_APP_API_BASE_URL}/records/essay-image/${d.record_id}/result`, {
         user_id: userId,
         essay_image_result: score,
       },
@@ -105,7 +105,7 @@ function ModalActionValue({ isOpen, setIsOpen, data, reloadData, setReloadData }
 
                   <div className="flex-1 flex justify-center items-center">
                     <img
-                      src={`${import.meta.env.REACT_APP_API_BASE_URL}/records/img/${d.record_id}`}
+                      src={`${import.meta.env.VITE_APP_API_BASE_URL}/records/img/${d.record_id}`}
                       alt={`Essay ${index + 1}`}
                       className="w-[300px] rounded-xl"
                       />

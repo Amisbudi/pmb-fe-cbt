@@ -55,7 +55,7 @@ const Dashboard = () => {
   const getPackageQuestionUsers = async (data, identityNumber) => {
     try {
       const responsePackageQuestionUsers = await axios.get(
-        `${import.meta.env.REACT_APP_API_BASE_URL}/packagequestionusers/user/${data.userId}`,
+        `${import.meta.env.VITE_APP_API_BASE_URL}/packagequestionusers/user/${data.userId}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -63,7 +63,7 @@ const Dashboard = () => {
         }
       );
 
-      const responseRecords = await axios.get(`${import.meta.env.REACT_APP_API_BASE_URL}/records`, {
+      const responseRecords = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/records`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -107,7 +107,7 @@ const Dashboard = () => {
     const dataId = e.target.getAttribute('data-id');
     await axios
       .get(
-        `${import.meta.env.REACT_APP_API_BASE_URL}/packagequestionusers/request/${dataId}`,
+        `${import.meta.env.VITE_APP_API_BASE_URL}/packagequestionusers/request/${dataId}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -144,7 +144,7 @@ const Dashboard = () => {
                 name: name,
               };
               const response = await axios.get(
-                `${import.meta.env.REACT_APP_API_BASE_URL}/questionusers/questions/${data.package_question_id}/${data.user_id}`,
+                `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/questions/${data.package_question_id}/${data.user_id}`,
                 {
                   headers: {
                     "api-key": "b4621b89b8b68387",
@@ -152,7 +152,7 @@ const Dashboard = () => {
                 },
               );
               if (!response.data?.length > 0) {
-                await axios.post(`${import.meta.env.REACT_APP_API_BASE_URL}/questionusers`, data, {
+                await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/questionusers`, data, {
                   headers: {
                     "api-key": "b4621b89b8b68387",
                   },
@@ -184,7 +184,7 @@ const Dashboard = () => {
                 user_id: pkg.user_id,
               };
               const response = await axios.get(
-                `${import.meta.env.REACT_APP_API_BASE_URL}/questionusers/questions/${data.package_question_id}/${data.user_id}`,
+                `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/questions/${data.package_question_id}/${data.user_id}`,
                 {
                   headers: {
                     "api-key": "b4621b89b8b68387",
@@ -192,7 +192,7 @@ const Dashboard = () => {
                 },
               );
               if (!response.data?.length > 0) {
-                await axios.post(`${import.meta.env.REACT_APP_API_BASE_URL}/questionusers`, data, {
+                await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/questionusers`, data, {
                   headers: {
                     "api-key": "b4621b89b8b68387",
                   },
