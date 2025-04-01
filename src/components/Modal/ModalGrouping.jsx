@@ -69,7 +69,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
       });
 
     } else {
-      await axios.post('${import.meta.env.VITE_APP_API_BASE_URL}/groupquestions', data, {
+      await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/groupquestions`, data, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
