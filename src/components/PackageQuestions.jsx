@@ -25,7 +25,7 @@ const PackageQuestions = () => {
   const [essayQuestion, setEssayQuestion] = useState('')
 
   const [loading, setLoading] = useState(true);
-  console.log('essayQuestion :', essayQuestion)
+
   const [formData, setFormData] = useState({
     id: "",
     type_id: "",
@@ -38,7 +38,7 @@ const PackageQuestions = () => {
   const getData = async (page = 1) => {
     setLoading(true);
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/packagequestions?page=${page}`, {
+      .get(`${import.meta.env.VITE_APP_API_BASE_URL}/packagequestions?page=${page}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -130,7 +130,7 @@ const PackageQuestions = () => {
 
   const getTypes = async () => {
     await axios
-      .get(`https://be-cbt.trisakti.ac.id/types`, {
+      .get(`${import.meta.env.VITE_APP_API_BASE_URL}/types`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -169,7 +169,7 @@ const PackageQuestions = () => {
     e.preventDefault();
     await axios
       .post(
-        `https://be-cbt.trisakti.ac.id/packagequestions`,
+        `${import.meta.env.VITE_APP_API_BASE_URL}/packagequestions`,
         {
           type_id: formData.type_id,
           name: formData.name,
@@ -204,7 +204,7 @@ const PackageQuestions = () => {
     e.preventDefault();
     await axios
       .patch(
-        `https://be-cbt.trisakti.ac.id/packagequestions/${formData.id}`,
+        `${import.meta.env.VITE_APP_API_BASE_URL}/packagequestions/${formData.id}`,
         {
           type_id: formData.type_id,
           name: formData.name,
@@ -237,7 +237,7 @@ const PackageQuestions = () => {
   const handleDelete = async (id) => {
     if (confirm("Apakah yakin akan menghapus paket soal?")) {
       await axios
-        .delete(`https://be-cbt.trisakti.ac.id/packagequestions/${id}`, {
+        .delete(`${import.meta.env.VITE_APP_API_BASE_URL}/packagequestions/${id}`, {
           headers: {
             "api-key": "b4621b89b8b68387",
           },
@@ -255,7 +255,9 @@ const PackageQuestions = () => {
   useEffect(() => {
     getTypes();
     getData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return loading ? (
     <LoadingScreen />
   ) : (
@@ -300,7 +302,7 @@ const PackageQuestions = () => {
               </tr>
             </thead>
             <tbody>
-              {packageQuestions.length > 0 ? (
+              {packageQuestions?.length > 0 ? (
                 packageQuestions.map((packageQuestion, index) => (
                   <tr
                     key={index}
@@ -434,7 +436,7 @@ const PackageQuestions = () => {
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                     >
                       <option value="">Pilih</option>
-                      {types.length > 0 &&
+                      {types?.length > 0 &&
                         types.map((type, index) => (
                           <option value={type.id} key={index}>
                             {type.name}
@@ -560,7 +562,7 @@ const PackageQuestions = () => {
                       id="type_id"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                     >
-                      {types.length > 0 &&
+                      {types?.length > 0 &&
                         types.map((type, index) => (
                           <option value={type.id} key={index}>
                             {type.name}

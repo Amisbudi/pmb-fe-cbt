@@ -60,7 +60,7 @@ const Assesment = () => {
       if (activePackage) {
         const data = JSON.parse(activePackage);
         const responseQuestions = await axios.get(
-          `https://be-cbt.trisakti.ac.id/questionusers/packagequestion/${data?.package_question_id}/${data.user_id}`,
+          `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/packagequestion/${data?.package_question_id}/${data.user_id}`,
           {
             headers: {
               "api-key": "b4621b89b8b68387",
@@ -94,7 +94,7 @@ const Assesment = () => {
       if (activePackage) {
         const data = JSON.parse(activePackage);
         const responseQuestions = await axios.get(
-          `https://be-cbt.trisakti.ac.id/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
+          `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
           {
             headers: {
               "api-key": "b4621b89b8b68387",
@@ -111,7 +111,7 @@ const Assesment = () => {
   const getRecord = async (question, pkg) => {
     await axios
       .get(
-        `https://be-cbt.trisakti.ac.id/records/question/${question}/${pkg}`,
+        `${import.meta.env.VITE_APP_API_BASE_URL}/records/question/${question}/${pkg}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -134,7 +134,7 @@ const Assesment = () => {
   const getAnswers = async (id) => {
     try {
       const responseAnwers = await axios.get(
-        `https://be-cbt.trisakti.ac.id/answers/question/${id}`,
+        `${import.meta.env.VITE_APP_API_BASE_URL}/answers/question/${id}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -151,7 +151,7 @@ const Assesment = () => {
   const changeQuestion = async (id, packageQuestion) => {
     try {
       const responseQuestions = await axios.get(
-        `https://be-cbt.trisakti.ac.id/questionusers/${id}/${packageQuestion}`,
+        `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/${id}/${packageQuestion}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -213,7 +213,7 @@ const Assesment = () => {
 
         if (update) {
           const response = await axios.patch(
-            `https://be-cbt.trisakti.ac.id/records/${record?.question_id}/${record?.package_question_id}`,
+            `${import.meta.env.VITE_APP_API_BASE_URL}/records/${record?.question_id}/${record?.package_question_id}`,
             {
               user_id: 1,
               answer_id: record.answer_id,
@@ -258,7 +258,7 @@ const Assesment = () => {
           }
 
           const response = await axios.post(
-            'https://be-cbt.trisakti.ac.id/records',
+            '${import.meta.env.VITE_APP_API_BASE_URL}/records',
             payload,
             {
               headers: {
@@ -304,7 +304,7 @@ const Assesment = () => {
         setLoading(true);
         if (update) {
           const response = await axios.patch(
-            `https://be-cbt.trisakti.ac.id/records/${record?.question_id}/${record?.package_question_id}`,
+            `${import.meta.env.VITE_APP_API_BASE_URL}/records/${record?.question_id}/${record?.package_question_id}`,
             {
               user_id: 1,
               answer_id: record.answer_id,
@@ -342,7 +342,7 @@ const Assesment = () => {
           }
 
           const response = await axios.post(
-            'https://be-cbt.trisakti.ac.id/records',
+            '${import.meta.env.VITE_APP_API_BASE_URL}/records',
             payload,
             {
               headers: {
@@ -447,7 +447,7 @@ const Assesment = () => {
         console.error("Error accessing the camera:", error);
         const packageStorage = localStorage.getItem('CBT:package');
         const packageParse = JSON.parse(packageStorage);
-        const response = await axios.get(`https://be-cbt.trisakti.ac.id/packagequestionusers/check/${packageParse?.package_question_id}`,{
+        const response = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/packagequestionusers/check/${packageParse?.package_question_id}`,{
           headers: {
             "api-key": "b4621b89b8b68387",
           },
@@ -519,7 +519,7 @@ const Assesment = () => {
             <div className="space-y-3">
               {questionActive?.image && (
                 <img
-                  src={`https://be-cbt.trisakti.ac.id/questions/image/${questionActive.id}`}
+                  src={`${import.meta.env.VITE_APP_API_BASE_URL}/questions/image/${questionActive.id}`}
                   alt="Question Image"
                   className="w-[500px] rounded-xl"
                 />
@@ -565,7 +565,7 @@ const Assesment = () => {
                     </label>
                     {answer.image && (
                       <img
-                        src={`https://be-cbt.trisakti.ac.id/answers/image/${answer.id}`}
+                        src={`${import.meta.env.VITE_APP_API_BASE_URL}/answers/image/${answer.id}`}
                         alt="Answer Image"
                         className="w-36 rounded-xl"
                       />

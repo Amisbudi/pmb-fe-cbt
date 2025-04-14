@@ -46,7 +46,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
     };
 
     if (detail?.id) {
-      await axios.patch(`https://be-cbt.trisakti.ac.id/groupquestions/${detail?.id}`, data, {
+      await axios.patch(`${import.meta.env.VITE_APP_API_BASE_URL}/groupquestions/${detail?.id}`, data, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -69,7 +69,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
       });
 
     } else {
-      await axios.post('https://be-cbt.trisakti.ac.id/groupquestions', data, {
+      await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/groupquestions`, data, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -260,7 +260,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
 
   const packageQuestionData = async () => {
 
-    await axios.get('https://be-cbt.trisakti.ac.id/packagequestions', {
+    await axios.get('${import.meta.env.VITE_APP_API_BASE_URL}/packagequestions', {
       headers: {
         "api-key": "b4621b89b8b68387",
       },

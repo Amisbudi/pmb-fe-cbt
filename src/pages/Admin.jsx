@@ -84,8 +84,11 @@ const Admin = () => {
     const params = new URLSearchParams(window.location.search);
     const pageParam = params.get('page') || 'packagequestions';
     setPage(pageParam);
+    
     getInfo();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <div className='relative flex'>
       {
