@@ -38,7 +38,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     await axios
-      .post(`http://127.0.0.1:8000/issueauth`, {
+      .post(`https://api.trisakti.ac.id/issueauth`, {
         username: formData.username,
         password: formData.password,
       })
