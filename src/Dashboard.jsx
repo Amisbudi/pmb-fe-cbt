@@ -70,18 +70,22 @@ const Dashboard = () => {
       });
 
       const packageQuestionUsers = responsePackageQuestionUsers.data;
+      // console.log('packageQuestionUsers', packageQuestionUsers);
       const records = responseRecords.data;
+      console.log('records', records);
 
       const filteredPackageQuestions = packageQuestionUsers.filter((pq) => {
         const isAlreadyInRecords = records.some(
           (record) =>
             String(record.package_question_id) === String(pq.id) &&
-            String(record.user_id) === String(identityNumber)
+            String(record.user_id) === String(identityNumber) && 
+            String(record.registration_number) === String(pq.registration_number)
         );
         return !isAlreadyInRecords;
       });
 
       setPackages(filteredPackageQuestions);
+      console.log('filteredPackageQuestions', filteredPackageQuestions);
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
@@ -141,10 +145,11 @@ const Dashboard = () => {
               const data = {
                 package_question_id: pkg.package_question_id,
                 user_id: pkg.user_id,
+                registration_number: pkg.registration_number,
                 name: name,
               };
               const response = await axios.get(
-                `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/questions/${data.package_question_id}/${data.user_id}`,
+                `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/questions/${data.package_question_id}/${data.user_id}/${data.registration_number}`,
                 {
                   headers: {
                     "api-key": "b4621b89b8b68387",
@@ -182,6 +187,7 @@ const Dashboard = () => {
               const data = {
                 package_question_id: pkg.package_question_id,
                 user_id: pkg.user_id,
+                registration_number: pkg.registration_number,
               };
               const response = await axios.get(
                 `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/questions/${data.package_question_id}/${data.user_id}`,

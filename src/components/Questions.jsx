@@ -164,7 +164,7 @@ const Questions = () => {
     await axios
       .get(`${import.meta.env.VITE_APP_API_BASE_URL}/packagequestions`, {
         params: { 
-          limit: 10
+          limit: 25
         },
         headers: {
           "api-key": "b4621b89b8b68387",

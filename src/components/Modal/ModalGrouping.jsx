@@ -94,7 +94,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
     };
     
     const handleChange = (e) => {
-        if (e.target.name === "excel" && e.target.files.length > 0) {
+        if (e.target.name === "excel" && e.target.files?.length > 0) {
           const file = e.target.files[0];
           const reader = new FileReader();
           reader.onloadend = () => {
@@ -109,7 +109,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
             ...formData,
             [e.target.name]: e.target.value,
           });
-        } else if (e.target.name === "image" && e.target.files.length > 0) {
+        } else if (e.target.name === "image" && e.target.files?.length > 0) {
           const file = e.target.files[0];
           const reader = new FileReader();
           reader.onloadend = () => {
@@ -121,7 +121,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
           reader.readAsDataURL(file);
         } else if (
           e.target.name === "answer_1_image" &&
-          e.target.files.length > 0
+          e.target.files?.length > 0
         ) {
           const file = e.target.files[0];
           const reader = new FileReader();
@@ -134,7 +134,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
           reader.readAsDataURL(file);
         } else if (
           e.target.name === "answer_2_image" &&
-          e.target.files.length > 0
+          e.target.files?.length > 0
         ) {
           const file = e.target.files[0];
           const reader = new FileReader();
@@ -147,7 +147,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
           reader.readAsDataURL(file);
         } else if (
           e.target.name === "answer_3_image" &&
-          e.target.files.length > 0
+          e.target.files?.length > 0
         ) {
           const file = e.target.files[0];
           const reader = new FileReader();
@@ -160,7 +160,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
           reader.readAsDataURL(file);
         } else if (
           e.target.name === "answer_4_image" &&
-          e.target.files.length > 0
+          e.target.files?.length > 0
         ) {
           const file = e.target.files[0];
           const reader = new FileReader();
@@ -173,7 +173,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
           reader.readAsDataURL(file);
         } else if (
           e.target.name === "answer_5_image" &&
-          e.target.files.length > 0
+          e.target.files?.length > 0
         ) {
           const file = e.target.files[0];
           const reader = new FileReader();
@@ -186,7 +186,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
           reader.readAsDataURL(file);
         } else if (
           e.target.name === "answer_6_image" &&
-          e.target.files.length > 0
+          e.target.files?.length > 0
         ) {
           const file = e.target.files[0];
           const reader = new FileReader();
@@ -199,7 +199,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
           reader.readAsDataURL(file);
         } else if (
           e.target.name === "answer_7_image" &&
-          e.target.files.length > 0
+          e.target.files?.length > 0
         ) {
           const file = e.target.files[0];
           const reader = new FileReader();
@@ -212,7 +212,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
           reader.readAsDataURL(file);
         } else if (
           e.target.name === "answer_8_image" &&
-          e.target.files.length > 0
+          e.target.files?.length > 0
         ) {
           const file = e.target.files[0];
           const reader = new FileReader();
@@ -225,7 +225,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
           reader.readAsDataURL(file);
         } else if (
           e.target.name === "answer_9_image" &&
-          e.target.files.length > 0
+          e.target.files?.length > 0
         ) {
           const file = e.target.files[0];
           const reader = new FileReader();
@@ -238,7 +238,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
           reader.readAsDataURL(file);
         } else if (
           e.target.name === "answer_10_image" &&
-          e.target.files.length > 0
+          e.target.files?.length > 0
         ) {
           const file = e.target.files[0];
           const reader = new FileReader();
@@ -260,7 +260,10 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
 
   const packageQuestionData = async () => {
 
-    await axios.get('${import.meta.env.VITE_APP_API_BASE_URL}/packagequestions', {
+    await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/packagequestions`, {
+      params: { 
+        limit: 25
+      },
       headers: {
         "api-key": "b4621b89b8b68387",
       },
@@ -314,7 +317,7 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                 >
                   <option value="">Pilih Pake Soal</option>
-                  {packageQuestnData.length > 0 &&
+                  {packageQuestnData?.length > 0 &&
                     packageQuestnData.map((data, index) => (
                       <option value={data.id} key={index}>
                         {data.name}

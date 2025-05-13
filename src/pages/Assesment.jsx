@@ -14,6 +14,7 @@ const Assesment = () => {
   const [timeLeft, setTimeLeft] = useState("00:00:00");
   const [scheduleTime, setScheduleTime] = useState(null);
   const [identityNumber, setIdentityNumber] = useState("");
+  const [regNumber, setRegNumber] = useState("");
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState([]);
 
@@ -60,7 +61,7 @@ const Assesment = () => {
       if (activePackage) {
         const data = JSON.parse(activePackage);
         const responseQuestions = await axios.get(
-          `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/packagequestion/${data?.package_question_id}/${data.user_id}`,
+          `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/packagequestion/${data?.package_question_id}/${data.user_id}/${data.registration_number}`,
           {
             headers: {
               "api-key": "b4621b89b8b68387",
@@ -75,7 +76,9 @@ const Assesment = () => {
         getRecord(
           responseQuestions.data[0]?.question_id,
           responseQuestions.data[0]?.package_question_id,
+          responseQuestions.data[0]?.registration_number
         );
+        setRegNumber(responseQuestions.data[0].registration_number);
         getAnswers(responseQuestions.data[0].question_id);
         setTimeout(() => {
           setLoading(false);
@@ -94,7 +97,7 @@ const Assesment = () => {
       if (activePackage) {
         const data = JSON.parse(activePackage);
         const responseQuestions = await axios.get(
-          `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/packagequestion/${data.package_question_id}/${data.user_id}`,
+          `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/packagequestion/${data.package_question_id}/${data.user_id}/${data.registration_number}`,
           {
             headers: {
               "api-key": "b4621b89b8b68387",
@@ -108,10 +111,10 @@ const Assesment = () => {
     }
   };
 
-  const getRecord = async (question, pkg) => {
+  const getRecord = async (question, pkg, noreg) => {
     await axios
       .get(
-        `${import.meta.env.VITE_APP_API_BASE_URL}/records/question/${question}/${pkg}`,
+        `${import.meta.env.VITE_APP_API_BASE_URL}/records/question/${question}/${pkg}/${noreg}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -142,16 +145,16 @@ const Assesment = () => {
         },
       );
       setAnswersActive(responseAnwers.data);
-      console.log('responseAnwers.data :', responseAnwers.data)
+      // console.log('responseAnwers.data :', responseAnwers.data)
     } catch (error) {
       console.log(error.message);
     }
   };
 
-  const changeQuestion = async (id, packageQuestion) => {
+  const changeQuestion = async (id, packageQuestion, noreg) => {
     try {
       const responseQuestions = await axios.get(
-        `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/${id}/${packageQuestion}`,
+        `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/${id}/${packageQuestion}/${noreg}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -163,7 +166,9 @@ const Assesment = () => {
       getRecord(
         responseQuestions.data.question_id,
         responseQuestions.data.package_question_id,
+        responseQuestions.data.registration_number
       );
+      setRegNumber(responseQuestions.data.registration_number);
       setIndexQuestion(id);
     } catch (error) {
       console.log(error.message);
@@ -182,6 +187,7 @@ const Assesment = () => {
       package_question_id: packageQuestionId,
       answer_id: answerId,
       user_id: identityNumber,
+      registration_number: regNumber,
     };
     setSelectedAnswer(e.target.value);
     setRecord(data);
@@ -244,6 +250,7 @@ const Assesment = () => {
               answer_id: record.answer_id || null,
               package_question_id: record?.package_question_id || questionActive?.package_question_id,
               user_id: identityNumber || '',
+              registration_number: regNumber,
               essay_image: base64File,
             };
           }
@@ -252,13 +259,14 @@ const Assesment = () => {
             payload = {
               question_id: questionActive.id,
               package_question_id: questionActive?.package_question_id,
+              registration_number: regNumber,
               user_id: identityNumber || '',
               essay_image: base64File,
             };
           }
 
           const response = await axios.post(
-            '${import.meta.env.VITE_APP_API_BASE_URL}/records',
+            `${import.meta.env.VITE_APP_API_BASE_URL}/records`,
             payload,
             {
               headers: {
@@ -291,9 +299,9 @@ const Assesment = () => {
         }
 
         if (nextPage <= questions.length) {
-          changeQuestion(nextPage, packageQuestId);
+          changeQuestion(nextPage, packageQuestId, regNumber);
         } else {
-          changeQuestion(1, packageQuestId);
+          changeQuestion(1, packageQuestId, regNumber);
         }
         
         setIndexQuestion(null);
@@ -331,12 +339,14 @@ const Assesment = () => {
               answer_id: record.answer_id || null,
               package_question_id: record?.package_question_id || questionActive?.package_question_id,
               user_id: identityNumber || '',
+              registration_number: regNumber,
               essay_image: file,
             };
           } else if (questionActive.package?.type_of_question === 'Essay') {
             payload = {
               package_question_id: questionActive?.package_question_id,
               user_id: identityNumber || '',
+              registration_number: regNumber,
               essay_image: base64File,
             };
           }
@@ -374,9 +384,9 @@ const Assesment = () => {
         }
 
         if (nextPage <= questions.length) {
-          changeQuestion(nextPage, packageQuestId);
+          changeQuestion(nextPage, packageQuestId, regNumber);
         } else {
-          changeQuestion(1, packageQuestId);
+          changeQuestion(1, packageQuestId, regNumber);
         }
 
         setIndexQuestion(null);
@@ -689,6 +699,7 @@ const Assesment = () => {
                       changeQuestion(
                         question?.number,
                         question?.package_question_id,
+                        regNumber
                       )
                     }
                     className={`flex items-center justify-center w-10 h-10 rounded-xl border-2 font-bold transition-all ease-in-out ${question.answered ? "bg-emerald-500 text-white border-emerald-400" : "bg-gray-100 text-sky-800 hover:text-white hover:bg-sky-700 border-sky-600"}`}
