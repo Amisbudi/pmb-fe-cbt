@@ -28,6 +28,8 @@ const Admin = () => {
       const currentTime = Math.floor(Date.now() / 1000);
       const tokenReceivedTime = authData.received;
       const expiredTime = authData.expired;
+      setName(authData.username);
+      // console.log(authData)
 
       if (currentTime - tokenReceivedTime >= expiredTime) {
         alert('Mohon maaf, sesi telah habis!');
@@ -36,12 +38,12 @@ const Admin = () => {
         throw new Error('Token sudah kedaluwarsa');
       }
 
-      const response = await axios.get('https://api.trisakti.ac.id/issueprofile', {
+      const response = await axios.get(`${import.meta.env.VITE_APP_GATEWAY_BASE_URL}/issueprofile`, {
         headers: {
           Authorization: `Bearer ${authData.token}`
         }
       });
-      setName(response.data.fullname);
+      setName(response.data?.fullname);
       const decoded = jwtDecode(authData.token);
       if (decoded.scopes[0] == 'admission-participant') {
         navigate('/dashboard');
@@ -135,7 +137,7 @@ const Admin = () => {
             <div className='w-full space-y-4'>
               <h2 className="text-white space-x-2 text-center">
                 <FontAwesomeIcon icon={faUserCircle} />
-                <span className='font-medium'>{name}</span>
+                <span className='font-medium capitalize'>{name}</span>
               </h2>
               <button type='button' onClick={handleLogout} className='w-full block bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-xl text-sm space-x-1'>
                 <FontAwesomeIcon icon={faSignOut} />

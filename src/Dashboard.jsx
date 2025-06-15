@@ -31,7 +31,7 @@ const Dashboard = () => {
       }
 
       const response = await axios.get(
-        `https://api.trisakti.ac.id/d3b1b0f38e11d357db8a6ae20b09ff23?username=${authData.username}`,
+        `${import.meta.env.VITE_APP_GATEWAY_BASE_URL}/d3b1b0f38e11d357db8a6ae20b09ff23?username=${authData.username}`,
         {
           headers: {
             Authorization: `Bearer ${authData.token}`,
@@ -72,7 +72,7 @@ const Dashboard = () => {
       const packageQuestionUsers = responsePackageQuestionUsers.data;
       // console.log('packageQuestionUsers', packageQuestionUsers);
       const records = responseRecords.data;
-      console.log('records', records);
+      // console.log('records', records);
 
       const filteredPackageQuestions = packageQuestionUsers.filter((pq) => {
         const isAlreadyInRecords = records.some(

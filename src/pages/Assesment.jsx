@@ -352,7 +352,7 @@ const Assesment = () => {
           }
 
           const response = await axios.post(
-            '${import.meta.env.VITE_APP_API_BASE_URL}/records',
+            `${import.meta.env.VITE_APP_API_BASE_URL}/records`,
             payload,
             {
               headers: {
@@ -417,22 +417,22 @@ const Assesment = () => {
         const currentTime = Math.floor(Date.now() / 1000);
         const tokenReceivedTime = authData.received;
         const expiredTime = authData.expired;
-
+        
         if (currentTime - tokenReceivedTime >= expiredTime) {
           alert("Mohon maaf, sesi telah habis!");
           localStorage.removeItem("CBTtrisakti:token");
           navigate("/");
           throw new Error("Token sudah kedaluwarsa");
         }
-        const response = await axios.get(
-          "https://api.trisakti.ac.id/d3b1b0f38e11d357db8a6ae20b09ff23?username=haisyammaulana22@gmail.com",
-          {
-            headers: {
-              Authorization: `Bearer ${authData.token}`,
-            },
-          },
-        );
-        setIdentityNumber(response.data.identify_number);
+        // const response = await axios.get(
+        //   `${import.meta.env.VITE_APP_GATEWAY_BASE_URL}/d3b1b0f38e11d357db8a6ae20b09ff23?username=haisyammaulana22@gmail.com`,
+        //   {
+        //     headers: {
+        //       Authorization: `Bearer ${authData.token}`,
+        //     },
+        //   },
+        // );
+        // setIdentityNumber(response.data.identify_number);
         const decoded = jwtDecode(token);
         if (decoded.scopes[0] == "admission-admin") {
           return navigate("/admin");
@@ -528,18 +528,35 @@ const Assesment = () => {
           <div className="space-y-8">
             <div className="space-y-3">
               {questionActive?.image && (
-                <img
-                  src={`${import.meta.env.VITE_APP_API_BASE_URL}/questions/image/${questionActive.id}`}
-                  alt="Question Image"
-                  className="w-[500px] rounded-xl"
-                />
+                <div className="overflow-auto">
+                  <img
+                    src={`${import.meta.env.VITE_APP_API_BASE_URL}/questions/image/${questionActive.id}`}
+                    alt="Question Image"
+                    className="w-[1080px] h-[720px] min-h-[720px] max-h-[720px] min-w-[1080px] max-w-[1080px] rounded-xl"
+                  />
+                </div>
               )}
-              {questionActive?.naration && 
-                <p className="text-gray-900">{document.createElement("div").innerHTML = questionActive?.naration?.replace(/<[^>]*>/g, '')?.replace(/&nbsp;/g, ' ')?.replace(/"/g, '')?.trim()}</p>
-              }
-              {questionActive?.name && 
-              <p className="text-gray-900">{document.createElement("div").innerHTML = questionActive?.name?.replace(/<[^>]*>/g, '')?.replace(/&nbsp;/g, ' ')?.replace(/"/g, '')?.trim()}</p>
-              }
+
+              {questionActive?.naration && (
+                <p className="text-gray-900">
+                  {questionActive.naration
+                    ?.replace(/<[^>]*>/g, '')
+                    ?.replace(/&nbsp;/g, ' ')
+                    ?.replace(/"/g, '')
+                    ?.trim()}
+                </p>
+              )}
+
+              {questionActive?.name && (
+                <p className="text-gray-900">
+                  {questionActive.name
+                    ?.replace(/<[^>]*>/g, '')
+                    ?.replace(/&nbsp;/g, ' ')
+                    ?.replace(/"/g, '')
+                    ?.trim()}
+                </p>
+              )}
+
               {isAnswered && (
                 <div className="inline-block bg-emerald-100 text-emerald-900 px-4 py-2.5 text-sm rounded-xl">
                   Anda sudah menjawab:{" "}

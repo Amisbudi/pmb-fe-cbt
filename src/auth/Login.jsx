@@ -38,7 +38,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     await axios
-      .post(`https://api.trisakti.ac.id/issueauth`, {
+      .post(`${import.meta.env.VITE_APP_GATEWAY_BASE_URL}/issueauth`, {
         username: formData.username,
         password: formData.password,
       })
