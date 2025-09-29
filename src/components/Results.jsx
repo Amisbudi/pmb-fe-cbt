@@ -33,7 +33,7 @@ const Results = () => {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
-        params: { ...filters },
+        params: { ...filters, limit: 15 },
       })
       .then((response) => {
 
