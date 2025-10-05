@@ -34,6 +34,9 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
     duration: detail?.duration,
   };
 
+  const API_URL = import.meta.env.VITE_APP_API_BASE_URL;
+  const API_KEY = "b4621b89b8b68387";
+
   // Form submission handler
   const handleSubmit = async (values, { resetForm }) => {
 
@@ -46,9 +49,9 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
     };
 
     if (detail?.id) {
-      await axios.patch(`${import.meta.env.VITE_APP_API_BASE_URL}/groupquestions/${detail?.id}`, data, {
+      await axios.patch(`${API_URL}/groupquestions/${detail?.id}`, data, {
         headers: {
-          "api-key": "b4621b89b8b68387",
+          "api-key": API_KEY,
         },
       }).then(() => {
         setIsOpen(false);
@@ -69,9 +72,9 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
       });
 
     } else {
-      await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/groupquestions`, data, {
+      await axios.post(`${API_URL}/groupquestions`, data, {
         headers: {
-          "api-key": "b4621b89b8b68387",
+          "api-key": API_KEY,
         },
       }).then(() => {
         setIsOpen(false);
@@ -260,12 +263,12 @@ function ModalGrouping({ isOpen, setIsOpen, reloadData, setReloadData, detail, s
 
   const packageQuestionData = async () => {
 
-    await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/packagequestions`, {
+    await axios.get(`${API_URL}/packagequestions`, {
       params: { 
         limit: 25
       },
       headers: {
-        "api-key": "b4621b89b8b68387",
+        "api-key": API_KEY,
       },
     }).then(({data : {data}}) => {
       setPackageQuestionData(data)

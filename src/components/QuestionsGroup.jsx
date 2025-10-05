@@ -10,104 +10,111 @@ import axios from "axios";
 import LoadingScreen from './LoadingScreen';
 
 function QuestionsGrup() {
-    const [isOpen, setIsOpen] = useState(false);
-    const [total, setTotal] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
-    const [limit, setLimit] = useState(0);
-    const [currentPage, setCurrentPage] = useState(0);
-    const [groupingDataQuestion, setGroupingDataQuestion] = useState([]);
-    const [reloadData, setReloadData] = useState(0)
-    const [detail, setDataDetail] = useState('')
-    const [paginations, setPaginations] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [detail, setDataDetail] = useState(null);
 
-    const getGruopingQuestions = async () => {
-        await axios
-          .get(`${import.meta.env.VITE_APP_API_BASE_URL}/groupquestions`, {
-            headers: {
-              "api-key": "b4621b89b8b68387",
-            },
-          })
-          .then((response) => {
-              setGroupingDataQuestion(response.data.data);
-              setCurrentPage(response.data.currentPage);
-              setTotal(response.data.totalItems);
-              setTotalPages(response.data.totalPages);
-              setLimit(response.data.limit);
+  // Data State
+  const [groupingDataQuestion, setGroupingDataQuestion] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
 
-              const paginate = [];
-              const maxButtons = 3;
+  // UI State
+  const [reloadData, setReloadData] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [paginations, setPaginations] = useState([]);
 
-            for (let i = 0; i < response.data.totalPages; i++) {
-                const isActive = i + 1 === response.data.currentPage;
-        
-                if (
-                    i < 2 ||
-                    (i >= response.data.currentPage - 1 && i <= response.data.currentPage + 1) ||
-                    i === response.data.totalPages - 1
-                ) {
-                    paginate.push(
-                    <li key={i} className="hidden md:inline-block">
-                        <button
-                        type="button"
-                        onClick={() => getGruopingQuestions(i + 1)}
-                        className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 transition-all ease-in-out ${
-                            isActive
-                            ? "bg-blue-500 text-white hover:bg-blue-600"
-                            : "bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                        }`}
-                        >
-                        {i + 1}
-                        </button>
-                    </li>
-                    );
-                }
-        
-                if (
-                    i === 2 &&
-                    response.data.totalPages > maxButtons &&
-                    response.data.totalPages > maxButtons
-                ) {
-                    paginate.push(
-                    <li key="dots" className="hidden md:inline-block">
-                        <button className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300">
-                        ...
-                        </button>
-                    </li>
-                    );
-                }
+  const API_URL = import.meta.env.VITE_APP_API_BASE_URL;
+  const API_KEY = "b4621b89b8b68387";
+
+  const getGruopingQuestions = async () => {
+    await axios
+      .get(`${API_URL}/groupquestions`, {
+        headers: {
+          "api-key": API_KEY,
+        },
+      })
+      .then((response) => {
+          setGroupingDataQuestion(response.data.data);
+          setCurrentPage(response.data.currentPage);
+          setTotal(response.data.totalItems);
+          setTotalPages(response.data.totalPages);
+          setLimit(response.data.limit);
+
+          const paginate = [];
+          const maxButtons = 3;
+
+        for (let i = 0; i < response.data.totalPages; i++) {
+            const isActive = i + 1 === response.data.currentPage;
+    
+            if (
+                i < 2 ||
+                (i >= response.data.currentPage - 1 && i <= response.data.currentPage + 1) ||
+                i === response.data.totalPages - 1
+            ) {
+                paginate.push(
+                <li key={i} className="hidden md:inline-block">
+                    <button
+                    type="button"
+                    onClick={() => getGruopingQuestions(i + 1)}
+                    className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 transition-all ease-in-out ${
+                        isActive
+                        ? "bg-blue-500 text-white hover:bg-blue-600"
+                        : "bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                    }`}
+                    >
+                    {i + 1}
+                    </button>
+                </li>
+                );
             }
+    
+            if (
+                i === 2 &&
+                response.data.totalPages > maxButtons &&
+                response.data.totalPages > maxButtons
+            ) {
+                paginate.push(
+                <li key="dots" className="hidden md:inline-block">
+                    <button className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300">
+                    ...
+                    </button>
+                </li>
+                );
+            }
+        }
 
-            setPaginations(paginate);
-            setTimeout(() => {
-            setLoading(false);
-            }, 1000);
-          })
-          .catch((error) => {
-            console.log(error.message);
-          });
+        setPaginations(paginate);
+        setTimeout(() => {
+        setLoading(false);
+        }, 1000);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
     };
 
     const handleDelete = async (id) => {
-        if (confirm("Apakah yakin akan menghapus data soal ini?")) {
-          await axios
-            .delete(`${import.meta.env.VITE_APP_API_BASE_URL}/groupquestions/${id}`, {
-              headers: {
-                "api-key": "b4621b89b8b68387",
-              },
-            })
-            .then((response) => {
-              alert(response.data.message);
-              setReloadData(reloadData + 1);
-            })
-            .catch((error) => {
-              if (error.response && error.response.status === 400) {
-                alert(error.response.data.message);
-              } else {
-                console.log(error);
-              }
-            });
-        }
+      if (confirm("Apakah yakin akan menghapus data soal ini?")) {
+        await axios
+          .delete(`${API_URL}/groupquestions/${id}`, {
+            headers: {
+              "api-key": API_KEY,
+            },
+          })
+          .then((response) => {
+            alert(response.data.message);
+            setReloadData(reloadData + 1);
+          })
+         .catch((error) => {
+            if (error.response && error.response.status === 400) {
+              alert(error.response.data.message);
+            } else {
+              console.log(error);
+            }
+        });
+      }
     };
     
     const handleEdit = (data) => { 
@@ -264,12 +271,12 @@ function QuestionsGrup() {
 
             
             <ModalGrouping
-                detail={detail}
-                setDetail={setDataDetail}
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                reloadData={reloadData}
-                setReloadData={setReloadData}
+              detail={detail}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              reloadData={reloadData}
+              setDetail={setDataDetail}
+              setReloadData={setReloadData}
             />
         </main>
     );
