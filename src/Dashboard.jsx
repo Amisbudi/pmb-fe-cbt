@@ -31,12 +31,14 @@ const Dashboard = () => {
       }
 
       const response = await axios.get(
-        `${import.meta.env.VITE_APP_GATEWAY_BASE_URL}/d3b1b0f38e11d357db8a6ae20b09ff23?username=${authData.username}`,
+        `${
+          import.meta.env.VITE_APP_GATEWAY_BASE_URL
+        }/d3b1b0f38e11d357db8a6ae20b09ff23?username=${authData.username}`,
         {
           headers: {
             Authorization: `Bearer ${authData.token}`,
           },
-        },
+        }
       );
       setName(response.data.fullname);
       const decoded = jwtDecode(authData.token);
@@ -55,7 +57,9 @@ const Dashboard = () => {
   const getPackageQuestionUsers = async (data, identityNumber) => {
     try {
       const responsePackageQuestionUsers = await axios.get(
-        `${import.meta.env.VITE_APP_API_BASE_URL}/packagequestionusers/user/${data.userId}`,
+        `${import.meta.env.VITE_APP_API_BASE_URL}/packagequestionusers/user/${
+          data.userId
+        }`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
@@ -63,11 +67,14 @@ const Dashboard = () => {
         }
       );
 
-      const responseRecords = await axios.get(`${import.meta.env.VITE_APP_API_BASE_URL}/records`, {
-        headers: {
-          "api-key": "b4621b89b8b68387",
-        },
-      });
+      const responseRecords = await axios.get(
+        `${import.meta.env.VITE_APP_API_BASE_URL}/records`,
+        {
+          headers: {
+            "api-key": "b4621b89b8b68387",
+          },
+        }
+      );
 
       const packageQuestionUsers = responsePackageQuestionUsers.data;
       // console.log('packageQuestionUsers', packageQuestionUsers);
@@ -78,14 +85,15 @@ const Dashboard = () => {
         const isAlreadyInRecords = records.some(
           (record) =>
             String(record.package_question_id) === String(pq.id) &&
-            String(record.user_id) === String(identityNumber) && 
-            String(record.registration_number) === String(pq.registration_number)
+            String(record.user_id) === String(identityNumber) &&
+            String(record.registration_number) ===
+              String(pq.registration_number)
         );
         return !isAlreadyInRecords;
       });
 
       setPackages(filteredPackageQuestions);
-      console.log('filteredPackageQuestions', filteredPackageQuestions);
+      // console.log("filteredPackageQuestions", filteredPackageQuestions);
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
@@ -108,15 +116,17 @@ const Dashboard = () => {
 
   const handleRequestUpdate = async (e) => {
     e.preventDefault();
-    const dataId = e.target.getAttribute('data-id');
+    const dataId = e.target.getAttribute("data-id");
     await axios
       .get(
-        `${import.meta.env.VITE_APP_API_BASE_URL}/packagequestionusers/request/${dataId}`,
+        `${
+          import.meta.env.VITE_APP_API_BASE_URL
+        }/packagequestionusers/request/${dataId}`,
         {
           headers: {
             "api-key": "b4621b89b8b68387",
           },
-        },
+        }
       )
       .then((response) => {
         getInfo();
@@ -131,11 +141,15 @@ const Dashboard = () => {
     try {
       const today = new Date();
       if (pkg.classes == "Reguler") {
-        const examDate = new Date(pkg.date_exam);
+        const examDate = new Date(pkg.date_start);
+        // console.log(examDate);
+        // console.log(today);
         if (examDate < today && isSameDate(examDate, today)) {
           if (
             window.confirm(
-              `Apakah anda yakin akan memulai tes ${pkg.package ? pkg.package.name : "Package not found"}?`,
+              `Apakah anda yakin akan memulai tes ${
+                pkg.package ? pkg.package.name : "Package not found"
+              }?`
             )
           ) {
             const activePackage = localStorage.getItem("CBT:package");
@@ -149,24 +163,34 @@ const Dashboard = () => {
                 name: name,
               };
               const response = await axios.get(
-                `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/questions/${data.package_question_id}/${data.user_id}/${data.registration_number}`,
+                `${
+                  import.meta.env.VITE_APP_API_BASE_URL
+                }/questionusers/questions/${data.package_question_id}/${
+                  data.user_id
+                }/${data.registration_number}`,
                 {
                   headers: {
                     "api-key": "b4621b89b8b68387",
                   },
-                },
+                }
               );
               if (!response.data?.length > 0) {
-                await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/questionusers`, data, {
-                  headers: {
-                    "api-key": "b4621b89b8b68387",
-                  },
-                });
+                await axios.post(
+                  `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers`,
+                  data,
+                  {
+                    headers: {
+                      "api-key": "b4621b89b8b68387",
+                    },
+                  }
+                );
               }
               localStorage.setItem("CBT:package", JSON.stringify(data));
               navigate("/assesment");
             }
           }
+        } else if (today > examDate) {
+          alert("Jadwal sudah berakhir!");
         } else {
           alert("Belum masuk jadwal!");
         }
@@ -177,7 +201,9 @@ const Dashboard = () => {
         if (today >= startDate && today <= endDate) {
           if (
             window.confirm(
-              `Apakah anda yakin akan memulai tes ${pkg.package ? pkg.package.name : "Package not found"}?`,
+              `Apakah anda yakin akan memulai tes ${
+                pkg.package ? pkg.package.name : "Package not found"
+              }?`
             )
           ) {
             const activePackage = localStorage.getItem("CBT:package");
@@ -190,19 +216,27 @@ const Dashboard = () => {
                 registration_number: pkg.registration_number,
               };
               const response = await axios.get(
-                `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers/questions/${data.package_question_id}/${data.user_id}`,
+                `${
+                  import.meta.env.VITE_APP_API_BASE_URL
+                }/questionusers/questions/${data.package_question_id}/${
+                  data.user_id
+                }`,
                 {
                   headers: {
                     "api-key": "b4621b89b8b68387",
                   },
-                },
+                }
               );
               if (!response.data?.length > 0) {
-                await axios.post(`${import.meta.env.VITE_APP_API_BASE_URL}/questionusers`, data, {
-                  headers: {
-                    "api-key": "b4621b89b8b68387",
-                  },
-                });
+                await axios.post(
+                  `${import.meta.env.VITE_APP_API_BASE_URL}/questionusers`,
+                  data,
+                  {
+                    headers: {
+                      "api-key": "b4621b89b8b68387",
+                    },
+                  }
+                );
               }
               localStorage.setItem("CBT:package", JSON.stringify(data));
               navigate("/assesment");
@@ -236,7 +270,7 @@ const Dashboard = () => {
     });
     getInfo();
     checkAssesment();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -261,7 +295,10 @@ const Dashboard = () => {
         </div>
         <div data-aos="fade-right" data-aos-offset="300" data-aos-delay="100">
           <p className="text-sm">
-            Ujian ini mewajibkan penggunaan kamera. Silakan ajukan permohonan di sini jika terjadi masalah dengan kamera Anda. Tetap semangat dan fokus pada tujuan! Setiap tantangan adalah kesempatan untuk menunjukkan kemampuan terbaik Anda.
+            Ujian ini mewajibkan penggunaan kamera. Silakan ajukan permohonan di
+            sini jika terjadi masalah dengan kamera Anda. Tetap semangat dan
+            fokus pada tujuan! Setiap tantangan adalah kesempatan untuk
+            menunjukkan kemampuan terbaik Anda.
           </p>
         </div>
         <div className="flex items-center gap-5 pt-4">
@@ -296,10 +333,10 @@ const Dashboard = () => {
                     today >= new Date(pkg.date_start) &&
                     today <= new Date(pkg.date_end));
 
-                    // Jangan tampilkan jika bukan hari ini
+                // Jangan tampilkan jika bukan hari ini
                 if (!isToday) return null;
-                
-                console.log('pkg', pkg)
+
+                // console.log("pkg", pkg);
 
                 return (
                   <div
@@ -315,7 +352,16 @@ const Dashboard = () => {
                         </h2>
                         {pkg.classes === "Reguler" && pkg.date_exam && (
                           <p className="text-xs">
-                            {moment.tz(pkg.date_exam, "Asia/Jakarta").format("DD-MM-YYYY")}{" "}{moment.tz(pkg.date_start, "Asia/Jakarta").format("HH:mm")}-{moment.tz(pkg.date_end, "Asia/Jakarta").format("HH:mm")}
+                            {moment
+                              .tz(pkg.date_exam, "Asia/Jakarta")
+                              .format("DD-MM-YYYY")}{" "}
+                            {moment
+                              .tz(pkg.date_start, "Asia/Jakarta")
+                              .format("HH:mm")}
+                            -
+                            {moment
+                              .tz(pkg.date_end, "Asia/Jakarta")
+                              .format("HH:mm")}
                           </p>
                         )}
                         {pkg.classes === "Employee" &&
@@ -323,10 +369,14 @@ const Dashboard = () => {
                           pkg.date_end && (
                             <p className="flex flex-col gap-2 text-xs">
                               <span>
-                                {moment.tz(pkg.date_start, "Asia/Jakarta").format("lll")}
+                                {moment
+                                  .tz(pkg.date_start, "Asia/Jakarta")
+                                  .format("lll")}
                               </span>
                               <span>
-                                {moment.tz(pkg.date_end, "Asia/Jakarta").format("lll")}
+                                {moment
+                                  .tz(pkg.date_end, "Asia/Jakarta")
+                                  .format("lll")}
                               </span>
                             </p>
                           )}
