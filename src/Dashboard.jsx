@@ -142,6 +142,7 @@ const Dashboard = () => {
       const today = new Date();
       if (pkg.classes == "Reguler") {
         const examDate = new Date(pkg.date_start);
+        const endExamDate = new Date(pkg.date_end);
         // console.log(examDate);
         // console.log(today);
         if (examDate < today && isSameDate(examDate, today)) {
@@ -189,7 +190,7 @@ const Dashboard = () => {
               navigate("/assesment");
             }
           }
-        } else if (today > examDate) {
+        } else if (today > endExamDate) {
           alert("Jadwal sudah berakhir!");
         } else {
           alert("Belum masuk jadwal!");
