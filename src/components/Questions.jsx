@@ -212,8 +212,8 @@ const Questions = () => {
         [e.target.name]: e.target.value,
       });
 
-      // const filteredData = groupingDataQuestion.filter(g => g.package_question_id === e.target.value)
-      // setGroupingDataQuestion(filteredData);
+      const filteredData = groupingDataQuestion.filter(g => g.package_question_id === e.target.value)
+      setGroupingDataQuestion(filteredData);
     } else if (e.target.name === "image" && e.target.files?.length > 0) {
       const file = e.target.files[0];
       const reader = new FileReader();
