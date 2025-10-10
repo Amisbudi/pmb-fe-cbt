@@ -92,13 +92,13 @@ const Questions = () => {
         const maxButtons = 3;
 
         for (let i = 0; i < response.data.totalPages; i++) {
-          const isActive = i + 1 === response.data.currentPage; // Cek apakah ini halaman aktif
+          const isActive = i + 1 === response.data.currentPage;
 
           if (
-            i < 2 || // Tambahkan halaman awal
+            i < 2 ||
             (i >= response.data.currentPage - 1 &&
-              i <= response.data.currentPage + 1) || // Tambahkan halaman sekitar halaman aktif
-            i === response.data.totalPages - 1 // Tambahkan halaman terakhir
+              i <= response.data.currentPage + 1) ||
+            i === response.data.totalPages - 1
           ) {
             paginate.push(
               <li key={i} className="hidden md:inline-block">
@@ -149,6 +149,9 @@ const Questions = () => {
   const getGruopingQuestions = async () => {
     await axios
       .get(`${import.meta.env.VITE_APP_API_BASE_URL}/groupquestions`, {
+        params: {
+          limit :  100
+        },
         headers: {
           "api-key": "b4621b89b8b68387",
         },

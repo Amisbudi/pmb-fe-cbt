@@ -28,9 +28,9 @@ function QuestionsGrup() {
   const API_URL = import.meta.env.VITE_APP_API_BASE_URL;
   const API_KEY = "b4621b89b8b68387";
 
-  const getGruopingQuestions = async () => {
+  const getGruopingQuestions = async (page = 1) => {
     await axios
-      .get(`${API_URL}/groupquestions`, {
+      .get(`${API_URL}/groupquestions?page=${page}`, {
         headers: {
           "api-key": API_KEY,
         },
@@ -50,7 +50,8 @@ function QuestionsGrup() {
     
             if (
                 i < 2 ||
-                (i >= response.data.currentPage - 1 && i <= response.data.currentPage + 1) ||
+                (i >= response.data.currentPage - 1 && 
+                i <= response.data.currentPage + 1) ||
                 i === response.data.totalPages - 1
             ) {
                 paginate.push(
@@ -124,7 +125,7 @@ function QuestionsGrup() {
     
     useEffect(() => {
         getGruopingQuestions()
-    } ,[reloadData])
+    } ,[])
 
     return loading ? (
         <LoadingScreen />
