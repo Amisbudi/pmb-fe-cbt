@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
+import { faPencilAlt, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import LoadingScreen from "./LoadingScreen";
 import { ModalActionValue } from "./Modal/ModalActionValue";
@@ -16,25 +16,24 @@ const Results = () => {
   const [openModalEssay, setOpenModalEssay] = useState(false);
   const [reloadData, setReloadData] = useState(0);
   const [toggleClearFilter, setToggleClearFilter] = useState(false);
-
   const [loading, setLoading] = useState(true);
+
+  // state untuk tanggal
   const [filtersToSend, setFiltersToSend] = useState({
     start_date: "",
     end_date: "",
   });
+
   const [displayFilters, setDisplayFilters] = useState({
     start_date: "",
     end_date: "",
   });
 
-  // Fungsi utama ambil data — selalu pakai filter aktif dari state
+  // ambil data
   const getData = async (page = 1, customFilters) => {
     setLoading(true);
 
-    // Pakai filter yang dikirim atau dari state terakhir
     const activeFilters = customFilters || filtersToSend;
-
-    // Build params hanya jika value ada
     const { start_date, end_date } = activeFilters;
     const params = {
       limit: 15,
@@ -112,50 +111,7 @@ const Results = () => {
       });
   };
 
-  // ---------- Date helpers ----------
-  const isoToDisplay = (iso) => {
-    if (!iso) return "";
-    const parts = iso.split("-");
-    if (parts.length !== 3) return "";
-    return `${parts[2]}/${parts[1]}/${parts[0]}`;
-  };
-
-  const displayToIso = (display) => {
-    if (!display) return "";
-    const clean = display.replace(/\s+/g, "");
-    const m = clean.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-    if (!m) return "";
-    const [_, d, mth, y] = m;
-    const day = Number(d);
-    const month = Number(mth);
-    const year = Number(y);
-    if (month < 1 || month > 12 || day < 1 || day > 31) return "";
-    return `${year}-${mth.padStart(2, "0")}-${d.padStart(2, "0")}`;
-  };
-
-  const formatTypingToDisplay = (raw) => {
-    const digits = raw.replace(/\D/g, "").slice(0, 8);
-    if (digits.length <= 2) return digits;
-    if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
-    return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
-  };
-
-  const handleDateTyping = (e) => {
-    const { name, value } = e.target;
-    const display = formatTypingToDisplay(value);
-    setDisplayFilters((prev) => ({ ...prev, [name]: display }));
-    const iso = displayToIso(display);
-    setFiltersToSend((prev) => ({ ...prev, [name]: iso || "" }));
-  };
-
-  useEffect(() => {
-    setDisplayFilters({
-      start_date: isoToDisplay(filtersToSend.start_date),
-      end_date: isoToDisplay(filtersToSend.end_date),
-    });
-  }, [filtersToSend.start_date, filtersToSend.end_date]);
-
-  // ---------- Apply / Reset ----------
+  // Apply / Reset filter
   const applyFilters = () => {
     setToggleClearFilter(true);
     getData(1, filtersToSend);
@@ -181,7 +137,8 @@ const Results = () => {
       <div className="space-y-1">
         <h2 className="font-bold text-xl text-gray-900">Hasil Ujian</h2>
         <p className="text-sm text-gray-700">
-          Di bawah ini adalah hasil ujian Anda. Anda dapat melihat, atau meninjau kembali hasil dari setiap ujian yang telah diikuti.
+          Di bawah ini adalah hasil ujian Anda. Anda dapat melihat, atau
+          meninjau kembali hasil dari setiap ujian yang telah diikuti.
         </p>
       </div>
 
@@ -190,30 +147,63 @@ const Results = () => {
           <div className="flex items-center gap-4">
             <span>Filter :</span>
 
-            <div className="flex flex-col w-1/6">
+            {/* Start Date */}
+            <div className="flex flex-col w-1/6 relative">
               <label className="text-xs">Start Date</label>
               <input
                 type="text"
                 name="start_date"
                 placeholder="dd/mm/yyyy"
                 value={displayFilters.start_date}
-                onChange={handleDateTyping}
-                className="border rounded-lg p-1"
-                autoComplete="off"
+                readOnly
+                onClick={() =>
+                  document.getElementById("start_date_picker").showPicker()
+                }
+                className="border rounded-lg p-1 cursor-pointer bg-white"
+              />
+              <FontAwesomeIcon icon={faCalendarAlt} className="absolute right-2 top-6 opacity-50"/> 
+              <input
+                id="start_date_picker"
+                type="date"
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                onChange={(e) => {
+                  const iso = e.target.value; // yyyy-mm-dd
+                  const [y, m, d] = iso.split("-");
+                  const display = `${d}/${m}/${y}`;
+                  setFiltersToSend((prev) => ({ ...prev, start_date: iso }));
+                  setDisplayFilters((prev) => ({ ...prev, start_date: display }));
+                }}
               />
             </div>
 
-            <div className="flex flex-col w-1/6">
+            {/* End Date */}
+            <div className="flex flex-col w-1/6 relative">
               <label className="text-xs">End Date</label>
               <input
                 type="text"
                 name="end_date"
                 placeholder="dd/mm/yyyy"
                 value={displayFilters.end_date}
-                onChange={handleDateTyping}
-                className="border rounded-lg p-1"
-                autoComplete="off"
+                readOnly
+                onClick={() =>
+                  document.getElementById("end_date_picker").showPicker()
+                }
+                className="border rounded-lg p-1 cursor-pointer bg-white"
               />
+              <FontAwesomeIcon icon={faCalendarAlt} className="absolute right-2 top-6 opacity-50"/> 
+              <input
+                id="end_date_picker"
+                type="date"
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                onChange={(e) => {
+                  const iso = e.target.value; // yyyy-mm-dd
+                  const [y, m, d] = iso.split("-");
+                  const display = `${d}/${m}/${y}`;
+                  setFiltersToSend((prev) => ({ ...prev, end_date: iso }));
+                  setDisplayFilters((prev) => ({ ...prev, end_date: display }));
+                }}
+              />
+              
             </div>
 
             <button
@@ -270,7 +260,10 @@ const Results = () => {
                     </td>
                     <td className="px-6 py-4">
                       {result.type_of_question === "Multiple choice"
-                        ? ((result.correct_answers / result.total_questions) * 100).toFixed()
+                        ? (
+                            (result.correct_answers / result.total_questions) *
+                            100
+                          ).toFixed()
                         : result.essay_image_result}
                     </td>
                     <td className="px-6 py-4 flex flex-col md:flex-row gap-1">
