@@ -28,9 +28,10 @@ function QuestionsGrup() {
   const API_URL = import.meta.env.VITE_APP_API_BASE_URL;
   const API_KEY = "b4621b89b8b68387";
 
-  const getGruopingQuestions = async (page = 1) => {
+  const getGruopingQuestions = async (page = 1, perPage = limit) => {
+    setLoading(true);
     await axios
-      .get(`${API_URL}/groupquestions?page=${page}`, {
+      .get(`${API_URL}/groupquestions?page=${page}&limit=${perPage}`, {
         headers: {
           "api-key": API_KEY,
         },
@@ -43,48 +44,86 @@ function QuestionsGrup() {
           setLimit(response.data.limit);
 
           const paginate = [];
-          const maxButtons = 3;
+          const maxButtons = 4;
 
-        for (let i = 0; i < response.data.totalPages; i++) {
-            const isActive = i + 1 === response.data.currentPage;
-    
-            if (
-                i < 2 ||
-                (i >= response.data.currentPage - 1 && 
-                i <= response.data.currentPage + 1) ||
-                i === response.data.totalPages - 1
-            ) {
-                paginate.push(
+          for (let i = 0; i < response.data.totalPages; i++) {
+            const pageNumber = i + 1;
+            const isActive = pageNumber === response.data.currentPage;
+            
+            if (i < 2) {
+              paginate.push(
                 <li key={i} className="hidden md:inline-block">
-                    <button
+                  <button
                     type="button"
-                    onClick={() => getGruopingQuestions(i + 1)}
+                    onClick={() => getGruopingQuestions(pageNumber, perPage)}
                     className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 transition-all ease-in-out ${
-                        isActive
-                        ? "bg-blue-500 text-white hover:bg-blue-600"
-                        : "bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                      isActive
+                        ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 font-semibold'
+                        : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
                     }`}
-                    >
-                    {i + 1}
-                    </button>
-                </li>
-                );
+                  >
+                    {pageNumber}
+                  </button>
+                </li>,
+              );
             }
-    
+
             if (
-                i === 2 &&
-                response.data.totalPages > maxButtons &&
-                response.data.totalPages > maxButtons
+              i === 2 &&
+              response.data.totalPages > maxButtons
             ) {
-                paginate.push(
+              paginate.push(
                 <li key="dots" className="hidden md:inline-block">
-                    <button className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300">
+                  <span className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300">
                     ...
-                    </button>
-                </li>
-                );
+                  </span>
+                </li>,
+              );
             }
-        }
+
+            if (response.data.totalPages > maxButtons) {
+              if (i === response.data.totalPages - 1) {
+                const isLastActive = response.data.totalPages === response.data.currentPage;
+                paginate.push(
+                  <li key={i} className="hidden md:inline-block">
+                    <button
+                      type="button"
+                      onClick={() => getGruopingQuestions(response.data.totalPages, perPage)}
+                      className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 transition-all ease-in-out ${
+                        isLastActive
+                          ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 font-semibold'
+                          : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
+                      }`}
+                    >
+                      {response.data.totalPages}
+                    </button>
+                  </li>,
+                );
+              }
+            }
+
+            if (
+              response.data.totalPages <= maxButtons &&
+              i >= 2 &&
+              i < response.data.totalPages
+            ) {
+              paginate.push(
+                <li key={i} className="hidden md:inline-block">
+                  <button
+                    type="button"
+                    onClick={() => getGruopingQuestions(pageNumber, perPage)}
+                    className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 transition-all ease-in-out ${
+                      isActive
+                        ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 font-semibold'
+                        : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
+                    }`}
+                  >
+                    {pageNumber}
+                  </button>
+                </li>,
+              );
+            }
+          }
 
         setPaginations(paginate);
         setTimeout(() => {
@@ -94,6 +133,12 @@ function QuestionsGrup() {
       .catch((error) => {
         console.log(error.message);
       });
+    };
+
+    const handleLimitChange = (e) => {
+      const newLimit = parseInt(e.target.value);
+      setLimit(newLimit);
+      getGruopingQuestions(1, newLimit);
     };
 
     const handleDelete = async (id) => {
@@ -107,6 +152,7 @@ function QuestionsGrup() {
           .then((response) => {
             alert(response.data.message);
             setReloadData(reloadData + 1);
+            getGruopingQuestions(currentPage, limit);
           })
          .catch((error) => {
             if (error.response && error.response.status === 400) {
@@ -125,7 +171,8 @@ function QuestionsGrup() {
     
     useEffect(() => {
         getGruopingQuestions()
-    } ,[])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    } ,[reloadData])
 
     return loading ? (
         <LoadingScreen />
@@ -138,19 +185,38 @@ function QuestionsGrup() {
                 </p>
             </div>
             <section className="mt-5">
-                <div className="flex items-center w-full justify-between">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
                     <button
                         type="button"
                         onClick={() => {
                             setIsOpen(true);
                             setDataDetail([])
                         }}
-                        className="text-white bg-sky-700 hover:bg-sky-800 font-medium rounded-xl text-sm px-5 py-2.5 space-x-2 mb-5 text-center"
+                        className="text-white bg-sky-700 hover:bg-sky-800 font-medium rounded-xl text-sm px-5 py-2.5 space-x-2 text-center w-full md:w-auto"
                     >
                         <FontAwesomeIcon icon={faPlusCircle} />
                         <span>Tambah</span>
                     </button>
+
+                    <div className="flex items-center gap-3">
+                      <label htmlFor="limit" className="text-sm text-gray-700 whitespace-nowrap">
+                        Tampilkan:
+                      </label>
+                      <select
+                        id="limit"
+                        value={limit}
+                        onChange={handleLimitChange}
+                        className="bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 px-2 py-2 transition-all ease-in-out"
+                      >
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={25}>25</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                      </select>
+                    </div>
                 </div>
+
                 <div className="overflow-x-auto border rounded-2xl">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                         <thead className="text-xs text-gray-700 uppercase bg-gray-50">
@@ -223,7 +289,7 @@ function QuestionsGrup() {
                             ))
                         ) : (
                             <tr className="bg-white">
-                            <td colSpan={6} className="px-6 py-4 text-center">
+                            <td colSpan={7} className="px-6 py-4 text-center">
                                 Data tidak ditemukan.
                             </td>
                             </tr>
@@ -233,37 +299,56 @@ function QuestionsGrup() {
 
                   {total > limit && (
                     <nav className="flex items-center flex-column flex-wrap md:flex-row justify-between p-5 bg-white">
-                    <span className="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">
-                        Saat ini terdapat{" "}
+                      <span className="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">
+                        Menampilkan{" "}
+                        <span className="font-bold text-gray-700">
+                          {limit * (currentPage - 1) + 1}
+                        </span>{" "}
+                        hingga{" "}
+                        <span className="font-bold text-gray-700">
+                          {Math.min(limit * currentPage, total)}
+                        </span>{" "}
+                        dari{" "}
                         <span className="font-bold text-gray-700">{total}</span> data.
-                    </span>
-                    <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+                      </span>
+                      <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
                         <li>
-                        <button
+                          <button
                             type="button"
-                            onClick={() => getGruopingQuestions(currentPage - 1)}
-                            className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
-                        >
+                            onClick={() => getGruopingQuestions(currentPage - 1, limit)}
+                            disabled={currentPage === 1}
+                            className={`flex items-center justify-center px-3 h-8 ms-0 leading-tight border border-gray-300 rounded-s-lg transition-all ease-in-out ${
+                              currentPage === 1
+                                ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                                : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
+                            }`}
+                          >
                             Previous
-                        </button>
+                          </button>
                         </li>
                         {paginations}
                         <li>
-                        <button
+                          <button
                             type="button"
                             onClick={() =>
-                            getGruopingQuestions(
-                                totalPages == currentPage
-                                ? currentPage
-                                : currentPage + 1,
-                            )
+                              getGruopingQuestions(
+                                totalPages === currentPage
+                                  ? currentPage
+                                  : currentPage + 1,
+                                limit
+                              )
                             }
-                            className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
-                        >
+                            disabled={currentPage === totalPages}
+                            className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 rounded-e-lg transition-all ease-in-out ${
+                              currentPage === totalPages
+                                ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                                : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
+                            }`}
+                          >
                             Next
-                        </button>
+                          </button>
                         </li>
-                    </ul>
+                      </ul>
                     </nav>
                     )}
                     

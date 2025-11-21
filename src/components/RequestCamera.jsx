@@ -6,16 +6,16 @@ const RequestCamera = () => {
   const [packageQuestions, setPackageQuestions] = useState([]);
   const [paginations, setPaginations] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [limit, setLimit] = useState(0);
+  const [limit, setLimit] = useState(10);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
   const [loading, setLoading] = useState(true);
 
-  const getData = async (page = 1) => {
+  const getData = async (page = 1, perPage = limit) => {
     setLoading(true);
     await axios
-      .get(`${import.meta.env.VITE_APP_API_BASE_URL}/packagequestionusers/requestcamera?page=${page}`, {
+      .get(`${import.meta.env.VITE_APP_API_BASE_URL}/packagequestionusers/requestcamera?page=${page}&limit=${perPage}`, {
         headers: {
           "api-key": "b4621b89b8b68387",
         },
@@ -27,19 +27,27 @@ const RequestCamera = () => {
         setTotal(response.data.totalItems);
         setTotalPages(response.data.totalPages);
         setLimit(response.data.limit);
+        
         const paginate = [];
         const maxButtons = 4;
 
-        for (let i = 0; i < response.data.totalItems; i++) {
+        for (let i = 0; i < response.data.totalPages; i++) {
+          const pageNumber = i + 1;
+          const isActive = pageNumber === response.data.currentPage;
+          
           if (i < 2) {
             paginate.push(
               <li key={i} className="hidden md:inline-block">
                 <button
                   type="button"
-                  onClick={() => getData(i + 1)}
-                  className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
+                  onClick={() => getData(pageNumber, perPage)}
+                  className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 transition-all ease-in-out ${
+                    isActive
+                      ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 font-semibold'
+                      : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
+                  }`}
                 >
-                  {i + 1}
+                  {pageNumber}
                 </button>
               </li>,
             );
@@ -47,7 +55,6 @@ const RequestCamera = () => {
 
           if (
             i === 2 &&
-            response.data.totalItems > maxButtons &&
             response.data.totalPages > maxButtons
           ) {
             paginate.push(
@@ -59,17 +66,19 @@ const RequestCamera = () => {
             );
           }
 
-          if (response.data.totalItems > 10) {
-            if (
-              i === response.data.totalItems - 1 &&
-              response.data.totalItems > maxButtons
-            ) {
+          if (response.data.totalPages > maxButtons) {
+            if (i === response.data.totalPages - 1) {
+              const isLastActive = response.data.totalPages === response.data.currentPage;
               paginate.push(
                 <li key={i} className="hidden md:inline-block">
                   <button
                     type="button"
-                    onClick={() => getData(response.data.totalPages)}
-                    className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
+                    onClick={() => getData(response.data.totalPages, perPage)}
+                    className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 transition-all ease-in-out ${
+                      isLastActive
+                        ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 font-semibold'
+                        : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
+                    }`}
                   >
                     {response.data.totalPages}
                   </button>
@@ -79,23 +88,28 @@ const RequestCamera = () => {
           }
 
           if (
-            response.data.totalItems <= maxButtons &&
+            response.data.totalPages <= maxButtons &&
             i >= 2 &&
-            i < response.data.totalItems - 1
+            i < response.data.totalPages
           ) {
             paginate.push(
               <li key={i} className="hidden md:inline-block">
                 <button
                   type="button"
-                  onClick={() => getData(i + 1)}
-                  className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
+                  onClick={() => getData(pageNumber, perPage)}
+                  className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 transition-all ease-in-out ${
+                    isActive
+                      ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 font-semibold'
+                      : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
+                  }`}
                 >
-                  {i + 1}
+                  {pageNumber}
                 </button>
               </li>,
             );
           }
         }
+
         setPaginations(paginate);
         setTimeout(() => {
           setLoading(false);
@@ -104,6 +118,12 @@ const RequestCamera = () => {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const handleLimitChange = (e) => {
+    const newLimit = parseInt(e.target.value);
+    setLimit(newLimit);
+    getData(1, newLimit);
   };
 
   const handleCameraUpdate = async (e) => {
@@ -121,7 +141,7 @@ const RequestCamera = () => {
       )
       .then((response) => {
         alert(response.data.message);
-        getData();
+        getData(currentPage, limit);
         setTimeout(() => {
           setLoading(false);
         }, 1000);
@@ -136,7 +156,9 @@ const RequestCamera = () => {
 
   useEffect(() => {
     getData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return loading ? (
     <LoadingScreen />
   ) : (
@@ -148,6 +170,26 @@ const RequestCamera = () => {
         </p>
       </div>
       <section className="mt-5">
+        <div className="flex items-center justify-end mb-5">
+          <div className="flex items-center gap-3">
+            <label htmlFor="limit" className="text-sm text-gray-700 whitespace-nowrap">
+              Tampilkan:
+            </label>
+            <select
+              id="limit"
+              value={limit}
+              onChange={handleLimitChange}
+              className="bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 px-2 py-2 transition-all ease-in-out"
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+          </div>
+        </div>
+
         <div className="overflow-x-auto border rounded-2xl">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
@@ -213,15 +255,28 @@ const RequestCamera = () => {
           {total > limit && (
             <nav className="flex items-center flex-column flex-wrap md:flex-row justify-between p-5 bg-white">
               <span className="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">
-                Saat ini terdapat{" "}
+                Menampilkan{" "}
+                <span className="font-bold text-gray-700">
+                  {limit * (currentPage - 1) + 1}
+                </span>{" "}
+                hingga{" "}
+                <span className="font-bold text-gray-700">
+                  {Math.min(limit * currentPage, total)}
+                </span>{" "}
+                dari{" "}
                 <span className="font-bold text-gray-700">{total}</span> data.
               </span>
               <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
                 <li>
                   <button
                     type="button"
-                    onClick={() => getData(currentPage - 1)}
-                    className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
+                    onClick={() => getData(currentPage - 1, limit)}
+                    disabled={currentPage === 1}
+                    className={`flex items-center justify-center px-3 h-8 ms-0 leading-tight border border-gray-300 rounded-s-lg transition-all ease-in-out ${
+                      currentPage === 1
+                        ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                        : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
+                    }`}
                   >
                     Previous
                   </button>
@@ -232,12 +287,18 @@ const RequestCamera = () => {
                     type="button"
                     onClick={() =>
                       getData(
-                        totalPages == currentPage
+                        totalPages === currentPage
                           ? currentPage
                           : currentPage + 1,
+                        limit
                       )
                     }
-                    className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 transition-all ease-in-out"
+                    disabled={currentPage === totalPages}
+                    className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 rounded-e-lg transition-all ease-in-out ${
+                      currentPage === totalPages
+                        ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                        : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
+                    }`}
                   >
                     Next
                   </button>

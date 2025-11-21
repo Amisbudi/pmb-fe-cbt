@@ -29,7 +29,6 @@ const Admin = () => {
       const tokenReceivedTime = authData.received;
       const expiredTime = authData.expired;
       setName(authData.username);
-      // console.log(authData)
 
       if (currentTime - tokenReceivedTime >= expiredTime) {
         alert('Mohon maaf, sesi telah habis!');
@@ -82,6 +81,15 @@ const Admin = () => {
     }
   }
 
+  // Helper function to determine active menu item
+  const getMenuItemClass = (menuPage) => {
+    const baseClass = 'block w-full cursor-pointer text-sm py-4 px-5 rounded-xl transition-all ease-in-out';
+    const activeClass = 'bg-blue-600 text-white hover:bg-blue-700';
+    const inactiveClass = 'text-gray-200 hover:text-gray-300 bg-gray-700 hover:bg-gray-900';
+    
+    return `${baseClass} ${page === menuPage ? activeClass : inactiveClass}`;
+  };
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const pageParam = params.get('page') || 'packagequestions';
@@ -95,46 +103,56 @@ const Admin = () => {
     <div className='relative flex'>
       {
         sidebar && (
-          <aside className='absolute md:relative flex flex-col items-center justify-between w-full md:w-2/12 bg-gray-800 h-screen px-5'>
+          <aside className='absolute md:relative flex flex-col items-center justify-between w-full md:w-2/12 bg-gray-800 h-screen px-5 z-50'>
             <div className='w-full flex flex-col justify-center items-center'>
               <a href='#' className='w-full block space-y-3 pt-5'>
                 <img src={TrisaktiLogo} alt="Logo Trisakti" className='w-24 mx-auto' />
                 <h2 className='text-center font-bold text-white'>Computer-Based Test</h2>
               </a>
               <ul className='w-full mt-6 space-y-2'>
-                <a href={`/admin?page=packagequestions`} className='block w-full cursor-pointer text-gray-200 hover:text-gray-300 text-sm bg-gray-700 hover:bg-gray-900 py-4 px-5 rounded-xl transition-all ease-in-out'>
-                  <p className='space-x-3'>
-                    <FontAwesomeIcon icon={faTags} />
-                    <span>Package Questions</span>
-                  </p>
-                </a>
-                <a href={`/admin?page=group-questions`} className='block cursor-pointer text-gray-200 hover:text-gray-300 text-sm bg-gray-700 hover:bg-gray-900 py-4 px-5 rounded-xl transition-all ease-in-out'>
-                  <p className='space-x-3'>
-                    <FontAwesomeIcon icon={faLayerGroup} />
-                    <span>Group Questions</span>
-                  </p>
-                </a>
-                <a href={`/admin?page=questions`} className='block cursor-pointer text-gray-200 hover:text-gray-300 text-sm bg-gray-700 hover:bg-gray-900 py-4 px-5 rounded-xl transition-all ease-in-out'>
-                  <p className='space-x-3'>
-                    <FontAwesomeIcon icon={faQuestionCircle} />
-                    <span>Questions</span>
-                  </p>
-                </a>
-                <a href={`/admin?page=camera`} className='block cursor-pointer text-gray-200 hover:text-gray-300 text-sm bg-gray-700 hover:bg-gray-900 py-4 px-5 rounded-xl transition-all ease-in-out'>
-                  <p className='space-x-3'>
-                    <FontAwesomeIcon icon={faCamera} />
-                    <span>Camera Requests</span>
-                  </p>
-                </a>
-                <a href={`/admin?page=results`} className='block cursor-pointer text-gray-200 hover:text-gray-300 text-sm bg-gray-700 hover:bg-gray-900 py-4 px-5 rounded-xl transition-all ease-in-out'>
-                  <p className='space-x-3'>
-                    <FontAwesomeIcon icon={faRankingStar} />
-                    <span>Results</span>
-                  </p>
-                </a>
+                <li>
+                  <a href={`/admin?page=packagequestions`} className={getMenuItemClass('packagequestions')}>
+                    <p className='space-x-3'>
+                      <FontAwesomeIcon icon={faTags} />
+                      <span>Package Questions</span>
+                    </p>
+                  </a>
+                </li>
+                <li>
+                  <a href={`/admin?page=group-questions`} className={getMenuItemClass('group-questions')}>
+                    <p className='space-x-3'>
+                      <FontAwesomeIcon icon={faLayerGroup} />
+                      <span>Group Questions</span>
+                    </p>
+                  </a>
+                </li>
+                <li>
+                  <a href={`/admin?page=questions`} className={getMenuItemClass('questions')}>
+                    <p className='space-x-3'>
+                      <FontAwesomeIcon icon={faQuestionCircle} />
+                      <span>Questions</span>
+                    </p>
+                  </a>
+                </li>
+                <li>
+                  <a href={`/admin?page=camera`} className={getMenuItemClass('camera')}>
+                    <p className='space-x-3'>
+                      <FontAwesomeIcon icon={faCamera} />
+                      <span>Camera Requests</span>
+                    </p>
+                  </a>
+                </li>
+                <li>
+                  <a href={`/admin?page=results`} className={getMenuItemClass('results')}>
+                    <p className='space-x-3'>
+                      <FontAwesomeIcon icon={faRankingStar} />
+                      <span>Results</span>
+                    </p>
+                  </a>
+                </li>
               </ul>
             </div>
-            <div className='w-full space-y-4'>
+            <div className='w-full space-y-4 pb-4'>
               <h2 className="text-white space-x-2 text-center">
                 <FontAwesomeIcon icon={faUserCircle} />
                 <span className='font-medium capitalize'>{name}</span>
@@ -143,12 +161,12 @@ const Admin = () => {
                 <FontAwesomeIcon icon={faSignOut} />
                 <span>Keluar</span>
               </button>
+              <p className='text-center text-xs text-gray-400'>© 2023 Universitas Trisakti</p>
             </div>
-            <p className='text-center text-xs py-3 text-gray-400'>© 2023 Universitas Trisakti</p>
           </aside>
         )
       }
-      <button type='button' onClick={() => setSidebar(!sidebar)} className='block md:hidden absolute text-center right-5 top-5'>
+      <button type='button' onClick={() => setSidebar(!sidebar)} className='block md:hidden absolute text-center right-5 top-5 z-50'>
         <FontAwesomeIcon icon={faBars} className='text-gray-300 hover:text-gray-400 transition-all ease-in-out' size='xl' />
       </button>
       {renderContent()}

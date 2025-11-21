@@ -10,7 +10,7 @@ const Results = () => {
   const [results, setResults] = useState([]);
   const [paginations, setPaginations] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [limit, setLimit] = useState(0);
+  const [limit, setLimit] = useState(10);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [openModalEssay, setOpenModalEssay] = useState(false);
@@ -30,13 +30,13 @@ const Results = () => {
   });
 
   // ambil data
-  const getData = async (page = 1, customFilters) => {
+  const getData = async (page = 1, customFilters = null, perPage = limit) => {
     setLoading(true);
 
-    const activeFilters = customFilters || filtersToSend;
+    const activeFilters = customFilters !== null ? customFilters : filtersToSend;
     const { start_date, end_date } = activeFilters;
     const params = {
-      limit: 15,
+      limit: perPage,
       ...(start_date ? { start_date } : {}),
       ...(end_date ? { end_date } : {}),
     };
@@ -57,45 +57,83 @@ const Results = () => {
         setLimit(response.data.limit);
 
         const paginate = [];
-        const maxButtons = 3;
+        const maxButtons = 4;
 
         for (let i = 0; i < response.data.totalPages; i++) {
-          const isActive = i + 1 === response.data.currentPage;
-
-          if (
-            i < 2 ||
-            (i >= response.data.currentPage - 1 &&
-              i <= response.data.currentPage + 1) ||
-            i === response.data.totalPages - 1
-          ) {
+          const pageNumber = i + 1;
+          const isActive = pageNumber === response.data.currentPage;
+          
+          if (i < 2) {
             paginate.push(
               <li key={i} className="hidden md:inline-block">
                 <button
                   type="button"
-                  onClick={() => getData(i + 1)}
+                  onClick={() => getData(pageNumber, activeFilters, perPage)}
                   className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 transition-all ease-in-out ${
                     isActive
-                      ? "bg-blue-500 text-white hover:bg-blue-600"
-                      : "bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                      ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 font-semibold'
+                      : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
                   }`}
                 >
-                  {i + 1}
+                  {pageNumber}
                 </button>
-              </li>
+              </li>,
             );
           }
 
           if (
             i === 2 &&
-            response.data.totalPages > maxButtons &&
             response.data.totalPages > maxButtons
           ) {
             paginate.push(
               <li key="dots" className="hidden md:inline-block">
-                <button className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300">
+                <span className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300">
                   ...
+                </span>
+              </li>,
+            );
+          }
+
+          if (response.data.totalPages > maxButtons) {
+            if (i === response.data.totalPages - 1) {
+              const isLastActive = response.data.totalPages === response.data.currentPage;
+              paginate.push(
+                <li key={i} className="hidden md:inline-block">
+                  <button
+                    type="button"
+                    onClick={() => getData(response.data.totalPages, activeFilters, perPage)}
+                    className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 transition-all ease-in-out ${
+                      isLastActive
+                        ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 font-semibold'
+                        : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
+                    }`}
+                  >
+                    {response.data.totalPages}
+                  </button>
+                </li>,
+              );
+            }
+          }
+
+          if (
+            response.data.totalPages <= maxButtons &&
+            i >= 2 &&
+            i < response.data.totalPages
+          ) {
+            paginate.push(
+              <li key={i} className="hidden md:inline-block">
+                <button
+                  type="button"
+                  onClick={() => getData(pageNumber, activeFilters, perPage)}
+                  className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 transition-all ease-in-out ${
+                    isActive
+                      ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 font-semibold'
+                      : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
+                  }`}
+                >
+                  {pageNumber}
                 </button>
-              </li>
+              </li>,
             );
           }
         }
@@ -111,22 +149,41 @@ const Results = () => {
       });
   };
 
+  const handleLimitChange = (e) => {
+    const newLimit = parseInt(e.target.value);
+    setLimit(newLimit);
+    getData(1, filtersToSend, newLimit);
+  };
+
   // Apply / Reset filter
   const applyFilters = () => {
+    if (!filtersToSend.start_date && !filtersToSend.end_date) {
+      alert("Please select at least one date filter");
+      return;
+    }
+    
+    if (filtersToSend.start_date && filtersToSend.end_date) {
+      if (new Date(filtersToSend.start_date) > new Date(filtersToSend.end_date)) {
+        alert("Start date cannot be greater than end date");
+        return;
+      }
+    }
+
     setToggleClearFilter(true);
-    getData(1, filtersToSend);
+    getData(1, filtersToSend, limit);
   };
 
   const resetFilters = () => {
     setFiltersToSend({ start_date: "", end_date: "" });
     setDisplayFilters({ start_date: "", end_date: "" });
     setToggleClearFilter(false);
-    getData(1, {});
+    getData(1, { start_date: "", end_date: "" }, limit);
   };
 
   // Load pertama kali
   useEffect(() => {
-    getData(1);
+    getData(1, { start_date: "", end_date: "" }, limit);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reloadData]);
 
   // ---------- Render ----------
@@ -143,86 +200,123 @@ const Results = () => {
       </div>
 
       <section className="mt-5">
-        <div className="mb-2">
-          <div className="flex items-center gap-4">
-            <span>Filter :</span>
+        <div className="mb-4">
+          <div className="flex flex-col lg:flex-row lg:items-end gap-4">
+            <span className="font-medium text-gray-700">Filter :</span>
 
             {/* Start Date */}
-            <div className="flex flex-col w-1/6 relative">
-              <label className="text-xs">Start Date</label>
-              <input
-                type="text"
-                name="start_date"
-                placeholder="dd/mm/yyyy"
-                value={displayFilters.start_date}
-                readOnly
-                onClick={() =>
-                  document.getElementById("start_date_picker").showPicker()
-                }
-                className="border rounded-lg p-1 cursor-pointer bg-white"
-              />
-              <FontAwesomeIcon icon={faCalendarAlt} className="absolute right-2 top-6 opacity-50"/> 
-              <input
-                id="start_date_picker"
-                type="date"
-                className="absolute inset-0 opacity-0 cursor-pointer"
-                onChange={(e) => {
-                  const iso = e.target.value; // yyyy-mm-dd
-                  const [y, m, d] = iso.split("-");
-                  const display = `${d}/${m}/${y}`;
-                  setFiltersToSend((prev) => ({ ...prev, start_date: iso }));
-                  setDisplayFilters((prev) => ({ ...prev, start_date: display }));
-                }}
-              />
+            <div className="flex flex-col w-full lg:w-48 relative">
+              <label className="text-xs mb-1 font-medium text-gray-700">Start Date</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  name="start_date"
+                  placeholder="dd/mm/yyyy"
+                  value={displayFilters.start_date}
+                  readOnly
+                  onClick={() => {
+                    const picker = document.getElementById("start_date_picker");
+                    if (picker) picker.showPicker();
+                  }}
+                  className="w-full border border-gray-300 rounded-lg p-2 pr-10 cursor-pointer bg-white hover:border-blue-400 transition-all"
+                />
+                <FontAwesomeIcon 
+                  icon={faCalendarAlt} 
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                /> 
+                <input
+                  id="start_date_picker"
+                  type="date"
+                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                  value={filtersToSend.start_date}
+                  onChange={(e) => {
+                    const iso = e.target.value; // yyyy-mm-dd
+                    if (iso) {
+                      const [y, m, d] = iso.split("-");
+                      const display = `${d}/${m}/${y}`;
+                      setFiltersToSend((prev) => ({ ...prev, start_date: iso }));
+                      setDisplayFilters((prev) => ({ ...prev, start_date: display }));
+                    }
+                  }}
+                />
+              </div>
             </div>
 
             {/* End Date */}
-            <div className="flex flex-col w-1/6 relative">
-              <label className="text-xs">End Date</label>
-              <input
-                type="text"
-                name="end_date"
-                placeholder="dd/mm/yyyy"
-                value={displayFilters.end_date}
-                readOnly
-                onClick={() =>
-                  document.getElementById("end_date_picker").showPicker()
-                }
-                className="border rounded-lg p-1 cursor-pointer bg-white"
-              />
-              <FontAwesomeIcon icon={faCalendarAlt} className="absolute right-2 top-6 opacity-50"/> 
-              <input
-                id="end_date_picker"
-                type="date"
-                className="absolute inset-0 opacity-0 cursor-pointer"
-                onChange={(e) => {
-                  const iso = e.target.value; // yyyy-mm-dd
-                  const [y, m, d] = iso.split("-");
-                  const display = `${d}/${m}/${y}`;
-                  setFiltersToSend((prev) => ({ ...prev, end_date: iso }));
-                  setDisplayFilters((prev) => ({ ...prev, end_date: display }));
-                }}
-              />
-              
+            <div className="flex flex-col w-full lg:w-48 relative">
+              <label className="text-xs mb-1 font-medium text-gray-700">End Date</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  name="end_date"
+                  placeholder="dd/mm/yyyy"
+                  value={displayFilters.end_date}
+                  readOnly
+                  onClick={() => {
+                    const picker = document.getElementById("end_date_picker");
+                    if (picker) picker.showPicker();
+                  }}
+                  className="w-full border border-gray-300 rounded-lg p-2 pr-10 cursor-pointer bg-white hover:border-blue-400 transition-all"
+                />
+                <FontAwesomeIcon 
+                  icon={faCalendarAlt} 
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                /> 
+                <input
+                  id="end_date_picker"
+                  type="date"
+                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                  value={filtersToSend.end_date}
+                  onChange={(e) => {
+                    const iso = e.target.value; // yyyy-mm-dd
+                    if (iso) {
+                      const [y, m, d] = iso.split("-");
+                      const display = `${d}/${m}/${y}`;
+                      setFiltersToSend((prev) => ({ ...prev, end_date: iso }));
+                      setDisplayFilters((prev) => ({ ...prev, end_date: display }));
+                    }
+                  }}
+                />
+              </div>
             </div>
 
-            <button
-              type="button"
-              onClick={applyFilters}
-              className="bg-blue-500 text-white px-4 py-1 rounded-lg"
-            >
-              Apply
-            </button>
-
-            {toggleClearFilter && (
+            <div className="flex gap-2">
               <button
                 type="button"
-                onClick={resetFilters}
-                className="bg-gray-500 text-white px-4 py-1 rounded-lg"
+                onClick={applyFilters}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg transition-all font-medium"
               >
-                Reset
+                Apply Filter
               </button>
-            )}
+
+              {toggleClearFilter && (
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg transition-all font-medium"
+                >
+                  Reset Filter
+                </button>
+              )}
+            </div>
+
+            <div className="flex items-center gap-3 lg:ml-auto">
+              <label htmlFor="limit" className="text-sm text-gray-700 whitespace-nowrap font-medium">
+                Tampilkan:
+              </label>
+              <select
+                id="limit"
+                value={limit}
+                onChange={handleLimitChange}
+                className="bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 px-2 py-2 transition-all ease-in-out"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -290,18 +384,30 @@ const Results = () => {
           </table>
 
           {total > limit && (
-            <nav className="flex items-center justify-between p-5 bg-white">
-              <span className="text-sm font-normal text-gray-500">
-                Saat ini terdapat{" "}
+            <nav className="flex items-center flex-column flex-wrap md:flex-row justify-between p-5 bg-white">
+              <span className="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">
+                Menampilkan{" "}
+                <span className="font-bold text-gray-700">
+                  {limit * (currentPage - 1) + 1}
+                </span>{" "}
+                hingga{" "}
+                <span className="font-bold text-gray-700">
+                  {Math.min(limit * currentPage, total)}
+                </span>{" "}
+                dari{" "}
                 <span className="font-bold text-gray-700">{total}</span> data.
               </span>
-              <ul className="inline-flex -space-x-px text-sm h-8">
+              <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
                 <li>
                   <button
                     type="button"
-                    onClick={() => getData(currentPage - 1)}
+                    onClick={() => getData(currentPage - 1, filtersToSend, limit)}
                     disabled={currentPage === 1}
-                    className="flex items-center justify-center px-3 h-8 text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50"
+                    className={`flex items-center justify-center px-3 h-8 ms-0 leading-tight border border-gray-300 rounded-s-lg transition-all ease-in-out ${
+                      currentPage === 1
+                        ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                        : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
+                    }`}
                   >
                     Previous
                   </button>
@@ -314,10 +420,17 @@ const Results = () => {
                       getData(
                         totalPages === currentPage
                           ? currentPage
-                          : currentPage + 1
+                          : currentPage + 1,
+                        filtersToSend,
+                        limit
                       )
                     }
-                    className="flex items-center justify-center px-3 h-8 text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700"
+                    disabled={currentPage === totalPages}
+                    className={`flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 rounded-e-lg transition-all ease-in-out ${
+                      currentPage === totalPages
+                        ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                        : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700'
+                    }`}
                   >
                     Next
                   </button>
