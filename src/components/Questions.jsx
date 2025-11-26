@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import {
   faEdit,
   faKey,
@@ -12,6 +11,7 @@ import {
   faXmarkCircle,
   faLayerGroup,
   faEye,
+  faFileExport
 } from "@fortawesome/free-solid-svg-icons";
 import { faCheckCircle } from "@fortawesome/free-regular-svg-icons";
 import axios from "axios";
@@ -20,27 +20,33 @@ import ExampleImportQuestion from "../assets/example-import-questions.xlsx";
 import TextEditor from "./Editor";
 import ModalGrouping from "./Modal/ModalGrouping";
 import ModalViewQuestion from "./Modal/ModalViewQuestion";
+import { API_KEY, API_BASE_URL } from "../helpers/constant";
+import { customStyles } from '../helpers/stylingSelect'
+import Select from "react-select";
 
 const Questions = () => {
+  const [loading, setLoading] = useState(true);
+  const [editModal, setEditModal] = useState(false);
   const [createModal, setCreateModal] = useState(false);
   const [importModal, setImportModal] = useState(false);
-  const [editModal, setEditModal] = useState(false);
+
+  const [total, setTotal] = useState(0);
+  const [limit, setLimit] = useState(10);
   const [questions, setQuestions] = useState([]);
-  const [packageQuestions, setPackageQuestions] = useState([]);
-  const [paginations, setPaginations] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [countAnswer, setCountAnswer] = useState(0);
-  const [limit, setLimit] = useState(10);
-  const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const [paginations, setPaginations] = useState([]);
+  const [packageName, setPackageName] = useState('');
+  const [optionFilters, setOptionFilters] = useState([])
+  const [idGroupQuestion, setIdGroupQuestion] = useState("");
+  const [packageQuestions, setPackageQuestions] = useState([]);
+
+  const [getId, setGetIdView] = useState();
+  const [viewModal, setViewModal] = useState(false);
+  const [questionType, setQuestionType] = useState("");
   const [openModalGrouping, setOpenModalGrouping] = useState(false);
   const [groupingDataQuestion, setGroupingDataQuestion] = useState([]);
-  const [idGroupQuestion, setIdGroupQuestion] = useState("");
-  const [questionType, setQuestionType] = useState("");
-  const [viewModal, setViewModal] = useState(false);
-  const [getId, setGetIdView] = useState();
-
-  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     id: "",
@@ -74,13 +80,15 @@ const Questions = () => {
   });
 
   const getData = async (page = 1, perPage = limit) => {
-    setLoading(true);
     await axios
-      .get(`${import.meta.env.VITE_APP_API_BASE_URL}/questions?page=${page}&limit=${perPage}`, {
-        headers: {
-          "api-key": "b4621b89b8b68387",
-        },
-      })
+    .get(
+        `${API_BASE_URL}/questions?page=${page}&limit=${perPage}&package.name=${packageName}`,
+        {
+          headers: {
+            "api-key": API_KEY,
+          },
+        }
+      )
       .then((response) => {
         setQuestions(response.data.data);
         setCurrentPage(response.data.currentPage);
@@ -192,12 +200,12 @@ const Questions = () => {
 
   const getGruopingQuestions = async () => {
     await axios
-      .get(`${import.meta.env.VITE_APP_API_BASE_URL}/groupquestions`, {
+      .get(`${API_BASE_URL}/groupquestions`, {
         params: {
           limit :  100
         },
         headers: {
-          "api-key": "b4621b89b8b68387",
+          "api-key": API_KEY,
         },
       })
       .then((response) => {
@@ -216,12 +224,12 @@ const Questions = () => {
 
   const getPackageQuestions = async () => {
     await axios
-      .get(`${import.meta.env.VITE_APP_API_BASE_URL}/packagequestions`, {
+      .get(`${API_BASE_URL}/packagequestions`, {
         params: {
           limit: 25,
         },
         headers: {
-          "api-key": "b4621b89b8b68387",
+          "api-key": API_KEY,
         },
       })
       .then((response) => {
@@ -416,12 +424,12 @@ const Questions = () => {
   const handleEdit = async (content) => {
     await axios
       .get(
-        `${import.meta.env.VITE_APP_API_BASE_URL}/answers/question/${
+        `${API_BASE_URL}/answers/question/${
           content.id
         }`,
         {
           headers: {
-            "api-key": "b4621b89b8b68387",
+            "api-key": API_KEY,
           },
         }
       )
@@ -459,14 +467,14 @@ const Questions = () => {
     e.preventDefault();
     await axios
       .post(
-        `${import.meta.env.VITE_APP_API_BASE_URL}/questions/import`,
+        `${API_BASE_URL}/questions/import`,
         {
           package_question_id: formData.package_question_id,
           excel: formData.excel,
         },
         {
           headers: {
-            "api-key": "b4621b89b8b68387",
+            "api-key": API_KEY,
           },
         }
       )
@@ -494,6 +502,7 @@ const Questions = () => {
   const handleSave = async (e) => {
     setLoading(true);
     e.preventDefault();
+
     let data = {
       package_question_id: formData.package_question_id,
       id_group_questions: parseFloat(idGroupQuestion),
@@ -503,6 +512,7 @@ const Questions = () => {
       status: true,
       count_answer: countAnswer,
     };
+
     for (let i = 0; i < parseInt(countAnswer); i++) {
       data[`answer_${i + 1}`] = formData[`answer_${i + 1}`];
       data[`answer_${i + 1}_image`] = formData[`answer_${i + 1}_image`];
@@ -510,9 +520,9 @@ const Questions = () => {
     }
 
     await axios
-      .post(`${import.meta.env.VITE_APP_API_BASE_URL}/questions`, data, {
+      .post(`${API_BASE_URL}/questions`, data, {
         headers: {
-          "api-key": "b4621b89b8b68387",
+          "api-key": API_KEY,
         },
       })
       .then((response) => {
@@ -557,11 +567,11 @@ const Questions = () => {
 
     await axios
       .patch(
-        `${import.meta.env.VITE_APP_API_BASE_URL}/questions/${formData.id}`,
+        `${API_BASE_URL}/questions/${formData.id}`,
         data,
         {
           headers: {
-            "api-key": "b4621b89b8b68387",
+            "api-key": API_KEY,
           },
         }
       )
@@ -589,9 +599,9 @@ const Questions = () => {
   const handleDelete = async (id) => {
     if (confirm("Apakah yakin akan menghapus paket soal?")) {
       await axios
-        .delete(`${import.meta.env.VITE_APP_API_BASE_URL}/questions/${id}`, {
+        .delete(`${API_BASE_URL}/questions/${id}`, {
           headers: {
-            "api-key": "b4621b89b8b68387",
+            "api-key": API_KEY,
           },
         })
         .then((response) => {
@@ -608,18 +618,78 @@ const Questions = () => {
     }
   };
 
+  const handleExport = async () => {
+    try {
+      setLoading(true);
+  
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: limit.toString(),
+      });
+  
+      if (packageName) {
+        params.append('package.name', packageName);
+      }
+  
+      const response = await axios.get(
+        `${API_BASE_URL}/questions/export/pdf?${params.toString()}`,
+        {
+          headers: {
+            "api-key": API_KEY,
+          },
+          responseType: 'blob',
+        }
+      );
+  
+      // Create blob and trigger download
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `questions_page${currentPage}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+  
+      setLoading(false);
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Failed to export PDF. Please try again.');
+      setLoading(false);
+    }
+  };
+
   const handleView = async (id) => {
     setGetIdView(id);
     setViewModal(true);
   };
 
   useEffect(() => {
+    getData();
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [packageName])
+
+  useEffect(() => {
     getGruopingQuestions();
     getPackageQuestions();
-    getData();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+
+  useEffect(() => {
+    if(packageQuestions) {
+      const result = packageQuestions?.map((item) => {
+        return {
+          value: item.id,
+          label: item.name
+        }
+      })
+      setOptionFilters(result)
+    }
+  }, [packageQuestions])
 
   return loading ? (
     <LoadingScreen />
@@ -670,24 +740,52 @@ const Questions = () => {
               <FontAwesomeIcon icon={faUpload} />
               <span>Import</span>
             </button>
+
+            <button
+              type="button"
+              onClick={handleExport}
+              className="text-white bg-sky-700 hover:bg-sky-800 font-medium rounded-xl text-sm px-5 py-2.5 space-x-2 text-center w-full sm:w-auto"
+            >
+              <FontAwesomeIcon icon={faFileExport} />
+              <span>Export</span>
+            </button>
           </div>
 
-          <div className="flex items-center gap-3 w-full md:w-auto">
-            <label htmlFor="limit" className="text-sm text-gray-700 whitespace-nowrap">
-              Tampilkan:
-            </label>
-            <select
-              id="limit"
-              value={limit}
-              onChange={handleLimitChange}
-              className="bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 px-2 py-2 transition-all ease-in-out"
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={25}>25</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-            </select>
+          <div className="flex gap-x-2 items-center">
+            <div className="relative">
+              <Select
+                options={optionFilters}
+                styles={customStyles}
+                value={packageName !== '' ? undefined : ''}
+                onChange={(selectedOption) => {
+                  setPackageName(selectedOption.label);
+                }}
+                placeholder="Select..."
+              />
+              {packageName && (
+                <span
+                  onClick={() => setPackageName('')} 
+                  className="absolute cursor-pointer font-bold right-1/4 top-[0.6rem] text-sm"
+                >
+                 <FontAwesomeIcon icon={faXmarkCircle} />
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              <select
+                id="limit"
+                value={limit}
+                onChange={handleLimitChange}
+                className="bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 px-2 py-2 transition-all ease-in-out"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -740,7 +838,7 @@ const Questions = () => {
                       {question.image ? (
                         <img
                           src={`${
-                            import.meta.env.VITE_APP_API_BASE_URL
+                            API_BASE_URL
                           }/questions/image/${question.id}`}
                           alt="Question Image"
                           className="w-32 rounded-xl"

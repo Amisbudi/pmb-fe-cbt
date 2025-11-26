@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=3100",
+    "dev": "vite --port=4200",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -30,6 +30,7 @@
     "react-dropzone": "^14.3.5",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.26.1",
+    "react-select": "^5.10.2",
     "sort-by": "^1.2.0",
     "yup": "^1.4.0"
   },
