@@ -11,18 +11,26 @@ import {
 import { faCheckCircle } from "@fortawesome/free-regular-svg-icons";
 import axios from "axios";
 import LoadingScreen from "./LoadingScreen";
+import { API_BASE_URL, API_KEY} from '../helpers/constant'
+import Select from "react-select";
+import { customStyles } from '../helpers/stylingSelect'
 
 const PackageQuestions = () => {
-  const [createModal, setCreateModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
-  const [packageQuestions, setPackageQuestions] = useState([]);
+  const [createModal, setCreateModal] = useState(false);
+
   const [types, setTypes] = useState([]);
   const [paginations, setPaginations] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [limit, setLimit] = useState(10);
+  const [optionFilters, setOptionFilters] = useState([])
+  const [packageQuestions, setPackageQuestions] = useState([]);
+
   const [total, setTotal] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+
   const [essayQuestion, setEssayQuestion] = useState('')
+  const [typeName, setTypeName] = useState('');
 
   const [loading, setLoading] = useState(true);
 
@@ -36,11 +44,10 @@ const PackageQuestions = () => {
   });
 
   const getData = async (page = 1, perPage = limit) => {
-    setLoading(true);
     await axios
-      .get(`${import.meta.env.VITE_APP_API_BASE_URL}/packagequestions?page=${page}&limit=${perPage}`, {
+      .get(`${API_BASE_URL}/packagequestions?page=${page}&limit=${perPage}&type_name=${typeName}`, {
         headers: {
-          "api-key": "b4621b89b8b68387",
+          "api-key": API_KEY,
         },
       })
       .then((response) => {
@@ -143,9 +150,9 @@ const PackageQuestions = () => {
 
   const getTypes = async () => {
     await axios
-      .get(`${import.meta.env.VITE_APP_API_BASE_URL}/types`, {
+      .get(`${API_BASE_URL}/types`, {
         headers: {
-          "api-key": "b4621b89b8b68387",
+          "api-key": API_KEY,
         },
       })
       .then((response) => {
@@ -168,7 +175,7 @@ const PackageQuestions = () => {
   const handleLimitChange = (e) => {
     const newLimit = parseInt(e.target.value);
     setLimit(newLimit);
-    getData(1, newLimit); // Reset to page 1 when changing limit
+    getData(1, newLimit);
   };
 
   const handleEdit = (content) => {
@@ -188,7 +195,7 @@ const PackageQuestions = () => {
     e.preventDefault();
     await axios
       .post(
-        `${import.meta.env.VITE_APP_API_BASE_URL}/packagequestions`,
+        `${API_BASE_URL}/packagequestions`,
         {
           type_id: formData.type_id,
           name: formData.name,
@@ -198,7 +205,7 @@ const PackageQuestions = () => {
         },
         {
           headers: {
-            "api-key": "b4621b89b8b68387",
+            "api-key": API_KEY,
           },
         },
       )
@@ -223,7 +230,7 @@ const PackageQuestions = () => {
     e.preventDefault();
     await axios
       .patch(
-        `${import.meta.env.VITE_APP_API_BASE_URL}/packagequestions/${formData.id}`,
+        `${API_BASE_URL}/packagequestions/${formData.id}`,
         {
           type_id: formData.type_id,
           name: formData.name,
@@ -233,7 +240,7 @@ const PackageQuestions = () => {
         },
         {
           headers: {
-            "api-key": "b4621b89b8b68387",
+            "api-key": API_KEY,
           },
         },
       )
@@ -256,9 +263,9 @@ const PackageQuestions = () => {
   const handleDelete = async (id) => {
     if (confirm("Apakah yakin akan menghapus paket soal?")) {
       await axios
-        .delete(`${import.meta.env.VITE_APP_API_BASE_URL}/packagequestions/${id}`, {
+        .delete(`${API_BASE_URL}/packagequestions/${id}`, {
           headers: {
-            "api-key": "b4621b89b8b68387",
+            "api-key": API_KEY,
           },
         })
         .then((response) => {
@@ -272,10 +279,25 @@ const PackageQuestions = () => {
   };
 
   useEffect(() => {
-    getTypes();
     getData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typeName])
+
+  useEffect(() => {
+    getTypes();
   }, []);
+
+  useEffect(() => {
+    if(types) {
+      const result = types?.map((item) => {
+        return {
+          value: item.id,
+          label: item.name
+        }
+      })
+      setOptionFilters(result)
+    }
+  }, [types])
 
   return loading ? (
     <LoadingScreen />
@@ -298,10 +320,27 @@ const PackageQuestions = () => {
             <span>Tambah</span>
           </button>
           
-          <div className="flex items-center gap-3">
-            <label htmlFor="limit" className="text-sm text-gray-700 whitespace-nowrap">
-              Tampilkan:
-            </label>
+          <div className="flex gap-x-2 items-center">
+           <div className="relative">
+              <Select
+                options={optionFilters}
+                styles={customStyles}
+                value={typeName !== '' ? undefined : ''}
+                onChange={(selectedOption) => {
+                  setTypeName(selectedOption.label);
+                }}
+                placeholder="Select..."
+              />
+              {typeName && (
+                <span
+                  onClick={() => setTypeName('')} 
+                  className="absolute cursor-pointer font-bold right-1/4 top-[0.6rem] text-sm"
+                >
+                 <FontAwesomeIcon icon={faXmarkCircle} />
+                </span>
+              )}
+            </div>
+      
             <select
               id="limit"
               value={limit}
