@@ -4,21 +4,27 @@ import {
     faEdit,
     faPlusCircle,
     faTrashAlt,
+    faXmarkCircle,
   } from "@fortawesome/free-solid-svg-icons";
 import ModalGrouping from "./Modal/ModalGrouping";
 import axios from "axios";
 import LoadingScreen from './LoadingScreen';
+import Select from "react-select";
+import { customStyles } from '../helpers/stylingSelect'
 
 function QuestionsGrup() {
   const [isOpen, setIsOpen] = useState(false);
   const [detail, setDataDetail] = useState(null);
 
   // Data State
-  const [groupingDataQuestion, setGroupingDataQuestion] = useState([]);
   const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
   const [limit, setLimit] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [packageName, setPackageName] = useState('');
+  const [optionFilters, setOptionFilters] = useState([])
+  const [packageQuestions, setPackageQuestions] = useState([]);
+  const [groupingDataQuestion, setGroupingDataQuestion] = useState([]);
 
   // UI State
   const [reloadData, setReloadData] = useState(0);
@@ -29,9 +35,8 @@ function QuestionsGrup() {
   const API_KEY = "b4621b89b8b68387";
 
   const getGruopingQuestions = async (page = 1, perPage = limit) => {
-    setLoading(true);
     await axios
-      .get(`${API_URL}/groupquestions?page=${page}&limit=${perPage}`, {
+      .get(`${API_URL}/groupquestions?page=${page}&limit=${perPage}&package_name=${packageName}`, {
         headers: {
           "api-key": API_KEY,
         },
@@ -168,11 +173,42 @@ function QuestionsGrup() {
         setIsOpen(true)
         setDataDetail(data)
     }
+
+    const getPackageQuestions = async () => {
+      await axios
+        .get(`${API_URL}/packagequestions`, {
+          params: {
+            limit: 25,
+          },
+          headers: {
+            "api-key": API_KEY,
+          },
+        })
+        .then((response) => {
+          setPackageQuestions(response.data.data);
+        })
+        .catch((error) => {
+          console.log(error.message);
+        });
+    };
+
+    useEffect(() => {
+      if(packageQuestions) {
+        const result = packageQuestions?.map((item) => {
+          return {
+            value: item.id,
+            label: item.name
+          }
+        })
+        setOptionFilters(result)
+      }
+    }, [packageQuestions])
     
     useEffect(() => {
-        getGruopingQuestions()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    } ,[reloadData])
+      getGruopingQuestions()
+      getPackageQuestions()
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    } ,[reloadData, packageName])
 
     return loading ? (
         <LoadingScreen />
@@ -198,10 +234,27 @@ function QuestionsGrup() {
                         <span>Tambah</span>
                     </button>
 
-                    <div className="flex items-center gap-3">
-                      <label htmlFor="limit" className="text-sm text-gray-700 whitespace-nowrap">
-                        Tampilkan:
-                      </label>
+                    <div className="flex gap-x-2 items-center">
+                       <div className="relative">
+                        <Select
+                          options={optionFilters}
+                          styles={customStyles}
+                          value={packageName !== '' ? undefined : ''}
+                          onChange={(selectedOption) => {
+                            setPackageName(selectedOption.label);
+                          }}
+                          placeholder="Select..."
+                        />
+                        {packageName && (
+                          <span
+                            onClick={() => setPackageName('')} 
+                            className="absolute cursor-pointer font-bold right-1/4 top-[0.6rem] text-sm"
+                          >
+                          <FontAwesomeIcon icon={faXmarkCircle} />
+                          </span>
+                        )}
+                      </div>
+
                       <select
                         id="limit"
                         value={limit}
